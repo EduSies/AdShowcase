@@ -1,0 +1,18 @@
+services:
+  traefik-adshowcase:
+    container_name: traefik-adshowcase
+    image: traefik:v2.10
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true

@@ -1,0 +1,74 @@
+version: "3.9"
+services:
+  db:
+    container_name: db-showcase
+    image: mariadb:11.3
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db-adshowcase:/var/lib/mysql
+    networks: [adshowcase_private]
+
+  php:
+    container_name: php-showcase
+    build:
+      context: ../env-toolkit/adshowcase-traefik/docker/php
+    working_dir: /var/www/html
+    # En server normalmente usas imagen construida por CI y no montas el código del host.
+    # Si aún no tienes registry, puedes montar el repo temporalmente:
+    volumes:
+      - ../../:/var/www/html:ro
+    depends_on:
+      - db
+    networks: [adshowcase_private]
+
+  nginx:
+    container_name: nginx-showcase
+    image: nginx:1.25-alpine
+    volumes:
+      - ../../:/var/www/html:ro
+      - ../env-toolkit/adshowcase-traefik/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on: [php]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_proxy
+
+      # Middleware de redirección a HTTPS (selectivo por host)
+      - traefik.http.middlewares.force-https.redirectscheme.scheme=https
+
+      # TEST (HTTPS)
+      - traefik.http.routers.adshowcase-test.rule=Host(`${TEST_HOST}`)
+      - traefik.http.routers.adshowcase-test.entrypoints=websecure
+      - traefik.http.routers.adshowcase-test.tls=true
+      - traefik.http.routers.adshowcase-test.tls.certresolver=le
+      - traefik.http.services.adshowcase-test.loadbalancer.server.port=80
+      # Redirección HTTP->HTTPS solo para test
+      - traefik.http.routers.adshowcase-test-redirect.rule=Host(`${TEST_HOST}`)
+      - traefik.http.routers.adshowcase-test-redirect.entrypoints=web
+      - traefik.http.routers.adshowcase-test-redirect.middlewares=force-https
+
+      # PROD (HTTPS)
+      - traefik.http.routers.adshowcase-prod.rule=Host(`${PROD_HOST}`)
+      - traefik.http.routers.adshowcase-prod.entrypoints=websecure
+      - traefik.http.routers.adshowcase-prod.tls=true
+      - traefik.http.routers.adshowcase-prod.tls.certresolver=le
+      - traefik.http.services.adshowcase-prod.loadbalancer.server.port=80
+      # Redirección HTTP->HTTPS solo para prod
+      - traefik.http.routers.adshowcase-prod-redirect.rule=Host(`${PROD_HOST}`)
+      - traefik.http.routers.adshowcase-prod-redirect.entrypoints=web
+      - traefik.http.routers.adshowcase-prod-redirect.middlewares=force-https
+
+    networks:
+      - adshowcase_private
+      - traefik_proxy
+
+volumes:
+  db-adshowcase:
+
+networks:
+  adshowcase_private:
+  traefik_proxy:
+    external: true
