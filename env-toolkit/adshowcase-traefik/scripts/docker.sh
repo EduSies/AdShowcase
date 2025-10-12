@@ -12,7 +12,7 @@
             echo "[env-toolkit] Añade a /etc/hosts:  127.0.0.1   ${LOCAL}"
           fi
           if ! docker network ls --format '{{.Name}}' | grep -q '^traefik_proxy$'; then
-            echo "[env-toolkit] Falta la red 'traefik_proxy'. Ejecuta:  cd ~/AdShowcase/global-traefik && make up"
+            echo "[env-toolkit] Falta la red 'traefik_proxy'. Ejecuta:  cd ~/AdShowcase/env-toolkit/global-traefik && make up"
           fi
         fi;;
       up)
