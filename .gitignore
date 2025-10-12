@@ -1,19 +1,8 @@
 # macOS / IDE
 .DS_Store
 .idea/
-.vscode/
 
 # Docker/Build
 *.log
-**/node_modules/
 vendor/
 .env
-.env.*
-adshowcase_bundles/**/letsencrypt/
-adshowcase_bundles/**/dbdata/
-adshowcase_bundles/**/certs/
-adshowcase_bundles/**/tmp/
-traefik-global/letsencrypt/
-
-# Zips y artefactos
-*.zip
