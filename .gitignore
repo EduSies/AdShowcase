@@ -5,5 +5,5 @@
 # Docker/Build
 *.log
 vendor/
-.env
+/.env
 runtime/*
