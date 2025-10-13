@@ -3,9 +3,12 @@
 # ENV=local (por defecto) | ENV=server
 ENV ?= local
 
-TG_DIR     := env-toolkit/global-traefik
-LOCAL_DIR  := env-toolkit/adshowcase-traefik
+SHELL := /bin/bash
+TG_DIR := env-toolkit/global-traefik
+LOCAL_DIR := env-toolkit/adshowcase-traefik
 SERVER_DIR := env-toolkit/adshowcase-traefik-prod-addon
+COMPOSER_DEV_JSON ?= composer-dev.json
+COMPOSER_DEV_LOCK ?= composer-dev.lock
 
 TARGETS := \
 	stop ps logs recreate down dump-docker-config traefik-logs \
@@ -14,15 +17,16 @@ TARGETS := \
 	composer-install-PROD composer-update-PROD composer-require-PROD \
 	composer-install-DEV  composer-update-DEV  composer-require-DEV
 
-.PHONY: help env up down down-all $(TARGETS) local-% server-%
+.PHONY: help env up down down-all $(TARGETS) local-% server-% build composer-init-DEV
 
 help:
 	@echo "Uso:"
-	@echo "  make up                     # global-traefik + local (ENV=local)"
-	@echo "  ENV=server make up          # solo server (test/prod)"
-	@echo "  make down                   # para el stack según ENV"
-	@echo "  make down-all               # para local + global-traefik"
-	@echo "  make logs / ps / migrate... # actúan sobre LOCAL por defecto"
+	@echo "  make build                 	# build php (Yii2 horneado) + sync a raíz + deps"
+	@echo "  make up                    	# global-traefik + local (ENV=local)"
+	@echo "  ENV=server make up         	# solo server (test/prod)"
+	@echo "  make down                  	# para el stack según ENV"
+	@echo "  make down-all              	# para local + global-traefik"
+	@echo "  make logs / ps / migrate...	# actúan sobre LOCAL por defecto"
 
 env:
 	@echo "ENV = $(ENV)"
@@ -62,3 +66,56 @@ local-%:
 	@$(MAKE) -C $(LOCAL_DIR) $* NAME="$(NAME)"
 server-%:
 	@$(MAKE) -C $(SERVER_DIR) $* NAME="$(NAME)"
+
+build:
+	@echo ">> 1/5 Build de imágenes (php)"
+	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase build php
+
+	@echo ">> 2/5 Sincronizar Yii2 desde la imagen (si existe /opt/yii2-template)"
+	@bash -lc '\
+	  if docker compose -f "$(LOCAL_DIR)/docker-compose.yml" -p adshowcase run --rm php bash -lc "test -d /opt/yii2-template"; then \
+	    ( cd "$(LOCAL_DIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm php bash -lc "cd /opt/yii2-template && tar cf - ." ) | tar -x -k -f - ; \
+	  else \
+	    echo "   (fallback) creando scaffold con Composer dentro de php...)"; \
+	    docker compose -f "$(LOCAL_DIR)/docker-compose.yml" -p adshowcase run --rm --user "$$(id -u):$$(id -g)" php \
+	      composer create-project yiisoft/yii2-app-basic /var/www/html/_yii_scaffold --prefer-dist --no-interaction --no-progress; \
+	    rsync -av --ignore-existing \
+	      --exclude=".git" --exclude=".gitignore" --exclude="vendor" --exclude="runtime" --exclude="web/assets" \
+	      _yii_scaffold/ .; \
+	    rm -rf _yii_scaffold; \
+	  fi'
+
+	# Asegurar composer-dev.json (si no existe pero hay composer.json, copiar)
+	@if [ ! -f "$(COMPOSER_DEV_JSON)" ] && [ -f composer.json ]; then \
+	  cp composer.json "$(COMPOSER_DEV_JSON)"; echo ">> Copiado composer.json → $(COMPOSER_DEV_JSON)"; \
+	fi
+	@if [ ! -f "$(COMPOSER_DEV_JSON)" ]; then \
+	  echo "ERROR: falta $(COMPOSER_DEV_JSON) y composer.json. Crea uno y reintenta."; exit 2; \
+	fi
+
+	@echo ">> 3/5 Composer install (usando $(COMPOSER_DEV_JSON) / $(COMPOSER_DEV_LOCK))"
+	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase run --rm \
+	  --user "$(shell id -u):$(shell id -g)" \
+	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
+	  -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+	  -e HOME=/tmp \
+	  php bash -lc "set -euo pipefail; cd /var/www/html; \
+	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; else rm -f composer.lock; fi; \
+	    composer install --no-progress --no-interaction; \
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
+
+	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase run --rm php \
+		bash -lc 'mkdir -p runtime web/assets && chown -R www-data:www-data runtime web/assets && chmod -R u+rwX,g+rwX runtime web/assets'
+
+	@echo ">> Build listo. Luego: make up && open http://localhost.adshowcase.com"
+
+composer-init-DEV:
+	@if [ ! -f "$(COMPOSER_DEV_JSON)" ]; then \
+	  if [ -f composer.json ]; then \
+	    cp composer.json "$(COMPOSER_DEV_JSON)"; \
+	    echo ">> Copiado composer.json → $(COMPOSER_DEV_JSON)"; \
+	  else \
+	    echo "ERROR: No existe $(COMPOSER_DEV_JSON) ni composer.json. Crea uno y reintenta." >&2; \
+	    exit 2; \
+	  fi; \
+	fi

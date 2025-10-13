@@ -18,7 +18,7 @@ services:
 
   php:
     container_name: php-adshowcase
-    image: php:8.2-fpm-bookworm
+    build: ./docker/php
     platform: linux/arm64/v8
     working_dir: /var/www/html
     volumes:
@@ -45,16 +45,6 @@ services:
     networks:
       - traefik_private
       - traefik_proxy
-
-  composer:
-    container_name: composer-adshowcase
-    image: composer:2
-    platform: linux/arm64/v8
-    working_dir: /var/www/html
-    volumes:
-      - ../../:/var/www/html
-    entrypoint: ["composer"]
-    networks: [traefik_private]
 
 volumes:
   db-adshowcase:
