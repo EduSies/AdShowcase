@@ -17,16 +17,37 @@ TARGETS := \
 	composer-install-PROD composer-update-PROD composer-require-PROD \
 	composer-install-DEV  composer-update-DEV  composer-require-DEV
 
-.PHONY: help env up down down-all $(TARGETS) local-% server-% build composer-init-DEV
+.PHONY: help env up down down-all $(TARGETS) local-% server-% build
 
 help:
 	@echo "Uso:"
-	@echo "  make build                 	# build php (Yii2 horneado) + sync a raíz + deps"
-	@echo "  make up                    	# global-traefik + local (ENV=local)"
-	@echo "  ENV=server make up         	# solo server (test/prod)"
-	@echo "  make down                  	# para el stack según ENV"
-	@echo "  make down-all              	# para local + global-traefik"
-	@echo "  make logs / ps / migrate...	# actúan sobre LOCAL por defecto"
+	@echo "  make build                      # build php (Yii2 horneado) + sync a raíz + composer install (DEV)"
+	@echo "  make up                         # (ENV=local) levanta global-traefik + stack local"
+	@echo "  SKIP_TRAEFIK_GLOBAL=1 make up   # salta traefik global si ya tienes :80 ocupado"
+	@echo "  ENV=server make up              # levanta sólo el stack de server (test/prod)"
+	@echo "  make down                       # para el stack según ENV"
+	@echo "  make down-all                   # para local + global-traefik"
+	@echo "  make logs / ps                  # logs o listado de servicios (LOCAL por defecto)"
+	@echo "  make migrate / migrate-create   # migraciones de Yii2 (LOCAL)"
+	@echo ""
+	@echo "Composer (DEV, sobre composer-dev.json/lock):"
+	@echo "  make composer-install-DEV       # instala dependencias (usa composer-dev.json / composer-dev.lock)"
+	@echo "  make composer-require-DEV NAME='vendor/paquete:^version'  # añade dependencia en DEV"
+	@echo "  make composer-update-DEV [NAME=vendor/paquete]            # update selectivo o completo en DEV"
+	@echo "  (si falta composer-dev.json: cd env-toolkit/adshowcase-traefik && make composer-init-DEV)"
+	@echo ""
+	@echo "Composer (PROD / server):"
+	@echo "  make composer-install-PROD      # install en el stack de server"
+	@echo "  make composer-require-PROD NAME='vendor/paquete:^version'"
+	@echo "  make composer-update-PROD [NAME=vendor/paquete]"
+	@echo ""
+	@echo "Atajos útiles:"
+	@echo "  make traefik-logs               # logs del traefik global (:80)"
+	@echo "  local-<target> / server-<target># ejecuta un target directamente en LOCAL/SERVER"
+	@echo ""
+	@echo "Variables:"
+	@echo "  ENV=local|server                # entorno objetivo (por defecto: local)"
+	@echo "  NAME=vendor/paquete[:^version]  # usado por composer-require/update"
 
 env:
 	@echo "ENV = $(ENV)"
@@ -108,14 +129,3 @@ build:
 		bash -lc 'mkdir -p runtime web/assets && chown -R www-data:www-data runtime web/assets && chmod -R u+rwX,g+rwX runtime web/assets'
 
 	@echo ">> Build listo. Luego: make up && open http://localhost.adshowcase.com"
-
-composer-init-DEV:
-	@if [ ! -f "$(COMPOSER_DEV_JSON)" ]; then \
-	  if [ -f composer.json ]; then \
-	    cp composer.json "$(COMPOSER_DEV_JSON)"; \
-	    echo ">> Copiado composer.json → $(COMPOSER_DEV_JSON)"; \
-	  else \
-	    echo "ERROR: No existe $(COMPOSER_DEV_JSON) ni composer.json. Crea uno y reintenta." >&2; \
-	    exit 2; \
-	  fi; \
-	fi
