@@ -58,37 +58,38 @@ composer-require-PROD:
 	  run --rm php composer require $(NAME)
 
 composer-install-DEV:
-	@# 1) Comprobar que existe composer-dev.json (o abortar)
-	@test -f "$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON). Ejecuta: make composer-init-DEV"; exit 2; }
+	@test -f "$(ROOT_DIR)/$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON) en $(ROOT_DIR)."; exit 2; }
 	@echo ">> composer install (usando $(COMPOSER_DEV_JSON) / $(COMPOSER_DEV_LOCK))"
-	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase run --rm \
+	@ cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
 	  --user "$(shell id -u):$(shell id -g)" \
 	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
 	  php bash -lc "set -euo pipefail; cd /var/www/html; \
 	    rm -f composer.lock; \
 	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; fi; \
 	    composer install --no-progress --no-interaction; \
-	    mv -f composer.lock $(COMPOSER_DEV_LOCK)"
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
 
 composer-update-DEV:
-	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase run --rm \
+	@test -f "$(ROOT_DIR)/$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON) en $(ROOT_DIR)."; exit 2; }
+	@ cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
 	  --user "$(shell id -u):$(shell id -g)" \
 	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
 	  php bash -lc "set -euo pipefail; cd /var/www/html; \
 	    rm -f composer.lock; \
 	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; fi; \
 	    composer update $${NAME:-}; \
-	    mv -f composer.lock $(COMPOSER_DEV_LOCK)"
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
 
 composer-require-DEV:
-	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase run --rm \
+	@test -f "$(ROOT_DIR)/$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON) en $(ROOT_DIR)."; exit 2; }
+	@ cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
 	  --user "$(shell id -u):$(shell id -g)" \
 	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
 	  php bash -lc "set -euo pipefail; cd /var/www/html; \
 	    rm -f composer.lock; \
 	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; fi; \
 	    composer require $(NAME); \
-	    mv -f composer.lock $(COMPOSER_DEV_LOCK)"
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
 
 # ===== DB (Yii2) =====
 migrate:

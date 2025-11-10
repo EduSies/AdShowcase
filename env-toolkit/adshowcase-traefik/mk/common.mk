@@ -13,3 +13,4 @@ COMPOSE_FILE_SERVER := $(CURDIR)/$(SERVER_DIR)/docker-compose.yml
 SHELL := /bin/bash
 COMPOSER_DEV_JSON ?= composer-dev.json
 COMPOSER_DEV_LOCK ?= composer-dev.lock
+ROOT_DIR := $(abspath $(CURDIR)/../..)
