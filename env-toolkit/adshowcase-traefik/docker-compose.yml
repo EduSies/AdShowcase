@@ -1,24 +1,29 @@
-version: "3.9"
-
 services:
   db:
     container_name: db-adshowcase
     image: mariadb:11.3
+    restart: unless-stopped
     platform: linux/arm64/v8
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-yii2}
-      MYSQL_USER: ${MYSQL_USER:-yii2}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-secret}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecret}
+      DB_HOST: ${DB_HOST}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - db-adshowcase:/var/lib/mysql
       - ./docker/mariadb/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf:ro
       - ./docker/mariadb/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${MYSQL_BIND_IP:-127.0.0.1}:${MYSQL_FORWARD_PORT:-33088}:3306"
     networks: [traefik_private]
 
   php:
     container_name: php-adshowcase
-    build: ./docker/php
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: adshowcase-php
     platform: linux/arm64/v8
     working_dir: /var/www/html
     volumes:

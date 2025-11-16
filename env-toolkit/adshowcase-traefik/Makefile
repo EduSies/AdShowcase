@@ -45,51 +45,84 @@ traefik-logs:
 
 # ===== Composer =====
 composer-install-PROD:
+	@rm -rf "$(ROOT_DIR)/vendor" || true
+	@rm -f  "$(ROOT_DIR)/composer.lock" || true
+	@mkdir -p "$(ROOT_DIR)/runtime/composer" || true
 	@docker compose -f "$(COMPOSE_FILE_SERVER)" -p "$(COMPOSE_PROJECT)" \
-	  run --rm php composer install --no-progress --no-interaction
+	  run --rm \
+	  -e COMPOSER_HOME=/var/www/html/runtime/composer \
+	  -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
+	  php bash -lc 'set -euo pipefail; cd /var/www/html; \
+	    mkdir -p runtime/composer; \
+	    composer install --no-progress --no-interaction'
 
 composer-update-PROD:
+	@mkdir -p "$(ROOT_DIR)/runtime/composer" || true
 	@docker compose -f "$(COMPOSE_FILE_SERVER)" -p "$(COMPOSE_PROJECT)" \
-	  run --rm php composer update $(NAME)
+	  run --rm \
+	  -e COMPOSER_HOME=/var/www/html/runtime/composer \
+	  -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
+	  php bash -lc 'set -euo pipefail; cd /var/www/html; \
+	    mkdir -p runtime/composer; \
+	    composer update $${NAME:-}'
 
 composer-require-PROD:
 	@test -n "$(NAME)" || (echo "Uso: make composer-require-PROD NAME=vendor/paquete:^version"; exit 1)
+	@mkdir -p "$(ROOT_DIR)/runtime/composer" || true
 	@docker compose -f "$(COMPOSE_FILE_SERVER)" -p "$(COMPOSE_PROJECT)" \
-	  run --rm php composer require $(NAME)
+	  run --rm \
+	  -e COMPOSER_HOME=/var/www/html/runtime/composer \
+	  -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
+	  php bash -lc 'set -euo pipefail; cd /var/www/html; \
+	    mkdir -p runtime/composer; \
+	    composer require $(NAME)'
 
 composer-install-DEV:
+	@rm -rf "$(ROOT_DIR)/vendor" || true
+	@rm -f  "$(ROOT_DIR)/$(COMPOSER_DEV_LOCK)" || true
+	@mkdir -p "$(ROOT_DIR)/runtime/composer" || true
 	@test -f "$(ROOT_DIR)/$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON) en $(ROOT_DIR)."; exit 2; }
 	@echo ">> composer install (usando $(COMPOSER_DEV_JSON) / $(COMPOSER_DEV_LOCK))"
-	@ cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
+	@cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
 	  --user "$(shell id -u):$(shell id -g)" \
 	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
-	  php bash -lc "set -euo pipefail; cd /var/www/html; \
-	    rm -f composer.lock; \
+	  -e COMPOSER_HOME=/var/www/html/runtime/composer \
+	  -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
+	  php bash -lc 'set -euo pipefail; cd /var/www/html; \
+	    mkdir -p runtime/composer; \
 	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; fi; \
 	    composer install --no-progress --no-interaction; \
-	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi'
 
 composer-update-DEV:
 	@test -f "$(ROOT_DIR)/$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON) en $(ROOT_DIR)."; exit 2; }
-	@ cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
+	@mkdir -p "$(ROOT_DIR)/runtime/composer" || true
+	@cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
 	  --user "$(shell id -u):$(shell id -g)" \
 	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
-	  php bash -lc "set -euo pipefail; cd /var/www/html; \
+	  -e COMPOSER_HOME=/var/www/html/runtime/composer \
+	  -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
+	  php bash -lc 'set -euo pipefail; cd /var/www/html; \
+	    mkdir -p runtime/composer; \
 	    rm -f composer.lock; \
 	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; fi; \
 	    composer update $${NAME:-}; \
-	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi'
 
 composer-require-DEV:
 	@test -f "$(ROOT_DIR)/$(COMPOSER_DEV_JSON)" || { echo "ERROR: falta $(COMPOSER_DEV_JSON) en $(ROOT_DIR)."; exit 2; }
-	@ cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
+	@mkdir -p "$(ROOT_DIR)/runtime/composer" || true
+	@cd "$(CURDIR)" && docker compose -f docker-compose.yml -p adshowcase run --rm \
 	  --user "$(shell id -u):$(shell id -g)" \
 	  -e COMPOSER=$(COMPOSER_DEV_JSON) \
-	  php bash -lc "set -euo pipefail; cd /var/www/html; \
+	  -e COMPOSER_HOME=/var/www/html/runtime/composer \
+	  -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
+	  php bash -lc 'set -euo pipefail; cd /var/www/html; \
+	    mkdir -p runtime/composer; \
 	    rm -f composer.lock; \
 	    if [ -f $(COMPOSER_DEV_LOCK) ]; then cp $(COMPOSER_DEV_LOCK) composer.lock; fi; \
 	    composer require $(NAME); \
-	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi"
+	    if [ -f composer.lock ]; then mv -f composer.lock $(COMPOSER_DEV_LOCK); fi'
 
 # ===== DB (Yii2) =====
 migrate:

@@ -7,3 +7,4 @@
 vendor/
 /.env
 runtime/*
+composer-dev.lock
