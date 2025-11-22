@@ -22,7 +22,10 @@
     "yiisoft/yii2": "^2.0",
     "yiisoft/yii2-bootstrap5": "~2.0.2",
     "yiisoft/yii2-symfonymailer": "~2.0.3",
-    "vlucas/phpdotenv": "*"
+    "vlucas/phpdotenv": "*",
+    "twbs/bootstrap-icons": "*",
+    "powerkernel/yii2-flag-icon-css": "*",
+    "nullref/yii2-datatables": "~2.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

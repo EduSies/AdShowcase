@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'senderEmail' => 'noreply@example.com',
+    'adminEmail' => 'edusies89@gmail.com',
+    'senderEmail' => 'edusies89@gmail.com',
     'senderName' => 'Example.com mailer',
     'isSsl' => strtolower(($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https',
 ];

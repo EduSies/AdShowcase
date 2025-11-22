@@ -100,7 +100,7 @@ class m251115_205302_seed_users_per_role extends Migration
         }
 
         // Generar hash corto de 10 chars como pediste (para compartir/enlaces “bonitos”)
-        $hash = \Yii::$app->security->generateRandomString(10);
+        $hash = \Yii::$app->security->generateRandomString(16);
 
         // Insertar fila mínima válida. created_at/updated_at usan CURRENT_TIMESTAMP por defecto.
         $this->insert('{{%user}}', [
@@ -114,6 +114,15 @@ class m251115_205302_seed_users_per_role extends Migration
             'language_id' => null,
             'default_profile' => null,
             'avatar_url' => null,
+            'password_hash' => \Yii::$app->security->generatePasswordHash('Adshowcase#2025'),
+            'auth_key' => \Yii::$app->security->generateRandomString(),
+            'password_reset_token' => null,
+            'verification_token' => null,
+            'email_verified_at' => new \yii\db\Expression('CURRENT_TIMESTAMP'),
+            'failed_login_attempts' => 0,
+            'locked_until' => null,
+            'last_login_at' => null,
+            'last_login_ip' => null,
         ]);
 
         // Recuperar el ID autoincrement

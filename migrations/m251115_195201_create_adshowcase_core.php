@@ -35,7 +35,7 @@ class m251115_195201_create_adshowcase_core extends Migration
     {
         // === Reutilizables de tipo (mantener DRY) ===
         // Ojo: no incluyen DEFAULT; lo añadimos donde toque para preservar el comportamiento actual.
-        $statusEnum = "ENUM('active','archived','paused') NOT NULL";
+        $statusEnum = "ENUM('active','archived','pending') NOT NULL";
         $workflowStatusEnum = "ENUM('draft','reviewed','approved') NOT NULL";
 
         /*
@@ -46,16 +46,25 @@ class m251115_195201_create_adshowcase_core extends Migration
          */
         $this->createTable('{{%user}}', [
             'id' => $this->primaryKey(),
-            'hash' => $this->string(10)->notNull()->unique(),
+            'hash' => $this->chas(16)->notNull()->unique(),
             'email' => $this->string(255)->notNull()->unique(),
             'username' => $this->string(255)->notNull()->unique(),
             'type' => $this->string(32)->notNull(), // tipología interna (admin/editor/sales/...)
             'name' => $this->string(255)->notNull(),
             'surname' => $this->string(255)->notNull(),
-            'status' => $this->string(32)->notNull(),
+            'status' => "ENUM('active','archived','banned','inactive','pending') NOT NULL DEFAULT 'active'",
             'language_id' => $this->integer()->null(),
             'default_profile' => $this->string(64)->null(),
             'avatar_url' => $this->string(255)->null(),
+            'password_hash' => $this->string()->notNull(), // Hash seguro de la contraseña
+            'auth_key' => $this->string(32)->notNull(), // Clave "remember me" (Yii::$app->security->generateRandomString())
+            'password_reset_token' => $this->string(255)->null()->unique(), // Token de reseteo
+            'verification_token' => $this->string(255)->null()->unique(), // Token de verificación de email
+            'email_verified_at' => $this->dateTime()->null(), // Marca de verificación del email
+            'failed_login_attempts' => $this->integer()->notNull()->defaultValue(0), // contador de fallos login
+            'locked_until' => $this->dateTime()->null(), // bloqueado hasta...
+            'last_login_at' => $this->dateTime()->null(), // último login (timestamp)
+            'last_login_ip' => $this->string(45)->null(), // último IP (IPv4/IPv6)
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);
@@ -99,8 +108,6 @@ class m251115_195201_create_adshowcase_core extends Migration
             'name' => $this->string(255)->notNull()->unique(),
             'url_name' => $this->string(255)->notNull()->unique(),
             'status' => $statusEnum . " DEFAULT 'active'",
-            'alcohol' => $this->boolean()->notNull()->defaultValue(0),
-            'bet' => $this->boolean()->notNull()->defaultValue(0),
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);

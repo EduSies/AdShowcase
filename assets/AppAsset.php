@@ -19,13 +19,19 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+
     public $css = [
-        'css/site.css',
+        'css/custom.css',
+        'css/custom-responsive.css',
     ];
+
     public $js = [
     ];
+
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap5\BootstrapAsset'
+        'yii\bootstrap5\BootstrapAsset',
+        BootstrapIconsAsset::class,
+        SweetAlert2Asset::class,
     ];
 }

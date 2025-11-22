@@ -43,13 +43,7 @@ $config = [
         ],
     ],
     'params' => $params,
-    /*
-    'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
-        ],
-    ],
-    */
+    'vendorPath' => ADSHOWCASE_BASE_PATH . '/vendor',
 ];
 
 if (YII_ENV_DEV) {

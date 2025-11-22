@@ -52,8 +52,12 @@ class ContactForm extends Model
         if ($this->validate()) {
             Yii::$app->mailer->compose()
                 ->setTo($email)
-                ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
-                ->setReplyTo([$this->email => $this->name])
+                //->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
+                ->setReplyTo(
+                    isset($this->email) && filter_var($this->email, FILTER_VALIDATE_EMAIL)
+                        ? [$this->email => ($this->name ?? $this->email)]
+                        : null
+                )
                 ->setSubject($this->subject)
                 ->setTextBody($this->body)
                 ->send();
