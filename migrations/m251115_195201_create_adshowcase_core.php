@@ -162,6 +162,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->createTable('{{%product}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(255)->notNull(),
+            'url_slug' => $this->string(255)->null(),
             'status' => $statusEnum . " DEFAULT 'active'",
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
