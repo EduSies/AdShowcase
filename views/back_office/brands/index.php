@@ -18,86 +18,99 @@ $this->params['breadcrumbs'][] = $this->title;
 
 DataTablesAsset::register($this);
 
-$deleteConfirmJs = \yii\helpers\Json::htmlEncode(Yii::t('app', 'Are you sure you want to delete this item?'));
 $idDataTable = "brandsTable";
 
 ?>
 
-<?= DataTable::widget([
-    'id' => $idDataTable,
-    'scrollY' => 'calc(100vh - 374px)',
-    'scrollX' => true,
-    'scrollCollapse' => true,
-    'language' => [
-        'lengthMenu' => '_MENU_',
-        'info' => Yii::t('app', 'Showing _START_ - _END_ of _TOTAL_'),
-        'infoEmpty' => Yii::t('app', 'Showing 0 - 0 of 0'),
-        'infoFiltered' => ' (_MAX_)',
-        'loadingRecords' => Yii::t('app', 'Loading...'),
-        'processing' => Yii::t('app', 'Loading...'),
-    ],
-    'pagingType' => new JsExpression('window.matchMedia("(max-width: 1200px)").matches ? "full" : "full_numbers"'),
-    'pageLength' => 25,
-    'lengthMenu' => [
-        [10, 25, 50, 100, -1],
-        [10, 25, 50, 100, Yii::t('app', 'All')]
-    ],
-    'tableOptions' => ['class' => 'table hover w-100 text-nowrap'],
-    'columns' => [
-        [
-            'data' => 'id',
-            'title' => Yii::t('app', 'ID'),
-        ],
-        'hash',
-        [
-            'data' => 'name',
-            'title' => Yii::t('app', 'Name'),
-            'width' => '100px',
-        ],
-        [
-            'data' => 'url_name',
-            'title' => Yii::t('app', 'URL Name'),
-        ],
-        [
-            'data' => 'status',
-            'title' => Yii::t('app', 'Status'),
-            'className' => 'dt-head-center dt-body-center text-center',
-            'width' => '100px',
-        ],
-        [
-            'data' => 'created_at',
-            'title' => Yii::t('app', 'Created'),
-        ],
-        [
-            'data' => 'updated_at',
-            'title' => Yii::t('app', 'Updated'),
-        ],
-        [
-            'class' => DataTableColumn::class,
-            'title' => Yii::t('app', 'Actions'),
-            'orderable' => false,
-            'searchable' => false,
-            'className' => 'dt-head-center dt-body-center text-center',
-            'render' => new JsExpression('function (data,type,row) {
-                var editUrl = "'.Url::to(['back-office/brand-update']).'/" + row.id;
-                var delUrl  = "'.Url::to(['back-office/brand-delete']).'/" + row.id;
+<div class="card bg-transparent">
+    <div class="card-content">
+        <div class="level mb-4">
+            <div class="level-left"><h1 class="title is-4"><?= $this->title ?></h1></div>
+            <div class="level-right">
+                <a class="btn btn-outline-primary"
+                   href="<?= Url::to(['back-office/brand-create']) ?>"><?= Yii::t('app', 'New Brand') ?></a>
+            </div>
+        </div>
 
-                return \'<div class="d-flex gap-2 justify-content-center">\'
-                     + \'<a class="btn btn-sm btn-primary" href="\' + editUrl + \'">'.Yii::t('app','Edit').'</a>\'
-                     + \'<a class="btn btn-sm btn-outline-danger js-brand-delete" data-href="\' + delUrl + \'">'.Yii::t('app','Delete').'</a>\'
-                     + \'</div>\';
-            }'),
-        ],
-    ],
-    'data' => $rows,
-]) ?>
+        <?= DataTable::widget([
+            'id' => $idDataTable,
+            'scrollY' => 'calc(100vh - 489px)',
+            'scrollX' => true,
+            'scrollCollapse' => true,
+            'language' => [
+                'lengthMenu' => '_MENU_',
+                'info' => Yii::t('app', 'Showing _START_ - _END_ of _TOTAL_'),
+                'infoEmpty' => Yii::t('app', 'Showing 0 - 0 of 0'),
+                'infoFiltered' => ' (_MAX_)',
+                'loadingRecords' => Yii::t('app', 'Loading...'),
+                'processing' => Yii::t('app', 'Loading...'),
+            ],
+            'pagingType' => new JsExpression('window.matchMedia("(max-width: 1200px)").matches ? "full" : "full_numbers"'),
+            'pageLength' => 25,
+            'lengthMenu' => [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, Yii::t('app', 'All')]
+            ],
+            'tableOptions' => ['class' => 'table hover w-100 text-nowrap'],
+            'data' => $rows,
+            'columns' => [
+                [
+                    'data' => 'id',
+                    'title' => Yii::t('app', 'ID'),
+                ],
+                'hash',
+                [
+                    'data' => 'name',
+                    'title' => Yii::t('app', 'Name'),
+                    'width' => '100px',
+                ],
+                [
+                    'data' => 'url_name',
+                    'title' => Yii::t('app', 'URL Slug'),
+                ],
+                [
+                    'data' => 'status',
+                    'title' => Yii::t('app', 'Status'),
+                    'className' => 'dt-head-center dt-body-center text-center',
+                    'width' => '100px',
+                ],
+                [
+                    'data' => 'created_at',
+                    'title' => Yii::t('app', 'Created'),
+                ],
+                [
+                    'data' => 'updated_at',
+                    'title' => Yii::t('app', 'Updated'),
+                ],
+                [
+                    'class' => DataTableColumn::class,
+                    'title' => Yii::t('app', 'Actions'),
+                    'orderable' => false,
+                    'searchable' => false,
+                    'className' => 'dt-head-center dt-body-center text-center',
+                    'render' => new JsExpression('function (data,type,row) {
+                        var editUrl = "'.Url::to(['back-office/brand-update']).'/" + row.id;
+                        var delUrl  = "'.Url::to(['back-office/brand-delete']).'/" + row.id;
+        
+                        return \'<div class="d-flex gap-2 justify-content-center">\'
+                             + \'<a class="btn btn-sm btn-secondary" href="\' + editUrl + \'">'.Yii::t('app','Edit').'</a>\'
+                             + \'<a class="btn btn-sm btn-outline-danger js-delete" data-href="\' + delUrl + \'">'.Yii::t('app','Delete').'</a>\'
+                             + \'</div>\';
+                    }'),
+                ],
+            ],
+        ]) ?>
+    </div>
+</div>
 
 <?php
+
+$deleteConfirmJs = \yii\helpers\Json::htmlEncode(Yii::t('app', 'Are you sure you want to delete this item?'));
 
 $js = <<<JS
 
     (function(){
-      $(document).on('click','a.js-brand-delete', function(e){
+      $(document).on('click','a.js-delete', function(e){
         e.preventDefault();
         e.stopPropagation();
         

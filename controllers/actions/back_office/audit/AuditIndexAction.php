@@ -14,7 +14,7 @@ final class AuditIndexAction extends BaseBackOfficeAction
     public function run()
     {
         $this->ensureCan($this->can);
-        // Renderiza la vista de listado (DataTable/filters/…)
+
         return $this->controller->render($this->view ?? 'index');
     }
 }

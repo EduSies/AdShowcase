@@ -6,7 +6,7 @@ namespace app\controllers\actions\back_office\brands;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\Brand;
-use app\services\back_office\brand\BackOfficeBrandDeleteService;
+use app\services\back_office\brands\BackOfficeBrandDeleteService;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;

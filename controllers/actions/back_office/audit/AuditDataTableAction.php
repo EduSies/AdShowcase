@@ -19,7 +19,7 @@ final class AuditDataTableAction extends BaseDataTableAction
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
         return [
             'data' => [],
             'recordsTotal' => 0,

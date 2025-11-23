@@ -21,8 +21,6 @@ final class BrandDataTableAction extends BaseDataTableAction
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-
-
         return [
             'data' => [],
             'recordsTotal' => 0,

@@ -15,7 +15,7 @@ use yii\base\Model;
  */
 class LoginForm extends Model
 {
-    public const FORM_MANE = 'login-form';
+    public const FORM_NAME = 'login-form';
 
     public string $login = '';
     public string $password = '';
@@ -43,7 +43,7 @@ class LoginForm extends Model
 
     public function formName(): string
     {
-        return self::FORM_MANE;
+        return self::FORM_NAME;
     }
 
     public function login(): bool

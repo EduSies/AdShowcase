@@ -6,14 +6,14 @@ namespace app\controllers\actions\back_office\brands;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\forms\back_office\BrandForm;
-use app\services\back_office\brand\BackOfficeBrandCreateService;
+use app\services\back_office\brands\BackOfficeBrandCreateService;
 use Yii;
 
 final class BrandCreateAction extends BaseBackOfficeAction
 {
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = BrandForm::class;
-    public ?string $view = '@app/views/back_office/brands/' . BrandForm::FORM_MANE;
+    public ?string $view = '@app/views/back_office/brands/' . BrandForm::FORM_NAME;
 
     public function run()
     {
@@ -24,9 +24,9 @@ final class BrandCreateAction extends BaseBackOfficeAction
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeBrandCreateService();
-            $brand = $service->create($model);
+            $ok = $service->create($model);
 
-            if ($brand) {
+            if ($ok) {
                 \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
                 return $this->controller->redirect(['back-office/brands']);
             }

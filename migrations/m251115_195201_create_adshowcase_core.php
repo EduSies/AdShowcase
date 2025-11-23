@@ -118,7 +118,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'hash' => $this->char(16)->notNull()->unique(),
             'name' => $this->string(255)->notNull()->unique(),
             'status' => $statusEnum . " DEFAULT 'active'",
-            'country_iso' => $this->char(2)->notNull(),
+            'country_id' => $this->integer()->notNull(),
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);
@@ -146,7 +146,8 @@ class m251115_195201_create_adshowcase_core extends Migration
 
         // country
         $this->createTable('{{%country}}', [
-            'iso' => $this->char(2)->notNull(),
+            'id' => $this->primaryKey(),
+            'iso' => $this->char(2)->notNull()->unique(),
             'iso3' => $this->char(3)->null(),
             'name' => $this->string(255)->notNull(),
             'continent_code' => $this->char(2)->null(),
@@ -156,7 +157,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);
-        $this->addPrimaryKey('pk_country_iso', '{{%country}}', 'iso');
+        $this->addForeignKey('fk_agency_country', '{{%agency}}', 'country_id', '{{%country}}', 'id', 'RESTRICT', 'CASCADE');
 
         // product (catálogo libre por marca si aplica)
         $this->createTable('{{%product}}', [
@@ -182,7 +183,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'brand_id' => $this->integer()->notNull(),
             'agency_id' => $this->integer()->notNull(),
             'device_id' => $this->integer()->notNull(),
-            'country_iso' => $this->char(2)->notNull(),
+            'country_id' => $this->integer()->notNull(),
             'format_id' => $this->integer()->notNull(),
             'sales_type_id' => $this->integer()->notNull(),
             'product_id' => $this->integer()->null(),
@@ -200,7 +201,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->createIndex('idx_creative_agency', '{{%creative}}', 'agency_id');
         $this->createIndex('idx_creative_device', '{{%creative}}', 'device_id');
         $this->createIndex('idx_creative_format', '{{%creative}}', 'format_id');
-        $this->createIndex('idx_creative_country', '{{%creative}}', 'country_iso');
+        $this->createIndex('idx_creative_country', '{{%creative}}', 'country_id');
         $this->createIndex('idx_creative_sales_type', '{{%creative}}', 'sales_type_id');
         $this->createIndex('idx_creative_status', '{{%creative}}', 'status');
 
@@ -210,7 +211,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->addForeignKey('fk_creative_agency', '{{%creative}}', 'agency_id', '{{%agency}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_device', '{{%creative}}', 'device_id', '{{%device}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_format', '{{%creative}}', 'format_id', '{{%format}}', 'id', 'RESTRICT', 'CASCADE');
-        $this->addForeignKey('fk_creative_country', '{{%creative}}', 'country_iso', '{{%country}}', 'iso', 'RESTRICT', 'CASCADE');
+        $this->addForeignKey('fk_creative_country', '{{%creative}}', 'country_id', '{{%country}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_sales_type', '{{%creative}}', 'sales_type_id', '{{%sales_type}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_product', '{{%creative}}', 'product_id', '{{%product}}', 'id', 'SET NULL', 'CASCADE');
         $this->addForeignKey('fk_creative_user', '{{%creative}}', 'user_id', '{{%user}}', 'id', 'RESTRICT', 'CASCADE');
@@ -344,6 +345,8 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->dropTable('{{%country}}');
         $this->dropTable('{{%format}}');
         $this->dropTable('{{%device}}');
+
+        $this->dropForeignKey('fk_agency_country', '{{%agency}}');
         $this->dropTable('{{%agency}}');
         $this->dropTable('{{%brand}}');
         $this->dropTable('{{%sales_type}}');

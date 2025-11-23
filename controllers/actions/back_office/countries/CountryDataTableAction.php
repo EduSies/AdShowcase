@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\countries;
 
 use app\controllers\actions\back_office\BaseDataTableAction;
+use app\models\Country;
 use Yii;
 use yii\web\Response;
 
 final class CountryDataTableAction extends BaseDataTableAction
 {
     public ?string $can = 'taxonomies.manage';
-    public ?string $modelClass = \app\models\Country::class;
+    public ?string $modelClass = Country::class;
     public ?string $view = '@app/views/back_office/countries/index';
 
     public function run()
@@ -19,7 +20,7 @@ final class CountryDataTableAction extends BaseDataTableAction
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
         return [
             'data' => [],
             'recordsTotal' => 0,

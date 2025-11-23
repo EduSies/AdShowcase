@@ -22,7 +22,6 @@ class BaseWebController extends Controller
                     throw new \yii\web\ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
                 },
                 'rules' => [
-                    // Todo requiere estar logueado
                     ['allow' => true, 'roles' => ['@']],
                 ],
             ],

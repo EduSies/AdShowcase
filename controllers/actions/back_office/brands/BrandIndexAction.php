@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\brands;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
-use app\services\back_office\brand\BackOfficeBrandListService;
+use app\services\back_office\brands\BackOfficeBrandListService;
 use Yii;
 
 final class BrandIndexAction extends BaseBackOfficeAction

@@ -1,10 +1,10 @@
 <?php
-
 declare(strict_types=1);
-
 namespace app\controllers\actions\back_office\products;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\services\back_office\product\BackOfficeProductListService;
+use Yii;
 
 final class ProductIndexAction extends BaseBackOfficeAction
 {
@@ -14,7 +14,12 @@ final class ProductIndexAction extends BaseBackOfficeAction
     public function run()
     {
         $this->ensureCan($this->can);
-        // Renderiza la vista de listado (DataTable/filters/…)
-        return $this->controller->render($this->view ?? 'index');
+
+        $rows = (new BackOfficeProductListService())->findAll();
+
+        return $this->controller->render($this->view, [
+            'title' => Yii::t('app','Products list'),
+            'rows'  => $rows,
+        ]);
     }
 }

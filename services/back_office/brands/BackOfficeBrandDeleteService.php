@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace app\services\back_office\brand;
+namespace app\services\back_office\brands;
 
 use app\models\Brand;
 use Yii;
@@ -15,6 +15,7 @@ final class BackOfficeBrandDeleteService
     public function delete(int $id): bool
     {
         $brand = Brand::findOne($id);
+
         if (!$brand) {
             $brand->addErrors($brand->getErrors());
             return false;

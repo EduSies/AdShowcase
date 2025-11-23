@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace app\services\back_office\brand;
+namespace app\services\back_office\brands;
 
 use app\models\Brand;
 use app\models\forms\back_office\BrandForm;
@@ -17,6 +17,7 @@ final class BackOfficeBrandCreateService
     public function create(BrandForm $form): ?Brand
     {
         $brand = new Brand();
+
         $brand->setAttributes([
             'hash' => $form->hash ?: Yii::$app->security->generateRandomString(16),
             'name' => $form->name,

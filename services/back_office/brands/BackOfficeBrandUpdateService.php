@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace app\services\back_office\brand;
+namespace app\services\back_office\brands;
 
 use app\models\Brand;
 use app\models\forms\back_office\BrandForm;
-use Yii;
 
 final class BackOfficeBrandUpdateService
 {
@@ -16,6 +15,7 @@ final class BackOfficeBrandUpdateService
     public function update(int $id, BrandForm $form): bool
     {
         $brand = Brand::findOne($id);
+
         if (!$brand) {
             $form->addErrors($brand->getErrors());
             return false;

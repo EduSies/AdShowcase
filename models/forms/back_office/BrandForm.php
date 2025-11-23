@@ -3,12 +3,17 @@
 namespace app\models\forms\back_office;
 
 use app\helpers\StatusHelper;
+use app\models\Brand;
 use Yii;
 use yii\base\Model;
 
 final class BrandForm extends Model
 {
-    public const FORM_MANE = 'brand-form';
+    public const FORM_NAME = 'brand-form';
+
+    public const SCENARIO_CREATE = 'create';
+    public const SCENARIO_UPDATE = 'update';
+    public const SCENARIO_DELETE = 'delete';
 
     /** For updates we keep the id to exclude the current row from unique checks */
     public ?int $id = null;
@@ -25,21 +30,17 @@ final class BrandForm extends Model
     /** enum: active|archived|pending */
     public ?string $status = null;
 
-    public const SCENARIO_CREATE = 'create';
-    public const SCENARIO_UPDATE = 'update';
-    public const SCENARIO_DELETE = 'delete';
-
     public function formName(): string
     {
-        return self::FORM_MANE;
+        return self::FORM_NAME;
     }
 
     public function scenarios(): array
     {
         $scenarios = parent::scenarios();
 
-        $scenarios[self::SCENARIO_CREATE] = ['name', 'status'];
-        $scenarios[self::SCENARIO_UPDATE] = ['id', 'name', 'status'];
+        $scenarios[self::SCENARIO_CREATE] = ['name', 'url_name', 'status', 'hash'];
+        $scenarios[self::SCENARIO_UPDATE] = ['id', 'name', 'url_name', 'status', 'hash'];
         $scenarios[self::SCENARIO_DELETE] = ['id'];
 
         return $scenarios;
@@ -48,37 +49,58 @@ final class BrandForm extends Model
     public function rules(): array
     {
         return [
-            // create
             [['name', 'url_name', 'status'], 'required', 'on' => self::SCENARIO_CREATE],
-
-            // update
-            [['id', 'name', 'url_name' ,'status'], 'required', 'on' => self::SCENARIO_UPDATE],
-            [['id'], 'integer', 'on' => self::SCENARIO_UPDATE],
-
-            // delete
+            [['id', 'name', 'url_name', 'status'], 'required', 'on' => self::SCENARIO_UPDATE],
             [['id'], 'required', 'on' => self::SCENARIO_DELETE],
-            [['id'], 'integer', 'on' => self::SCENARIO_DELETE],
 
-            // Normalize/trim
-            [['name','url_name'], 'trim'],
+            [['id'], 'integer', 'on' => [self::SCENARIO_UPDATE, self::SCENARIO_DELETE]],
+            [['name', 'url_name'], 'string', 'max' => 255],
 
-            // Hash format (exactly 16 URL-safe chars). If empty, we’ll auto-generate in beforeValidate().
+            [['name', 'url_name'], 'trim'],
+            ['url_name', 'filter', 'filter' => fn($v) => mb_strtolower(trim((string)$v))],
+
             ['hash', 'string', 'length' => 16],
             ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => 'Hash must be 16 chars: letters, numbers, "-" or "_"'],
 
-            // Strings length
-            [['name', 'url_name'], 'string', 'max' => 255],
-
-            // Slug format (lowercase, numbers and dashes)
             ['url_name', 'match', 'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'message' => 'Use lowercase letters, numbers and dashes only.'],
 
-            // Status constraint
-            ['status', 'in', 'range' => [
-                StatusHelper::STATUS_ACTIVE,
-                StatusHelper::STATUS_ARCHIVED,
-                StatusHelper::STATUS_PENDING,
-            ]],
+            ['status', 'in',
+                'range' => [
+                    StatusHelper::STATUS_ACTIVE,
+                    StatusHelper::STATUS_ARCHIVED,
+                    StatusHelper::STATUS_PENDING,
+                ],
+                'message' => Yii::t('app', 'Invalid status.'),
+            ],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
+
+            [
+                'name', 'unique',
+                'targetClass' => Brand::class,
+                'targetAttribute' => 'name',
+                'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } }
+            ],
+            [
+                'url_name', 'unique',
+                'targetClass' => Brand::class,
+                'targetAttribute' => 'url_name',
+                'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } }
+            ],
+            [
+                'hash', 'unique',
+                'targetClass' => Brand::class,
+                'targetAttribute' => 'hash',
+                'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } },
+                'when' => fn() => !empty($this->hash),
+                'skipOnEmpty' => true,
+            ],
+
+            [
+                'id', 'exist',
+                'targetClass' => Brand::class,
+                'targetAttribute' => 'id',
+                'on' => [self::SCENARIO_UPDATE, self::SCENARIO_DELETE],
+            ],
         ];
     }
 

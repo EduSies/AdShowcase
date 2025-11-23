@@ -5,18 +5,25 @@ use yii\db\Expression;
 
 /**
  * Seeds {{%country}} with a canonical subset of countries (idempotent).
- * Table DDL (for reference):
- *  - iso CHAR(2) PK
- *  - iso3 CHAR(3)
+ *
+ * New schema note: country now uses an integer PK `id` (AUTO_INCREMENT).
+ * We insert a deterministic `id` for each row so other seeders can depend on
+ * stable IDs (e.g., agencies.country_id). On re-run, we upsert by the table's
+ * unique keys and refresh descriptive fields, never changing an existing `id`.
+ *
+ * Expected columns:
+ *  - id INT PK AI
+ *  - iso CHAR(2)
+ *  - iso3 CHAR(3) NULL
  *  - name VARCHAR
- *  - continent_code CHAR(2)
- *  - currency_code CHAR(3)
+ *  - continent_code CHAR(2) NULL
+ *  - currency_code  CHAR(3) NULL
  *  - status ENUM('active','archived','pending') DEFAULT 'active'
  *  - url_slug VARCHAR
  *  - created_at DATETIME DEFAULT CURRENT_TIMESTAMP
  *  - updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
  */
-class m251123_080814_seed_countries_fake extends Migration
+class m251123_072819_seed_countries_fake extends Migration
 {
     /** @var array[] [iso, iso3, name, continent_code, currency_code, status] */
     private array $rows = [
@@ -68,10 +75,12 @@ class m251123_080814_seed_countries_fake extends Migration
 
     public function safeUp()
     {
+        $id = 1;
         foreach ($this->rows as $r) {
             [$iso,$iso3,$name,$continent,$currency,$status] = $r;
 
             $this->db->createCommand()->upsert('{{%country}}', [
+                'id'             => $id,
                 'iso'            => $iso,
                 'iso3'           => $iso3,
                 'name'           => $name,
@@ -80,7 +89,6 @@ class m251123_080814_seed_countries_fake extends Migration
                 'status'         => $status,
                 'url_slug'       => $this->slugify($name),
             ], [
-                // On duplicate key, refresh descriptive fields + slug
                 'iso3'           => $iso3,
                 'name'           => $name,
                 'continent_code' => $continent,
@@ -89,6 +97,8 @@ class m251123_080814_seed_countries_fake extends Migration
                 'url_slug'       => $this->slugify($name),
                 'updated_at'     => new Expression('CURRENT_TIMESTAMP'),
             ])->execute();
+
+            $id++;
         }
     }
 

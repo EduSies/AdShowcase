@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\devices;
 
 use app\controllers\actions\back_office\BaseDataTableAction;
+use app\models\Device;
 use Yii;
 use yii\web\Response;
 
 final class DeviceDataTableAction extends BaseDataTableAction
 {
     public ?string $can = 'taxonomies.manage';
-    public ?string $modelClass = \app\models\Device::class;
+    public ?string $modelClass = Device::class;
     public ?string $view = '@app/views/back_office/devices/index';
 
     public function run()
@@ -19,7 +20,7 @@ final class DeviceDataTableAction extends BaseDataTableAction
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
         return [
             'data' => [],
             'recordsTotal' => 0,

@@ -7,7 +7,7 @@ namespace app\controllers\actions\back_office\brands;
 use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\Brand;
 use app\models\forms\back_office\BrandForm;
-use app\services\back_office\brand\BackOfficeBrandUpdateService;
+use app\services\back_office\brands\BackOfficeBrandUpdateService;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -15,9 +15,7 @@ final class BrandUpdateAction extends BaseBackOfficeAction
 {
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = BrandForm::class;
-    public ?string $view = '@app/views/back_office/brands/' . BrandForm::FORM_MANE;
-
-    /** Nombre del parámetro que trae el ID (GET/POST). */
+    public ?string $view = '@app/views/back_office/brands/' . BrandForm::FORM_NAME;
     public string $idParam = 'id';
 
     public function run()
@@ -38,19 +36,18 @@ final class BrandUpdateAction extends BaseBackOfficeAction
 
         $model = new $class(['scenario' => BrandForm::SCENARIO_UPDATE]);
         $model->setAttributes([
-            'id'       => (int)$brand->id,
-            'hash'     => $brand->hash,
-            'name'     => $brand->name,
+            'id' => (int)$brand->id,
+            'hash' => $brand->hash,
+            'name' => $brand->name,
             'url_name' => $brand->url_name,
-            'status'   => $brand->status,
-        ], false);
+            'status' => $brand->status,
+        ]);
 
         if ($model->load(Yii::$app->request->post())) {
             $service = new BackOfficeBrandUpdateService();
 
             if ($service->update($brand->id, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                // Ajusta el destino de vuelta a tu índice/listado
                 return $this->controller->redirect(['back-office/brands']);
             }
 

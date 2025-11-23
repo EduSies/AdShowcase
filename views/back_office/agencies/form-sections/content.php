@@ -1,7 +1,7 @@
 <?php
 
 /** @var yii\web\View $this */
-/** @var app\models\forms\back_office\BrandForm $model */
+/** @var app\models\forms\back_office\AgencyForm $model */
 /** @var $isUpdate */
 /** @var Yii\bootstrap5\ActiveForm $form */
 
@@ -14,14 +14,13 @@
 <div class="row g-3">
     <div class="col-md-6">
         <?= $form->field($model, 'name')
-            ->textInput(['maxlength' => true, 'placeholder' => Yii::t('app', 'Brand name')]) ?>
+            ->textInput(['maxlength' => true, 'placeholder' => Yii::t('app', 'Agency name')]) ?>
     </div>
 </div>
 <div class="row g-3">
     <div class="col-md-6">
-        <?= $form->field($model, 'url_name')
-            ->textInput(['maxlength' => true, 'readonly' => true, 'placeholder' => Yii::t('app', 'slug-like-this')])
-            ->hint(Yii::t('app', 'Lowercase, numbers and dashes only.')) ?>
+        <?= $form->field($model, 'country_id')
+            ->textInput(['maxlength' => true, 'placeholder' => Yii::t('app', 'Select country')]) ?>
     </div>
 </div>
 <div class="row g-3">

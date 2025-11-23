@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\agencies;
 
 use app\controllers\actions\back_office\BaseDataTableAction;
+use app\models\Agency;
 use Yii;
 use yii\web\Response;
 
 final class AgencyDataTableAction extends BaseDataTableAction
 {
     public ?string $can = 'taxonomies.manage';
-    public ?string $modelClass = \app\models\Agency::class;
+    public ?string $modelClass = Agency::class;
     public ?string $view = '@app/views/back-office/agencies/index';
 
     public function run()
@@ -19,7 +20,7 @@ final class AgencyDataTableAction extends BaseDataTableAction
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
         return [
             'data' => [],
             'recordsTotal' => 0,

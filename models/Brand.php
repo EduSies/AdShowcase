@@ -3,34 +3,27 @@
 namespace app\models;
 
 use app\helpers\StatusHelper;
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use Yii;
 
 /**
- * Brand AR model (maps to ADSHOWCASE_brand via tablePrefix).
- *
- * Columns:
- * - id (int PK)
- * - hash (char(16) UNIQUE, not null)
- * - name (varchar(255) UNIQUE, not null)
- * - url_name (varchar(255) UNIQUE, not null)
- * - status (enum: active|archived|pending, default active)
- * - created_at (datetime)
- * - updated_at (datetime)
+ * Brand AR model ({{%brand}})
+ * - id PK
+ * - hash char(16) UNIQUE
+ * - name varchar(255) UNIQUE
+ * - url_name varchar(255) UNIQUE
+ * - status enum
+ * - created_at, updated_at
  */
-class Brand extends ActiveRecord
+final class Brand extends ActiveRecord
 {
     public static function tableName(): string
     {
         return '{{%brand}}';
     }
 
-    /**
-     * Ensure created_at / updated_at are filled when saving from PHP as well.
-     * DB already has defaults; this keeps consistency when saving via AR.
-     */
     public function behaviors(): array
     {
         return [
@@ -43,29 +36,19 @@ class Brand extends ActiveRecord
         ];
     }
 
-    /**
-     * Validation rules aligned with DB constraints.
-     */
     public function rules(): array
     {
         return [
-            // Required
             [['hash', 'name', 'url_name'], 'required'],
+            [['hash', 'name', 'url_name'], 'trim'],
 
-            // Unique
             [['hash', 'name', 'url_name'], 'unique'],
-
-            // Length / exact char(16) for hash
             ['hash', 'string', 'min' => 16, 'max' => 16],
             [['name', 'url_name'], 'string', 'max' => 255],
 
-            // Hash pattern
             ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/'],
-
-            // Slug-like url_name
             ['url_name', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
 
-            // Status enum
             ['status', 'in', 'range' => [
                 StatusHelper::STATUS_ACTIVE,
                 StatusHelper::STATUS_ARCHIVED,
@@ -73,17 +56,21 @@ class Brand extends ActiveRecord
             ]],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
-            // Safe dates (managed by DB/TimestampBehavior)
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
 
-    /**
-     * Example relation (if you have a Creative AR pointing to brand_id).
-     * Uncomment when Creative model exists.
-     */
-    // public function getCreatives()
-    // {
-    //     return $this->hasMany(Creative::class, ['brand_id' => 'id']);
-    // }
+    public function beforeValidate(): bool
+    {
+        if ($this->isNewRecord && empty($this->hash)) {
+            $this->hash = Yii::$app->security->generateRandomString(16);
+        }
+        return parent::beforeValidate();
+    }
+
+    // Relaciones
+/*    public function getCreatives()
+    {
+        return $this->hasMany(Creative::class, ['brand_id' => 'id']);
+    }*/
 }

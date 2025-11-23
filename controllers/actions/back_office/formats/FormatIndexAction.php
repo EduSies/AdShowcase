@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\formats;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\services\back_office\format\BackOfficeFormatListService;
+use Yii;
 
 final class FormatIndexAction extends BaseBackOfficeAction
 {
@@ -14,7 +16,12 @@ final class FormatIndexAction extends BaseBackOfficeAction
     public function run()
     {
         $this->ensureCan($this->can);
-        // Renderiza la vista de listado (DataTable/filters/…)
-        return $this->controller->render($this->view ?? 'index');
+
+        $rows = (new BackOfficeFormatListService)->findAll();
+
+        return $this->controller->render($this->view ?? 'index', [
+            'title' => Yii::t('app', 'Formats list'),
+            'rows' => $rows,
+        ]);
     }
 }

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\products;
 
 use app\controllers\actions\back_office\BaseDataTableAction;
+use app\models\Product;
 use Yii;
 use yii\web\Response;
 
 final class ProductDataTableAction extends BaseDataTableAction
 {
     public ?string $can = 'taxonomies.manage';
-    public ?string $modelClass = \app\models\Product::class;
+    public ?string $modelClass = Product::class;
     public ?string $view = '@app/views/back_office/products/index';
 
     public function run()
@@ -19,7 +20,7 @@ final class ProductDataTableAction extends BaseDataTableAction
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
         return [
             'data' => [],
             'recordsTotal' => 0,

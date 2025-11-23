@@ -5,16 +5,23 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\devices;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\services\back_office\device\BackOfficeDeviceListService;
+use Yii;
 
 final class DeviceIndexAction extends BaseBackOfficeAction
 {
-    public ?string $can = 'taxonomies.manage';
+    public ?string $can  = 'taxonomies.manage';
     public ?string $view = '@app/views/back_office/devices/index';
 
     public function run()
     {
         $this->ensureCan($this->can);
-        // Renderiza la vista de listado (DataTable/filters/…)
-        return $this->controller->render($this->view ?? 'index');
+
+        $rows = (new BackOfficeDeviceListService())->findAll();
+
+        return $this->controller->render($this->view, [
+            'title' => Yii::t('app','Devices list'),
+            'rows'  => $rows,
+        ]);
     }
 }
