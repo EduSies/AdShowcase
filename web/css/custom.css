@@ -86,6 +86,8 @@ a {
 }
 
 
+/** CUSTOM CSS **/
+
 :root {
     --brand-orange: #FF4F00;
 }
@@ -205,3 +207,78 @@ i.bi.icon-80px { font-size: 80px; }
     color: var(--brand-orange);
 }
 /* END Breadcrumb */
+
+/* DataTable */
+.dt-container .main-column {
+    width: 15%;
+}
+.dt-container a.pagination-link[disabled] {
+    display: none;
+}
+.dt-container a.pagination-link:not(.is-current) {
+    background-color: var(--bs-white);
+    color: var(--bs-secondary);
+}
+.dt-container a.pagination-link.is-current, a.pagination-link.is-selected {
+    background-color: var(--brand-orange);
+    border-color: var(--brand-orange);
+}
+.dt-container .navbar-link:not(.is-arrowless):after,
+.dt-container .select:not(.is-multiple):not(.is-loading):after {
+    border-color: var(--brand-orange);
+}
+.dt-container table.dataTable thead > tr > th.dt-orderable-asc:hover,
+.dt-container table.dataTable thead > tr > th.dt-orderable-desc:hover,
+.dt-container table.dataTable thead > tr > td.dt-orderable-asc:hover,
+.dt-container table.dataTable thead > tr > td.dt-orderable-desc:hover {
+    outline: unset;
+    outline-offset: unset;
+}
+.dt-container .dt-info,
+.dt-container .dt-length select {
+    color: var(--bs-secondary);
+}
+.dt-container .input:focus,
+.dt-container .input:focus-within,
+.dt-container .is-focused.input,
+.dt-container .is-focused.textarea,
+.dt-container .select select.is-focused,
+.dt-container .select select:focus,
+.dt-container .select select:focus-within,
+.dt-container .textarea:focus,
+.dt-container .textarea:focus-within {
+    border-color: var(--brand-orange);
+    box-shadow: var(--focus-shadow-size, 0 0 0 0.125em) rgba(var(--brand-orange-rgb, 255,79,0), var(--bulma-input-focus-shadow-alpha, .35));
+}
+.dt-container table.dataTable {
+    background-color: transparent;
+}
+.dt-container table.dataTable thead tr,
+.dt-container table.dataTable tbody tr {
+    background-color: var(--bs-white);
+}
+.dt-container table.dataTable tbody tr:not(:hover) {
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: background-color 0.3s ease-in-out; /* vendorless fallback */
+    -o-transition: background-color 0.3s ease-in-out; /* opera */
+    -ms-transition: background-color 0.3s ease-in-out; /* IE 10 */
+    -moz-transition: background-color 0.3s ease-in-out; /* Firefox */
+    -webkit-transition: background-color 0.3s ease-in-out; /*safari and chrome */
+}
+.dt-container table.dataTable th, table.dataTable td {
+    vertical-align: middle;
+}
+/* END DataTable */
+
+/* Forms */
+section.form {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 4px;
+    padding: 36px 0 40px 0;
+    margin-bottom: 12px;
+}
+section.form .form-title {
+    padding-left: 24px;
+    margin-top: -4px;
+}
+/* END Forms */

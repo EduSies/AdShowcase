@@ -7,6 +7,7 @@
 
 namespace app\assets;
 
+use nullref\datatable\assets\DataTableAsset;
 use yii\web\AssetBundle;
 
 /**

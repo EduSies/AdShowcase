@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 DataTablesAsset::register($this);
 
 $deleteConfirmJs = \yii\helpers\Json::htmlEncode(Yii::t('app', 'Are you sure you want to delete this item?'));
-$idDataTable = "brandsTable";
+$idDataTable = "agenciesTable";
 
 ?>
 
@@ -52,7 +52,7 @@ $idDataTable = "brandsTable";
         [
             'data' => 'name',
             'title' => Yii::t('app', 'Name'),
-            'width' => '100px',
+            'width' => '200px',
         ],
         [
             'data' => 'url_name',
@@ -62,7 +62,7 @@ $idDataTable = "brandsTable";
             'data' => 'status',
             'title' => Yii::t('app', 'Status'),
             'className' => 'dt-head-center dt-body-center text-center',
-            'width' => '100px',
+            'width' => '200px',
         ],
         [
             'data' => 'created_at',
@@ -79,12 +79,12 @@ $idDataTable = "brandsTable";
             'searchable' => false,
             'className' => 'dt-head-center dt-body-center text-center',
             'render' => new JsExpression('function (data,type,row) {
-                var editUrl = "'.Url::to(['back-office/brand-update']).'/" + row.id;
-                var delUrl  = "'.Url::to(['back-office/brand-delete']).'/" + row.id;
+                var editUrl = "'.Url::to(['back-office/agency-update']).'/" + row.id;
+                var delUrl  = "'.Url::to(['back-office/agency-delete']).'/" + row.id;
 
                 return \'<div class="d-flex gap-2 justify-content-center">\'
                      + \'<a class="btn btn-sm btn-primary" href="\' + editUrl + \'">'.Yii::t('app','Edit').'</a>\'
-                     + \'<a class="btn btn-sm btn-outline-danger js-brand-delete" data-href="\' + delUrl + \'">'.Yii::t('app','Delete').'</a>\'
+                     + \'<a class="btn btn-sm btn-outline-danger js-agency-delete" data-href="\' + delUrl + \'">'.Yii::t('app','Delete').'</a>\'
                      + \'</div>\';
             }'),
         ],
@@ -97,7 +97,7 @@ $idDataTable = "brandsTable";
 $js = <<<JS
 
     (function(){
-      $(document).on('click','a.js-brand-delete', function(e){
+      $(document).on('click','a.js-agency-delete', function(e){
         e.preventDefault();
         e.stopPropagation();
         

@@ -5,26 +5,38 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\brands;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\models\forms\back_office\BrandForm;
+use app\services\back_office\brand\BackOfficeBrandCreateService;
 use Yii;
 
 final class BrandCreateAction extends BaseBackOfficeAction
 {
     public ?string $can = 'taxonomies.manage';
-    public ?string $modelClass = \app\models\Brand::class;
-    public ?string $view = '@app/views/back_office/brands/create';
+    public ?string $modelClass = BrandForm::class;
+    public ?string $view = '@app/views/back_office/brands/' . BrandForm::FORM_MANE;
 
     public function run()
     {
         $this->ensureCan($this->can);
-        $class = $this->modelClass;
-        /** @var \yii\db\ActiveRecord $model */
-        $model = new $class();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Created successfully.'));
-            return $this->controller->redirect(['backoffice/' . $this->controller->action->id]); // ajusta si quieres volver a index
+        $class = $this->modelClass;
+        $model = new $class(['scenario' => BrandForm::SCENARIO_CREATE]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $service = new BackOfficeBrandCreateService();
+            $brand = $service->create($model);
+
+            if ($brand) {
+                \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
+                return $this->controller->redirect(['back-office/brands']);
+            }
+
+            $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to create brand.');
+            \Yii::$app->session->setFlash('error', $firstError);
         }
 
-        return $this->controller->render($this->view ?? 'create', ['model' => $model]);
+        return $this->controller->render($this->view, [
+            'model' => $model,
+        ]);
     }
 }

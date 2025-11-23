@@ -4,6 +4,7 @@ use yii\helpers\ArrayHelper;
 
 Yii::setAlias('@adshowcase', ADSHOWCASE_BASE_PATH);
 Yii::setAlias('@uploads', ADSHOWCASE_BASE_PATH . '/uploads');
+Yii::setAlias('@adshowcase.layouts', ADSHOWCASE_BASE_PATH . '/views/layouts');
 
 try {
 

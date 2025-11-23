@@ -46,7 +46,7 @@ class m251115_195201_create_adshowcase_core extends Migration
          */
         $this->createTable('{{%user}}', [
             'id' => $this->primaryKey(),
-            'hash' => $this->chas(16)->notNull()->unique(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'email' => $this->string(255)->notNull()->unique(),
             'username' => $this->string(255)->notNull()->unique(),
             'type' => $this->string(32)->notNull(), // tipología interna (admin/editor/sales/...)

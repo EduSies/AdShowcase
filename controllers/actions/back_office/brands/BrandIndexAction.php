@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\brands;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
-use app\models\Brand;
+use app\services\back_office\brand\BackOfficeBrandListService;
 use Yii;
 
 final class BrandIndexAction extends BaseBackOfficeAction
@@ -16,9 +16,8 @@ final class BrandIndexAction extends BaseBackOfficeAction
     public function run()
     {
         $this->ensureCan($this->can);
-        // Renderiza la vista de listado (DataTable/filters/…)
 
-        $rows = Brand::find()->orderBy(['id' => SORT_DESC])->asArray()->all();
+        $rows = (new BackOfficeBrandListService)->findAll();
 
         return $this->controller->render($this->view ?? 'index', [
             'title' => Yii::t('app', 'Brands list'),

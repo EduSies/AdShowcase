@@ -17,6 +17,7 @@ $rules = [
 
     // --- Backoffice (module/prefix) ---
     'back-office' => 'back-office/index',
+    'back-office/<action:[a-z0-9\-]+>/<id:\d+>' => 'back-office/<action>',
     'back-office/<action:[a-z0-9\-]+>' => 'back-office/<action>',
 
     // --- Catalog shortcuts (slugs and IDs) ---

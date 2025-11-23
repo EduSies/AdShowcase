@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\brands;
 
 use app\controllers\actions\back_office\BaseDataTableAction;
+use app\models\Brand;
+use Yii;
 use yii\web\Response;
 
 final class BrandDataTableAction extends BaseDataTableAction
 {
     public ?string $can = 'taxonomies.manage';
-    public ?string $modelClass = \app\models\Brand::class;
+    public ?string $modelClass = Brand::class;
     public ?string $view = '@app/views/back_office/brands/index';
 
     public function run()
@@ -18,7 +20,9 @@ final class BrandDataTableAction extends BaseDataTableAction
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
+
+
         return [
             'data' => [],
             'recordsTotal' => 0,

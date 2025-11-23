@@ -65,6 +65,11 @@ $config = [
         ],
         'assetManager' => [
             'appendTimestamp' => true,
+            'bundles' => [
+                \nullref\datatable\assets\DataTableDefaultAsset::class => [
+                    'sourcePath' => null,
+                ],
+            ],
         ],
 /*        'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,

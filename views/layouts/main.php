@@ -34,7 +34,7 @@ if (Yii::$app->session->hasFlash('error')) {
 
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?= Yii::$app->language ?>" class="h-100" data-theme="light">
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>

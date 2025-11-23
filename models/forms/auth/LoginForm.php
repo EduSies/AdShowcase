@@ -2,10 +2,9 @@
 
 namespace app\models\forms\auth;
 
-use app\models\BaseModel;
-use app\models\User;
 use app\services\auth\AuthLoginService;
 use Yii;
+use yii\base\Model;
 
 /**
  * Modelo de usuario que mapea a {{%user}} (con tablePrefix => ADSHOWCASE_user).
@@ -14,7 +13,7 @@ use Yii;
  * - Valida contraseñas con password_hash.
  * - Registra telemetría (last_login_at/ip) y bloqueo temporal por intentos fallidos.
  */
-class LoginForm extends BaseModel
+class LoginForm extends Model
 {
     public const FORM_MANE = 'login-form';
 
