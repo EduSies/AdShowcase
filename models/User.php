@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\StatusHelper;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\db\ActiveRecord;
@@ -21,7 +22,6 @@ class User extends ActiveRecord implements IdentityInterface
     public const MAX_FAILED_LOGIN_ATTEMPTS = 5;
     /** Minutos de bloqueo tras superar el máximo de intentos. */
     public const LOCK_MINUTES = 5;
-    public const STATUS_ACTIVE = 'active';
 
     public function beforeSave($insert)
     {
@@ -52,10 +52,10 @@ class User extends ActiveRecord implements IdentityInterface
             [['language_id', 'failed_login_attempts'], 'integer'],
             [['email_verified_at', 'locked_until', 'last_login_at', 'created_at', 'updated_at'], 'safe'],
 
-            [['hash'], 'string', 'max' => 10],
+            ['hash', 'string', 'min' => 16, 'max' => 16],
             [['auth_key'], 'string', 'max' => 32],
             [['last_login_ip'], 'string', 'max' => 45],
-            [['default_profile', 'status', 'type', 'name', 'surname', 'avatar_url', 'password_hash', 'password_reset_token', 'verification_token'], 'string', 'max' => 255],
+            [['status', 'type', 'name', 'surname', 'avatar_url', 'password_hash', 'password_reset_token', 'verification_token'], 'string', 'max' => 255],
 
             [['email', 'username', 'hash', 'password_reset_token', 'verification_token'], 'unique'],
         ];
@@ -73,19 +73,18 @@ class User extends ActiveRecord implements IdentityInterface
             'surname' => Yii::t('app', 'Surname'),
             'status' => Yii::t('app', 'Status'),
             'language_id' => Yii::t('app', 'Language'),
-            'default_profile' => Yii::t('app', 'Default profile'),
             'avatar_url' => Yii::t('app', 'Avatar'),
             'password_hash' => Yii::t('app', 'Password'),
-            //'auth_key' => Yii::t('app', 'Auth Key'),
-            //'password_reset_token' => Yii::t('app', 'Reset token'),
-            //'verification_token' => Yii::t('app', 'Verification token'),
-            //'email_verified_at' => Yii::t('app', 'Email verified in'),
-            //'failed_login_attempts' => Yii::t('app', 'Failed attempts'),
-            //'locked_until' => Yii::t('app', 'Locked until'),
-            //'last_login_at' => Yii::t('app', 'Last access'),
-            //'last_login_ip' => Yii::t('app', 'IP address last access'),
-            //'created_at' => Yii::t('app', 'Created'),
-            //'updated_at' => Yii::t('app', 'Updated'),
+            'auth_key' => Yii::t('app', 'Auth Key'),
+            'password_reset_token' => Yii::t('app', 'Reset token'),
+            'verification_token' => Yii::t('app', 'Verification token'),
+            'email_verified_at' => Yii::t('app', 'Email verified in'),
+            'failed_login_attempts' => Yii::t('app', 'Failed attempts'),
+            'locked_until' => Yii::t('app', 'Locked until'),
+            'last_login_at' => Yii::t('app', 'Last access'),
+            'last_login_ip' => Yii::t('app', 'IP address last access'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 
@@ -118,7 +117,7 @@ class User extends ActiveRecord implements IdentityInterface
     /** Política de “usuario habilitado”: ajusta a tu gusto. */
     public function isActive(): bool
     {
-        $statusOk = ($this->status === self::STATUS_ACTIVE);
+        $statusOk = ($this->status === StatusHelper::STATUS_ACTIVE);
         $emailOk = empty($this->verification_token);
         $notLocked = !$this->isLocked();
 
@@ -127,7 +126,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function hasActiveStatus(): bool
     {
-        return $this->status === self::STATUS_ACTIVE;
+        return $this->status === StatusHelper::STATUS_ACTIVE;
     }
 
     public function isEmailVerified(): bool

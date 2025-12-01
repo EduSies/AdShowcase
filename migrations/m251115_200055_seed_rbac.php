@@ -77,16 +77,26 @@ class m251115_200055_seed_rbac extends Migration
             }
         }
 
-        // 2) Crear roles (si no existen)
-        $rAdmin = $auth->getRole('admin') ?: $auth->createRole('admin');
+        // 2) Crear roles (si no existen) y asignar descripción
+        $rAdmin  = $auth->getRole('admin') ?: $auth->createRole('admin');
         $rEditor = $auth->getRole('editor') ?: $auth->createRole('editor');
-        $rSales = $auth->getRole('sales') ?: $auth->createRole('sales');
+        $rSales  = $auth->getRole('sales') ?: $auth->createRole('sales');
         $rViewer = $auth->getRole('viewer') ?: $auth->createRole('viewer');
-        $rGuest = $auth->getRole('guest') ?: $auth->createRole('guest');
+        $rGuest  = $auth->getRole('guest') ?: $auth->createRole('guest');
+
+        // Descripciones de roles
+        $rAdmin->description  = 'Rol Admin';
+        $rEditor->description = 'Rol Editor';
+        $rSales->description  = 'Rol Sales';
+        $rViewer->description = 'Rol Viewer';
+        $rGuest->description  = 'Rol Guest';
 
         foreach ([$rAdmin, $rEditor, $rSales, $rViewer, $rGuest] as $role) {
+            // Si el rol no existe aún, lo añadimos; si ya existe, lo actualizamos (para que se apliquen las descripciones)
             if ($auth->getRole($role->name) === null) {
                 $auth->add($role);
+            } else {
+                $auth->update($role->name, $role);
             }
         }
 

@@ -80,22 +80,23 @@ class m251123_072819_seed_countries_fake extends Migration
             [$iso,$iso3,$name,$continent,$currency,$status] = $r;
 
             $this->db->createCommand()->upsert('{{%country}}', [
-                'id'             => $id,
-                'iso'            => $iso,
-                'iso3'           => $iso3,
-                'name'           => $name,
+                'id' => $id,
+                'hash' => \Yii::$app->security->generateRandomString(16),
+                'iso' => $iso,
+                'iso3' => $iso3,
+                'name' => $name,
                 'continent_code' => $continent,
-                'currency_code'  => $currency,
-                'status'         => $status,
-                'url_slug'       => $this->slugify($name),
+                'currency_code' => $currency,
+                'status' => $status,
+                'url_slug' => $this->slugify($name),
             ], [
-                'iso3'           => $iso3,
-                'name'           => $name,
+                'iso3' => $iso3,
+                'name' => $name,
                 'continent_code' => $continent,
-                'currency_code'  => $currency,
-                'status'         => $status,
-                'url_slug'       => $this->slugify($name),
-                'updated_at'     => new Expression('CURRENT_TIMESTAMP'),
+                'currency_code' => $currency,
+                'status' => $status,
+                'url_slug' => $this->slugify($name),
+                'updated_at' => new Expression('CURRENT_TIMESTAMP'),
             ])->execute();
 
             $id++;

@@ -9,9 +9,9 @@ use app\models\forms\back_office\CountryForm;
 
 final class BackOfficeCountryUpdateService
 {
-    public function update(string $iso, CountryForm $form): bool
+    public function update(string $hash, CountryForm $form): bool
     {
-        $country = Country::findOne($iso);
+        $country = Country::findOne(['hash' => $hash]);
 
         if (!$country) {
             $form->addErrors($country->getErrors());
@@ -19,7 +19,7 @@ final class BackOfficeCountryUpdateService
         }
 
         $country->setAttributes([
-            'iso' => $iso,
+            'iso' => $form->iso,
             'iso3' => $form->iso3,
             'name' => $form->name,
             'continent_code' => $form->continent_code,

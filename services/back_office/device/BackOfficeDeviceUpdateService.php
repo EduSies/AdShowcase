@@ -10,9 +10,9 @@ use app\models\forms\back_office\DeviceForm;
 final class BackOfficeDeviceUpdateService
 {
     /** Update entity by PK. Returns true on success. */
-    public function update(int $id, DeviceForm $form): bool
+    public function update(string $hash, DeviceForm $form): bool
     {
-        $device = Device::findOne($id);
+        $device = Device::findOne(['hash' => $hash]);
 
         if (!$device) {
             $form->addErrors($device->getErrors());

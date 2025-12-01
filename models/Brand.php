@@ -13,7 +13,7 @@ use Yii;
  * - id PK
  * - hash char(16) UNIQUE
  * - name varchar(255) UNIQUE
- * - url_name varchar(255) UNIQUE
+ * - url_slug varchar(255) UNIQUE
  * - status enum
  * - created_at, updated_at
  */
@@ -39,15 +39,15 @@ final class Brand extends ActiveRecord
     public function rules(): array
     {
         return [
-            [['hash', 'name', 'url_name'], 'required'],
-            [['hash', 'name', 'url_name'], 'trim'],
+            [['hash', 'name', 'url_slug'], 'required'],
+            [['hash', 'name', 'url_slug'], 'trim'],
 
-            [['hash', 'name', 'url_name'], 'unique'],
+            [['hash', 'name', 'url_slug'], 'unique'],
             ['hash', 'string', 'min' => 16, 'max' => 16],
-            [['name', 'url_name'], 'string', 'max' => 255],
+            [['name', 'url_slug'], 'string', 'max' => 255],
 
             ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/'],
-            ['url_name', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
+            ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
 
             ['status', 'in', 'range' => [
                 StatusHelper::STATUS_ACTIVE,

@@ -21,7 +21,7 @@ class m251122_082844_seed_brands_fake extends Migration
         for ($i = 0; $i < $this->count; $i++) {
             $name = $faker ? mb_substr($faker->unique()->company(), 0, 255) : $this->fallbackCompany($i);
 
-            // slug único (url_name)
+            // slug único (url_slug)
             $slugBase = Inflector::slug($name);
             $slug = $slugBase;
 
@@ -38,18 +38,18 @@ class m251122_082844_seed_brands_fake extends Migration
             $updatedAt = date('Y-m-d H:i:s', $updatedTs);
 
             $row = [
-                'hash'       => $hash,
-                'name'       => $name,
-                'url_name'   => $slug,
-                'status'     => $status,
+                'hash' => $hash,
+                'name' => $name,
+                'url_slug' => $slug,
+                'status' => $status,
                 'created_at' => $createdAt,
                 'updated_at' => $updatedAt,
             ];
 
             $this->upsert($table, $row, [
-                'hash'       => $row['hash'],
-                'name'       => $row['name'],
-                'status'     => $row['status'],
+                'hash' => $row['hash'],
+                'name' => $row['name'],
+                'status' => $row['status'],
                 'updated_at' => $row['updated_at'],
             ]);
         }

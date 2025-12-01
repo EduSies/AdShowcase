@@ -40,6 +40,33 @@ class m251115_195201_create_adshowcase_core extends Migration
 
         /*
          * =========================
+         * 0) Tabla de idiomas (language_locale)
+         * =========================
+         * Tabla de referencia para el idioma por defecto del usuario.
+         */
+        $this->createTable('{{%language_locale}}', [
+            'id' => $this->primaryKey(),
+            'language_code' => $this->char(2)->notNull(), // en, es, ca
+            'region_code' => $this->char(2)->null(), // ES, US, GB...
+            'locale_code' => $this->string(10)->notNull()->unique(), // es-ES, en-US, ca-ES...
+            'display_name_en' => $this->string(128)->notNull(), // Catalan (Spain)
+            'display_name_es' => $this->string(128)->notNull(), // Catalán (España)
+            'display_name_ca' => $this->string(128)->notNull(), // Català (Espanya)
+            'is_default' => $this->boolean()->notNull()->defaultValue(false),
+            'status' => $statusEnum . " DEFAULT 'active'",
+            'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
+            'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        ], $this->tableOptions);
+
+        // Índice de ayuda para búsquedas por lenguaje/región
+        $this->createIndex(
+            'idx_language_locale_language_region',
+            '{{%language_locale}}',
+            ['language_code', 'region_code']
+        );
+
+        /*
+         * =========================
          * 1) Tabla de usuarios
          * =========================
          * Nota: el nombre "user" se escapa como {{%user}} para evitar conflictos.
@@ -54,7 +81,6 @@ class m251115_195201_create_adshowcase_core extends Migration
             'surname' => $this->string(255)->notNull(),
             'status' => "ENUM('active','archived','banned','inactive','pending') NOT NULL DEFAULT 'active'",
             'language_id' => $this->integer()->null(),
-            'default_profile' => $this->string(64)->null(),
             'avatar_url' => $this->string(255)->null(),
             'password_hash' => $this->string()->notNull(), // Hash seguro de la contraseña
             'auth_key' => $this->string(32)->notNull(), // Clave "remember me" (Yii::$app->security->generateRandomString())
@@ -68,6 +94,23 @@ class m251115_195201_create_adshowcase_core extends Migration
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);
+
+        // Índice y FK para acelerar joins user.language_id -> language_locale.id
+        $this->createIndex(
+            'idx_user_language_id',
+            '{{%user}}',
+            'language_id'
+        );
+
+        $this->addForeignKey(
+            'fk_user_language',
+            '{{%user}}',
+            'language_id',
+            '{{%language_locale}}',
+            'id',
+            'SET NULL',
+            'CASCADE'
+        );
 
         /*
          * =========================
@@ -95,6 +138,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         // sales_type (p. ej. programmatic, direct, guaranteed…)
         $this->createTable('{{%sales_type}}', [
             'id' => $this->primaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'name' => $this->string(150)->notNull()->unique(),
             'status' => $statusEnum . " DEFAULT 'active'",
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -106,7 +150,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'id' => $this->primaryKey(),
             'hash' => $this->char(16)->notNull()->unique(),
             'name' => $this->string(255)->notNull()->unique(),
-            'url_name' => $this->string(255)->notNull()->unique(),
+            'url_slug' => $this->string(255)->notNull()->unique(),
             'status' => $statusEnum . " DEFAULT 'active'",
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
@@ -126,13 +170,17 @@ class m251115_195201_create_adshowcase_core extends Migration
         // device (Desktop/Mobile/Tablet/CTV…)
         $this->createTable('{{%device}}', [
             'id' => $this->primaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'name' => $this->string(100)->notNull()->unique(),
             'status' => $statusEnum . " DEFAULT 'active'",
+            'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
+            'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);
 
         // format (familia/experiencia/subtipo para filtros)
         $this->createTable('{{%format}}', [
             'id' => $this->primaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'name' => $this->string(150)->notNull(),
             'format' => $this->string(100)->notNull(),
             'family' => $this->string(100)->notNull(),
@@ -147,6 +195,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         // country
         $this->createTable('{{%country}}', [
             'id' => $this->primaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'iso' => $this->char(2)->notNull()->unique(),
             'iso3' => $this->char(3)->null(),
             'name' => $this->string(255)->notNull(),
@@ -162,6 +211,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         // product (catálogo libre por marca si aplica)
         $this->createTable('{{%product}}', [
             'id' => $this->primaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'name' => $this->string(255)->notNull(),
             'url_slug' => $this->string(255)->null(),
             'status' => $statusEnum . " DEFAULT 'active'",
@@ -345,6 +395,12 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->dropTable('{{%country}}');
         $this->dropTable('{{%format}}');
         $this->dropTable('{{%device}}');
+
+        // Eliminar relación y tabla de idiomas
+        $this->dropForeignKey('fk_user_language', '{{%user}}');
+        $this->dropIndex('idx_user_language_id', '{{%user}}');
+        $this->dropIndex('idx_language_locale_language_region', '{{%language_locale}}');
+        $this->dropTable('{{%language_locale}}');
 
         $this->dropForeignKey('fk_agency_country', '{{%agency}}');
         $this->dropTable('{{%agency}}');

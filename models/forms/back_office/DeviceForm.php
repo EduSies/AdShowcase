@@ -16,8 +16,9 @@ final class DeviceForm extends Model
     public const SCENARIO_DELETE = 'delete';
 
     public ?int $id = null;
+    public ?string $hash = null;
     public ?string $name = null;
-    public ?string $status = null;
+    public string $status = StatusHelper::STATUS_ACTIVE;
 
     public function formName(): string
     {
@@ -30,8 +31,8 @@ final class DeviceForm extends Model
         $scenarios = parent::scenarios();
 
         $scenarios[self::SCENARIO_CREATE] = ['name', 'status'];
-        $scenarios[self::SCENARIO_UPDATE] = ['id', 'name', 'status'];
-        $scenarios[self::SCENARIO_DELETE] = ['id'];
+        $scenarios[self::SCENARIO_UPDATE] = ['id', 'hash', 'name', 'status'];
+        $scenarios[self::SCENARIO_DELETE] = ['hash'];
 
         return $scenarios;
     }
@@ -58,6 +59,17 @@ final class DeviceForm extends Model
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
+
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+            ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => Yii::t('app', 'Invalid hash format.')],
+            [
+                'hash', 'unique',
+                'targetClass' => Device::class,
+                'targetAttribute' => 'hash',
+                'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } },
+                'when' => fn() => !empty($this->hash),
+                'skipOnEmpty' => true,
+            ],
 
             [
                 'name',

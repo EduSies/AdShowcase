@@ -19,7 +19,7 @@ final class AgencyForm extends Model
     public ?int $id = null;
     public ?string $hash = null;
     public ?string $name = null;
-    public ?string $status = null;
+    public string $status = StatusHelper::STATUS_ACTIVE;
     public ?string $country_id = null;
 
     public function formName(): string
@@ -31,9 +31,9 @@ final class AgencyForm extends Model
     {
         $scenarios = parent::scenarios();
 
-        $scenarios[self::SCENARIO_CREATE] = ['hash', 'name', 'status', 'country_id', 'created_at', 'updated_at'];
+        $scenarios[self::SCENARIO_CREATE] = ['name', 'status', 'country_id', 'created_at', 'updated_at'];
         $scenarios[self::SCENARIO_UPDATE] = ['id', 'hash', 'name', 'status', 'country_id', 'created_at', 'updated_at'];
-        $scenarios[self::SCENARIO_DELETE] = ['id'];
+        $scenarios[self::SCENARIO_DELETE] = ['hash'];
 
         return $scenarios;
     }

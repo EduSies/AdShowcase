@@ -9,9 +9,9 @@ use app\models\Format;
 final class BackOfficeFormatDeleteService
 {
     /** Hard delete by PK. Returns true on success. */
-    public function delete(int $id): bool
+    public function delete(string $hash): bool
     {
-        $format = Format::findOne($id);
+        $format = Format::findOne(['hash' => $hash]);
 
         if (!$format) {
             $format->addErrors($format->getErrors());

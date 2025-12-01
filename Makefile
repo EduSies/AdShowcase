@@ -139,6 +139,7 @@ build:
 	  docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase up -d db php; \
 	  docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase exec -T php \
 	    php yii migrate --migrationPath=@yii/rbac/migrations --interactive=0; \
+	  $(MAKE) migrate ENV=$(ENV); \
 	fi
 
 	@echo ">> Build listo. Luego: make up && open http://localhost.adshowcase.com"

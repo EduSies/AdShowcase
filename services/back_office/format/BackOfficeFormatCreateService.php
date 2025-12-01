@@ -6,6 +6,7 @@ namespace app\services\back_office\format;
 
 use app\models\Format;
 use app\models\forms\back_office\FormatForm;
+use Yii;
 
 final class BackOfficeFormatCreateService
 {
@@ -15,6 +16,7 @@ final class BackOfficeFormatCreateService
         $format = new Format();
 
         $format->setAttributes([
+            'hash' => $form->hash ?: Yii::$app->security->generateRandomString(16),
             'name' => $form->name,
             'format' => $form->format,
             'family' => $form->family,

@@ -6,6 +6,7 @@ namespace app\services\back_office\device;
 
 use app\models\Device;
 use app\models\forms\back_office\DeviceForm;
+use Yii;
 
 final class BackOfficeDeviceCreateService
 {
@@ -15,6 +16,7 @@ final class BackOfficeDeviceCreateService
         $device = new Device();
 
         $device->setAttributes([
+            'hash' => $form->hash ?: Yii::$app->security->generateRandomString(16),
             'name' => $form->name,
             'status' => $form->status,
         ]);

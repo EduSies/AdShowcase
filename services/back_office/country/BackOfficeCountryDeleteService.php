@@ -8,9 +8,9 @@ use app\models\Country;
 
 final class BackOfficeCountryDeleteService
 {
-    public function delete(int $id): bool
+    public function delete(string $hash): bool
     {
-        $country = Country::findOne($id);
+        $country = Country::findOne(['hash' => $hash]);
 
         if (!$country) {
             $country->addErrors($country->getErrors());

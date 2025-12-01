@@ -21,6 +21,9 @@ final class Device extends ActiveRecord
     public function rules(): array
     {
         return [
+            ['hash', 'unique'],
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+
             [['name', 'status'], 'required'],
             ['name', 'trim'],
             ['name', 'string', 'max' => 100],

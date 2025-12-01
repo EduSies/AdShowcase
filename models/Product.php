@@ -37,12 +37,15 @@ final class Product extends ActiveRecord
     public function rules(): array
     {
         return [
+            ['hash', 'unique'],
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+
             [['name', 'status'], 'required'],
             ['name', 'string', 'max' => 255],
             ['url_slug', 'string', 'max' => 255],
             [['name','url_slug'], 'trim'],
 
-            ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/', 'skipOnEmpty' => true],
+            ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
 
             ['status', 'in', 'range' => [
                 StatusHelper::STATUS_ACTIVE,

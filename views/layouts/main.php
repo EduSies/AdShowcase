@@ -44,30 +44,47 @@ if (Yii::$app->session->hasFlash('error')) {
 
 <header id="header">
     <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md bg-body-tertiary']
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => Yii::t('app','Catalogo'), 'url' => ['/mosaic/index']],
-            ['label' => Yii::t('app','Back Office'), 'url' => ['/back-office/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            '<li class="nav-item">'
-                . Html::beginForm(['/auth/logout'])
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'nav-link btn btn-link logout']
-                )
-                . Html::endForm() .
-            '</li>'
-        ]
-    ]);
-    NavBar::end();
+        NavBar::begin([
+            'brandLabel' => Yii::$app->name,
+            'brandUrl' => Yii::$app->homeUrl,
+            'options' => ['class' => 'navbar-expand-md bg-white'],
+        ]);
+
+        // Left side navigation (Catalog, Back Office)
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav'],
+            'items' => [
+                ['label' => Yii::t('app','Catalog'), 'url' => ['/catalog/index']],
+                [
+                    'label' => Yii::t('app','Back Office'),
+                    'url' => '#',
+                    'linkOptions' => [
+                        'data-bs-toggle' => 'offcanvas',
+                        'data-bs-target' => '#offcanvasBackOffice',
+                        'aria-controls' => 'offcanvasBackOffice',
+                    ],
+                ],
+            ],
+        ]);
+
+        // Right side navigation (Logout)
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav ms-auto'],
+            'items' => [
+                '<li class="nav-item">'
+                    . Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-inline'])
+                    . Html::submitButton(
+                        'Logout (' . Yii::$app->user->identity->username . ')',
+                        ['class' => 'btn btn-sm btn-outline-danger logout']
+                    )
+                    . Html::endForm() .
+                '</li>',
+            ],
+        ]);
+
+        NavBar::end();
     ?>
+    <?= $this->render('partials/_off-canvas-config', []) ?>
 </header>
 
 <main id="main" class="flex-shrink-0" role="main">

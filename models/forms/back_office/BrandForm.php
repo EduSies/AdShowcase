@@ -25,10 +25,10 @@ final class BrandForm extends Model
     public ?string $name = null;
 
     /** Slug (lowercase + dashes), UNIQUE */
-    public ?string $url_name = null;
+    public ?string $url_slug = null;
 
     /** enum: active|archived|pending */
-    public ?string $status = null;
+    public string $status = StatusHelper::STATUS_ACTIVE;
 
     public function formName(): string
     {
@@ -39,9 +39,9 @@ final class BrandForm extends Model
     {
         $scenarios = parent::scenarios();
 
-        $scenarios[self::SCENARIO_CREATE] = ['name', 'url_name', 'status', 'hash'];
-        $scenarios[self::SCENARIO_UPDATE] = ['id', 'name', 'url_name', 'status', 'hash'];
-        $scenarios[self::SCENARIO_DELETE] = ['id'];
+        $scenarios[self::SCENARIO_CREATE] = ['name', 'url_slug', 'status'];
+        $scenarios[self::SCENARIO_UPDATE] = ['id', 'hash', 'name', 'url_slug', 'status'];
+        $scenarios[self::SCENARIO_DELETE] = ['hash'];
 
         return $scenarios;
     }
@@ -49,20 +49,20 @@ final class BrandForm extends Model
     public function rules(): array
     {
         return [
-            [['name', 'url_name', 'status'], 'required', 'on' => self::SCENARIO_CREATE],
-            [['id', 'name', 'url_name', 'status'], 'required', 'on' => self::SCENARIO_UPDATE],
+            [['name', 'url_slug', 'status'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['id', 'name', 'url_slug', 'status'], 'required', 'on' => self::SCENARIO_UPDATE],
             [['id'], 'required', 'on' => self::SCENARIO_DELETE],
 
             [['id'], 'integer', 'on' => [self::SCENARIO_UPDATE, self::SCENARIO_DELETE]],
-            [['name', 'url_name'], 'string', 'max' => 255],
+            [['name', 'url_slug'], 'string', 'max' => 255],
 
-            [['name', 'url_name'], 'trim'],
-            ['url_name', 'filter', 'filter' => fn($v) => mb_strtolower(trim((string)$v))],
+            [['name', 'url_slug'], 'trim'],
+            ['url_slug', 'filter', 'filter' => fn($v) => mb_strtolower(trim((string)$v))],
 
-            ['hash', 'string', 'length' => 16],
-            ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => 'Hash must be 16 chars: letters, numbers, "-" or "_"'],
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+            ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => Yii::t('app', 'Invalid hash format.')],
 
-            ['url_name', 'match', 'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'message' => 'Use lowercase letters, numbers and dashes only.'],
+            ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'message' => 'Use lowercase letters, numbers and dashes only.'],
 
             ['status', 'in',
                 'range' => [
@@ -81,9 +81,9 @@ final class BrandForm extends Model
                 'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } }
             ],
             [
-                'url_name', 'unique',
+                'url_slug', 'unique',
                 'targetClass' => Brand::class,
-                'targetAttribute' => 'url_name',
+                'targetAttribute' => 'url_slug',
                 'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } }
             ],
             [
@@ -110,7 +110,7 @@ final class BrandForm extends Model
             'id' => Yii::t('app', 'ID'),
             'hash' => Yii::t('app', 'Hash'),
             'name' => Yii::t('app', 'Name'),
-            'url_name' => Yii::t('app', 'URL Slug'),
+            'url_slug' => Yii::t('app', 'URL Slug'),
             'status' => Yii::t('app', 'Status'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -129,8 +129,8 @@ final class BrandForm extends Model
         }
 
         // Slug automático si falta
-        if (empty($this->url_name) && !empty($this->name)) {
-            $this->url_name = \yii\helpers\Inflector::slug(mb_strtolower($this->name));
+        if (empty($this->url_slug) && !empty($this->name)) {
+            $this->url_slug = \yii\helpers\Inflector::slug(mb_strtolower($this->name));
         }
 
         // Hash automático si falta (16 chars URL-safe)

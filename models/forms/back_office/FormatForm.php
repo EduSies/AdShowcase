@@ -16,12 +16,13 @@ final class FormatForm extends Model
     public const SCENARIO_DELETE = 'delete';
 
     public ?int $id = null;
+    public ?string $hash = null;
     public ?string $name = null;
     public ?string $format = null;
     public ?string $family = null;
     public ?string $experience = null;
     public ?string $subtype = null;
-    public ?string $status = null;
+    public string $status = StatusHelper::STATUS_ACTIVE;
     public ?string $url_slug = null;
 
     public function formName(): string
@@ -34,8 +35,8 @@ final class FormatForm extends Model
         $scenarios = parent::scenarios();
 
         $scenarios[self::SCENARIO_CREATE] = ['name', 'format', 'family', 'experience', 'subtype', 'status', 'url_slug'];
-        $scenarios[self::SCENARIO_UPDATE] = ['id', 'name', 'format', 'family', 'experience', 'subtype', 'status', 'url_slug'];
-        $scenarios[self::SCENARIO_DELETE] = ['id'];
+        $scenarios[self::SCENARIO_UPDATE] = ['id', 'hash', 'name', 'format', 'family', 'experience', 'subtype', 'status', 'url_slug'];
+        $scenarios[self::SCENARIO_DELETE] = ['hash'];
 
         return $scenarios;
     }
@@ -53,6 +54,17 @@ final class FormatForm extends Model
             [['url_slug'], 'string', 'max' => 255],
 
             [['name', 'format', 'family', 'experience', 'subtype', 'status', 'url_slug'], 'trim'],
+
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+            ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => Yii::t('app', 'Invalid hash format.')],
+            [
+                'hash', 'unique',
+                'targetClass' => Format::class,
+                'targetAttribute' => 'hash',
+                'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } },
+                'when' => fn() => !empty($this->hash),
+                'skipOnEmpty' => true,
+            ],
 
             ['status', 'in',
                 'range' => [

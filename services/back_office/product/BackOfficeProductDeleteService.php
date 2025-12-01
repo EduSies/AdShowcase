@@ -9,9 +9,9 @@ use app\models\Product;
 final class BackOfficeProductDeleteService
 {
     /** Hard delete by PK. Returns true on success. */
-    public function delete(int $id): bool
+    public function delete(string $hash): bool
     {
-        $product = Product::findOne($id);
+        $product = Product::findOne(['hash' => $hash]);
 
         if (!$product) {
             $product->addErrors($product->getErrors());

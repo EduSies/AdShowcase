@@ -25,7 +25,8 @@ class m251123_075448_seed_devices_fake extends Migration
     {
         foreach ($this->names as $name) {
             $this->upsert('{{%device}}', [
-                'name'   => $name,
+                'hash' => \Yii::$app->security->generateRandomString(16),
+                'name' => $name,
                 'status' => 'active',
             ], [
                 'status' => new Expression("VALUES(status)"),

@@ -32,10 +32,15 @@ class m251123_082603_seed_products_fake extends Migration
         ];
 
         foreach ($rows as $row) {
-            $this->upsert('{{%product}}', $row, [
-                'name'     => $row['name'],
+            $this->upsert('{{%product}}', [
+                'hash' => \Yii::$app->security->generateRandomString(16),
+                'name' => $row['name'],
                 'url_slug' => $row['url_slug'],
-                'status'   => $row['status'],
+                'status' => $row['status'],
+            ], [
+                'name' => $row['name'],
+                'url_slug' => $row['url_slug'],
+                'status' => $row['status'],
             ]);
         }
     }

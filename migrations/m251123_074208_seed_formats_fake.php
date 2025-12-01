@@ -78,6 +78,7 @@ class m251123_074208_seed_formats_fake extends Migration
             $updatedAt = $faker->dateTimeBetween($createdAt, 'now');
 
             $rows[] = [
+                'hash' => \Yii::$app->security->generateRandomString(16),
                 'name' => mb_substr($name, 0, 150),
                 'format' => (string)$format,
                 'family' => (string)$family,

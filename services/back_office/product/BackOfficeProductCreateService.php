@@ -6,6 +6,7 @@ namespace app\services\back_office\product;
 
 use app\models\Product;
 use app\models\forms\back_office\ProductForm;
+use Yii;
 
 final class BackOfficeProductCreateService
 {
@@ -15,6 +16,7 @@ final class BackOfficeProductCreateService
         $product = new Product();
 
         $product->setAttributes([
+            'hash' => $form->hash ?: Yii::$app->security->generateRandomString(16),
             'name' => $form->name,
             'url_slug' => $form->url_slug,
             'status' => $form->status,

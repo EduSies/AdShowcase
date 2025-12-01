@@ -17,7 +17,11 @@ class m251123_084929_seed_sales_type_fake extends Migration
         ];
 
         foreach ($rows as $row) {
-            $this->db->createCommand()->upsert('{{%sales_type}}', $row, [
+            $this->db->createCommand()->upsert('{{%sales_type}}', [
+                'hash' => \Yii::$app->security->generateRandomString(16),
+                'name' => $row['name'],
+                'status' => $row['status'],
+            ], [
                 'name' => new Expression('VALUES(name)'),
                 'status' => new Expression('VALUES(status)'),
             ])->execute();

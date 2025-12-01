@@ -42,6 +42,9 @@ final class Country extends ActiveRecord
     public function rules(): array
     {
         return [
+            ['hash', 'unique'],
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+
             [['iso', 'name', 'status'], 'required'],
             [['id'], 'integer'],
             [['iso', 'continent_code'], 'string', 'length' => 2],
@@ -53,7 +56,7 @@ final class Country extends ActiveRecord
             ['iso3', 'match', 'pattern' => '/^[A-Z]{3}$/', 'skipOnEmpty' => true],
             ['continent_code', 'match', 'pattern' => '/^[A-Z]{2}$/', 'skipOnEmpty' => true],
             ['currency_code', 'match', 'pattern' => '/^[A-Z]{3}$/', 'skipOnEmpty' => true],
-            ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/', 'skipOnEmpty' => true],
+            ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
 
             ['status', 'in', 'range' => [
                 StatusHelper::STATUS_ACTIVE,

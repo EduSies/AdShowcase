@@ -89,7 +89,9 @@ a {
 /** CUSTOM CSS **/
 
 :root {
-    --brand-orange: #FF4F00;
+    --main-color: #FF4F00;
+    --main-color-rgb: 255,79,0;
+    --focus-shadow-size: 0 0 0 0.125em;
 }
 
 /* Login layout */
@@ -121,7 +123,7 @@ body:not(.login-layout) > main > .container {
 .logo-adshowcase {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 72px;
-    color: var(--brand-orange);
+    color: var(--main-color);
     display: inline-block;
 }
 /* END Login Layout */
@@ -196,15 +198,23 @@ i.bi.icon-80px { font-size: 80px; }
 /* END Icons */
 
 /* Home Page */
+.navbar-brand, .navbar-tabs {
+    min-height: auto;
+}
+.container>.navbar .navbar-brand,
+.navbar>.container .navbar-brand {
+    margin-inline-start: 0px;
+}
 .navbar-brand, .navbar-brand:hover, .navbar-brand:focus {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--brand-orange);
+    color: var(--main-color);
 }
 /* END Home Page */
 
 /* Breadcrumb */
 .breadcrumb-item a {
-    color: var(--brand-orange);
+    color: var(--main-color);
+    padding: 0px;
 }
 /* END Breadcrumb */
 
@@ -220,12 +230,12 @@ i.bi.icon-80px { font-size: 80px; }
     color: var(--bs-secondary);
 }
 .dt-container a.pagination-link.is-current, a.pagination-link.is-selected {
-    background-color: var(--brand-orange);
-    border-color: var(--brand-orange);
+    background-color: var(--main-color);
+    border-color: var(--main-color);
 }
 .dt-container .navbar-link:not(.is-arrowless):after,
 .dt-container .select:not(.is-multiple):not(.is-loading):after {
-    border-color: var(--brand-orange);
+    border-color: var(--main-color);
 }
 .dt-container table.dataTable thead > tr > th.dt-orderable-asc:hover,
 .dt-container table.dataTable thead > tr > th.dt-orderable-desc:hover,
@@ -247,8 +257,8 @@ i.bi.icon-80px { font-size: 80px; }
 .dt-container .select select:focus-within,
 .dt-container .textarea:focus,
 .dt-container .textarea:focus-within {
-    border-color: var(--brand-orange);
-    box-shadow: var(--focus-shadow-size, 0 0 0 0.125em) rgba(var(--brand-orange-rgb, 255,79,0), var(--bulma-input-focus-shadow-alpha, .35));
+    border-color: var(--main-color);
+    box-shadow: var(--focus-shadow-size, 0 0 0 0.125em) rgba(var(--main-color-rgb, 255,79,0), var(--bulma-input-focus-shadow-alpha, .35));
 }
 .dt-container table.dataTable {
     background-color: transparent;
@@ -282,3 +292,20 @@ section.form .form-title {
     margin-top: -4px;
 }
 /* END Forms */
+
+/* Off Canvas */
+.nav-link:hover,
+.nav-link:focus,
+.list-group-item-action:hover,
+.list-group-item-action:focus {
+    color: var(--main-color);
+}
+/* END Off Canvas */
+
+/* Btn Styles */
+.btn {
+    --bs-btn-border-radius: 2rem;
+    --bs-btn-border-radius-sm: 2rem;
+    --bs-btn-border-radius-lg: 2rem;
+}
+/* END Btn Styles */

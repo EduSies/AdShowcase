@@ -89,7 +89,7 @@ class m251115_205302_seed_users_per_role extends Migration
 
     /**
      * Crea el usuario si no existe (por email/username) y devuelve su ID.
-     * Campos usados: ver tu migración de núcleo (hash, email, username, type, name, surname, status, language_id, default_profile, avatar_url).
+     * Campos usados: ver tu migración de núcleo (hash, email, username, type, name, surname, status, language_id, avatar_url).
      */
     private function ensureUser(string $email, string $username, string $type, string $name, string $surname): int
     {
@@ -112,7 +112,6 @@ class m251115_205302_seed_users_per_role extends Migration
             'surname' => $surname,
             'status' => 'active',
             'language_id' => null,
-            'default_profile' => null,
             'avatar_url' => null,
             'password_hash' => \Yii::$app->security->generatePasswordHash('Adshowcase#2025'),
             'auth_key' => \Yii::$app->security->generateRandomString(),

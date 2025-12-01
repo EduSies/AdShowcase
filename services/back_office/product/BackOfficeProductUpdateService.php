@@ -10,9 +10,9 @@ use app\models\forms\back_office\ProductForm;
 final class BackOfficeProductUpdateService
 {
     /** Update entity by PK. Returns true on success. */
-    public function update(int $id, ProductForm $form): bool
+    public function update(string $hash, ProductForm $form): bool
     {
-        $product = Product::findOne($id);
+        $product = Product::findOne(['hash' => $hash]);
 
         if (!$product) {
             $form->addErrors($product->getErrors());

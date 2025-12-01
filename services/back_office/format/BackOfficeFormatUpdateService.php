@@ -10,9 +10,9 @@ use app\models\forms\back_office\FormatForm;
 final class BackOfficeFormatUpdateService
 {
     /** Update entity by PK. Returns true on success. */
-    public function update(int $id, FormatForm $form): bool
+    public function update(string $hash, FormatForm $form): bool
     {
-        $format = Format::findOne($id);
+        $format = Format::findOne(['hash' => $hash]);
 
         if (!$format) {
             $form->addErrors($format->getErrors());

@@ -9,9 +9,9 @@ use app\models\Device;
 final class BackOfficeDeviceDeleteService
 {
     /** Hard delete by PK. Returns true on success. */
-    public function delete(int $id): bool
+    public function delete(string $hash): bool
     {
-        $device = Device::findOne($id);
+        $device = Device::findOne(['hash' => $hash]);
 
         if (!$device) {
             $device->addErrors($device->getErrors());

@@ -16,12 +16,13 @@ final class CountryForm extends Model
     public const SCENARIO_DELETE = 'delete';
 
     public ?int $id = null;
+    public ?string $hash = null;
     public ?string $iso = null;
     public ?string $iso3 = null;
     public ?string $name = null;
     public ?string $continent_code = null;
     public ?string $currency_code = null;
-    public ?string $status = null;
+    public string $status = StatusHelper::STATUS_ACTIVE;
     public ?string $url_slug = null;
 
     public function formName(): string
@@ -36,12 +37,11 @@ final class CountryForm extends Model
         $scenarios[self::SCENARIO_CREATE] = [
             'iso', 'iso3', 'name', 'continent_code', 'currency_code', 'status', 'url_slug',
         ];
-
         $scenarios[self::SCENARIO_UPDATE] = [
-            'id', 'iso', 'iso3', 'name', 'continent_code', 'currency_code', 'status', 'url_slug',
+            'id', 'hash', 'iso', 'iso3', 'name', 'continent_code', 'currency_code', 'status', 'url_slug',
         ];
 
-        $scenarios[self::SCENARIO_DELETE] = ['id'];
+        $scenarios[self::SCENARIO_DELETE] = ['hash'];
 
         return $scenarios;
     }
@@ -52,6 +52,17 @@ final class CountryForm extends Model
             [['iso','name','status'], 'required', 'on' => self::SCENARIO_CREATE],
             [['id','iso','name','status'], 'required', 'on' => self::SCENARIO_UPDATE],
             [['id'], 'required', 'on' => self::SCENARIO_DELETE],
+
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+            ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => Yii::t('app', 'Invalid hash format.')],
+            [
+                'hash', 'unique',
+                'targetClass' => Country::class,
+                'targetAttribute' => 'hash',
+                'filter' => function ($q) { if ($this->id) { $q->andWhere(['<>', 'id', $this->id]); } },
+                'when' => fn() => !empty($this->hash),
+                'skipOnEmpty' => true,
+            ],
 
             [['iso','iso3','continent_code','currency_code','name','url_slug','status'], 'trim'],
             [['iso','iso3','continent_code','currency_code'], 'filter', 'filter' => 'strtoupper'],

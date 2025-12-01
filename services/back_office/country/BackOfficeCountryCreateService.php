@@ -6,6 +6,7 @@ namespace app\services\back_office\country;
 
 use app\models\Country;
 use app\models\forms\back_office\CountryForm;
+use Yii;
 
 final class BackOfficeCountryCreateService
 {
@@ -15,6 +16,7 @@ final class BackOfficeCountryCreateService
         $country = new Country();
 
         $country->setAttributes([
+            'hash' => $form->hash ?: Yii::$app->security->generateRandomString(16),
             'iso' => $form->iso,
             'iso3' => $form->iso3,
             'name' => $form->name,

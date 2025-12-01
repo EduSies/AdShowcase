@@ -41,6 +41,9 @@ final class Format extends ActiveRecord
     public function rules(): array
     {
         return [
+            ['hash', 'unique'],
+            ['hash', 'string', 'min' => 16, 'max' => 16],
+
             [['name','format','family','experience','status','url_slug'], 'required'],
             ['name', 'string', 'max' => 150],
             [['format','family','experience','subtype'], 'string', 'max' => 100],
