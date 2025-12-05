@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace app\controllers\actions\back_office;
+namespace app\controllers\actions\site;
 
 use Yii;
 use yii\base\Action;
 use yii\web\ForbiddenHttpException;
 
-abstract class BaseBackOfficeAction extends Action
+abstract class BaseSiteAction extends Action
 {
     /** Permiso RBAC requerido para esta acción (si procede). */
     public ?string $can = null;
@@ -19,7 +19,7 @@ abstract class BaseBackOfficeAction extends Action
     /** Clase del modelo AR que gestiona esta acción. */
     public ?string $modelClass = null;
 
-    public ?array $indexRoute = null;
+    public array $sections = [];
 
     protected function ensureCan(?string $perm): void
     {

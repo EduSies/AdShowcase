@@ -5,7 +5,7 @@ use yii\web\UrlManager;
 // Custom routes adshowcase
 $rules = [
     // --- Home ---
-    '' => 'adshowcase/index',
+    '' => 'site/index',
 
     // --- Auth (pretty URLs for login/registration/reset/verify) ---
     'login' => 'auth/login',

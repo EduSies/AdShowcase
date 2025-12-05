@@ -55,7 +55,7 @@ final class ProductIndexAction extends BaseDataTableAction
         );
 
         return $this->controller->render($this->view ?? 'index', [
-            'title' => Yii::t('app','Products list'),
+            'title' => Yii::t('app','Products'),
             'idDataTable' => $idDataTable,
             'dataTableConfig' => $dataTableConfig,
         ]);

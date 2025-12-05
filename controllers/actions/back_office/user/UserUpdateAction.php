@@ -17,6 +17,7 @@ final class UserUpdateAction extends BaseBackOfficeAction
     public ?string $can = 'users.manage';
     public ?string $modelClass = UserForm::class;
     public ?string $view = '@app/views/back_office/user/' . UserForm::FORM_NAME;
+    public ?array $indexRoute = ['back-office/users'];
     public string $idParam = 'hash';
 
     public function run()
@@ -54,7 +55,7 @@ final class UserUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($user->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/users']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update user.');
@@ -62,6 +63,7 @@ final class UserUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
             'roles' => (new RbacRolesService)->getRolesDropDown(),
         ]);

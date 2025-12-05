@@ -4,6 +4,7 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
+use app\widgets\Icon;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
@@ -34,12 +35,12 @@ if (Yii::$app->session->hasFlash('error')) {
 
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100" data-theme="light">
+<html lang="<?= Yii::$app->language ?>" class="min-vh-100" data-theme="light">
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column min-vh-100">
 <?php $this->beginBody() ?>
 
 <header id="header">
@@ -51,31 +52,68 @@ if (Yii::$app->session->hasFlash('error')) {
         ]);
 
         // Left side navigation (Catalog, Back Office)
-        echo Nav::widget([
-            'options' => ['class' => 'navbar-nav'],
-            'items' => [
-                ['label' => Yii::t('app','Catalog'), 'url' => ['/catalog/index']],
-                [
-                    'label' => Yii::t('app','Back Office'),
-                    'url' => '#',
-                    'linkOptions' => [
-                        'data-bs-toggle' => 'offcanvas',
-                        'data-bs-target' => '#offcanvasBackOffice',
-                        'aria-controls' => 'offcanvasBackOffice',
-                    ],
-                ],
+        $leftItems = [
+            [
+                'label' => Icon::widget([
+                        'icon' => 'bi-collection-play',
+                        'size' => Icon::SIZE_24,
+                        'options' => ['class' => 'flex-shrink-0'],
+                    ]) .
+                    Html::tag('span', Yii::t('app', 'Catalog'), ['class' => 'ms-2']),
+                'url' => ['/catalog/index'],
             ],
+        ];
+
+        if (!Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access')) {
+            $leftItems[] = [
+                'label' => Icon::widget([
+                        'icon' => 'bi-gear',
+                        'size' => Icon::SIZE_24,
+                        'options' => ['class' => 'flex-shrink-0'],
+                    ]) .
+                    Html::tag('span', Yii::t('app', 'Back Office'), ['class' => 'ms-2']),
+                'url' => '#',
+                'linkOptions' => [
+                    'data-bs-toggle' => 'offcanvas',
+                    'data-bs-target' => '#offcanvasBackOffice',
+                    'aria-controls' => 'offcanvasBackOffice',
+                ],
+            ];
+        }
+
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav mx-auto'],
+            'encodeLabels' => false,
+            'items' => $leftItems,
         ]);
 
         // Right side navigation (Logout)
         echo Nav::widget([
-            'options' => ['class' => 'navbar-nav ms-auto'],
+            'options' => ['class' => 'navbar-nav'],
             'items' => [
                 '<li class="nav-item">'
                     . Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-inline'])
                     . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'btn btn-sm btn-outline-danger logout']
+                        Icon::widget([
+                            'icon' => 'bi-box-arrow-right',
+                            'size' => Icon::SIZE_24,
+                            'options' => ['class' => 'flex-shrink-0 me-1'],
+                        ]) .
+                        Html::tag(
+                            'span',
+                            Html::encode(
+                                Yii::t(
+                                    'app',
+                                    'Logout ({username})',
+                                    ['username' => Yii::$app->user->identity->username]
+                                )
+                            ),
+                            ['class' => 'align-middle']
+                        ),
+                        [
+                            'class' => 'btn btn-sm btn-outline-danger logout d-inline-flex align-items-center gap-1',
+                            'encode' => false,
+                        ]
                     )
                     . Html::endForm() .
                 '</li>',
@@ -84,7 +122,11 @@ if (Yii::$app->session->hasFlash('error')) {
 
         NavBar::end();
     ?>
-    <?= $this->render('partials/_off-canvas-config', []) ?>
+    <?php if (!Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access')): ?>
+        <?= $this->render('partials/_off-canvas-sections', [
+            'sections' => $this->context->getSectionsMenu()
+        ]) ?>
+    <?php endif; ?>
 </header>
 
 <main id="main" class="flex-shrink-0" role="main">

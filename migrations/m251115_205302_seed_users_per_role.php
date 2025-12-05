@@ -113,7 +113,7 @@ class m251115_205302_seed_users_per_role extends Migration
             'status' => 'active',
             'language_id' => null,
             'avatar_url' => null,
-            'password_hash' => \Yii::$app->security->generatePasswordHash('Adshowcase#2025'),
+            'password_hash' => \Yii::$app->security->generatePasswordHash('Adshowcase25'),
             'auth_key' => \Yii::$app->security->generateRandomString(),
             'password_reset_token' => null,
             'verification_token' => null,

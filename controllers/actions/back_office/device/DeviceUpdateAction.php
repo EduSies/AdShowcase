@@ -16,6 +16,7 @@ final class DeviceUpdateAction extends BaseBackOfficeAction
     public ?string $can  = 'taxonomies.manage';
     public ?string $modelClass = DeviceForm::class;
     public ?string $view = '@app/views/back_office/device/' . DeviceForm::FORM_NAME;
+    public ?array $indexRoute = ['back-office/devices'];
     public string $idParam = 'hash';
 
     public function run()
@@ -47,7 +48,7 @@ final class DeviceUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($device->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/devices']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update device.');
@@ -55,6 +56,7 @@ final class DeviceUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

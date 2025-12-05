@@ -61,7 +61,7 @@ final class CountryIndexAction extends BaseDataTableAction
         );
 
         return $this->controller->render($this->view ?? 'index', [
-            'title' => Yii::t('app', 'Countries list'),
+            'title' => Yii::t('app', 'Countries'),
             'idDataTable' => $idDataTable,
             'dataTableConfig' => $dataTableConfig,
         ]);

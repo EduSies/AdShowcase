@@ -61,7 +61,7 @@ final class BrandIndexAction extends BaseDataTableAction
         );
 
         return $this->controller->render($this->view ?? 'index', [
-            'title' => Yii::t('app', 'Brands list'),
+            'title' => Yii::t('app', 'Brands'),
             'idDataTable' => $idDataTable,
             'dataTableConfig' => $dataTableConfig,
         ]);

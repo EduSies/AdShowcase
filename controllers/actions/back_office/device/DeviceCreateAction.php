@@ -14,6 +14,7 @@ final class DeviceCreateAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = DeviceForm::class;
     public ?string $view = '@app/views/back_office/device/' . DeviceForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/devices'];
 
     public function run()
     {
@@ -28,7 +29,7 @@ final class DeviceCreateAction extends BaseBackOfficeAction
 
             if ($ok) {
                 \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
-                return $this->controller->redirect(['back-office/devices']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to create device.');
@@ -36,6 +37,7 @@ final class DeviceCreateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

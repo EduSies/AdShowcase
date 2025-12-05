@@ -92,6 +92,10 @@ a {
     --main-color: #FF4F00;
     --main-color-rgb: 255,79,0;
     --focus-shadow-size: 0 0 0 0.125em;
+    --effects-shadow-card: 0px 2px 10px 0px rgba(0, 43, 72, 0.16), 0px 2px 40px 0px rgba(0, 41, 72, 0.08);
+    --swal2-success-color: #a5dc86;
+    --swal2-error-color: #f27474;
+    --swal2-warning-color: #f8bb86;
 }
 
 /* Login layout */
@@ -105,10 +109,6 @@ body.login-layout > main > .container {
 
 body:not(.login-layout) > main > .container {
     padding: 20px 15px 20px;
-/*    margin-top: 100px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.08);
-    background: var(--bs-white);
-    border-radius: 16px;*/
 }
 
 #login-form {
@@ -125,6 +125,14 @@ body:not(.login-layout) > main > .container {
     font-size: 72px;
     color: var(--main-color);
     display: inline-block;
+}
+
+.bg-main {
+    background-color: var(--main-color) !important;
+}
+
+.color-main {
+    color: var(--main-color) !important;
 }
 /* END Login Layout */
 
@@ -160,13 +168,13 @@ body:not(.login-layout) > main > .container {
     color: var(--bs-gray-500);
 }
 .swal2-toast.swal2-icon-success > .swal2-timer-progress-bar-container > .swal2-timer-progress-bar {
-    background: #a5dc86;
+    background: var(--swal2-success-color);
 }
 .swal2-toast.swal2-icon-error > .swal2-timer-progress-bar-container > .swal2-timer-progress-bar {
-    background: #f27474;
+    background: var(--swal2-error-color);
 }
 .swal2-toast.swal2-icon-warning > .swal2-timer-progress-bar-container > .swal2-timer-progress-bar {
-    background: #f8bb86;
+    background: var(--swal2-warning-color);
 }
 .swal2-toast > .swal2-html-container {
     width: 305px !important;
@@ -288,7 +296,7 @@ section.form {
     margin-bottom: 12px;
 }
 section.form .form-title {
-    padding-left: 24px;
+    padding-left: 25px;
     margin-top: -4px;
 }
 /* END Forms */
@@ -309,3 +317,52 @@ section.form .form-title {
     --bs-btn-border-radius-lg: 2rem;
 }
 /* END Btn Styles */
+
+/* Dashboard */
+.font-adshowcase {
+    font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.logo-adshowcase-dashboard {
+    font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--main-color);
+    display: inline-block;
+    margin: 0;
+}
+
+.list-group-item.active {
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+    color: var(--bs-white);
+}
+
+.site-index .card {
+    border-color: transparent;
+}
+
+.site-index .card:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: background-color 0.3s ease-in-out; /* vendorless fallback */
+    -o-transition: background-color 0.3s ease-in-out; /* opera */
+    -ms-transition: background-color 0.3s ease-in-out; /* IE 10 */
+    -moz-transition: background-color 0.3s ease-in-out; /* Firefox */
+    -webkit-transition: background-color 0.3s ease-in-out; /*safari and chrome */
+
+    border-color: var(--main-color);
+    transition: border-color 0.3s ease-in-out; /* vendorless fallback */
+    -o-transition: border-color 0.3s ease-in-out; /* opera */
+    -ms-transition: border-color 0.3s ease-in-out; /* IE 10 */
+    -moz-transition: border-color 0.3s ease-in-out; /* Firefox */
+    -webkit-transition: border-color 0.3s ease-in-out; /*safari and chrome */
+}
+
+.site-index .card:hover i,
+.site-index .card:hover .card-title {
+    color: var(--main-color) !important;
+    transition: color 0.3s ease-in-out; /* vendorless fallback */
+    -o-transition: color 0.3s ease-in-out; /* opera */
+    -ms-transition: color 0.3s ease-in-out; /* IE 10 */
+    -moz-transition: color 0.3s ease-in-out; /* Firefox */
+    -webkit-transition: color 0.3s ease-in-out; /*safari and chrome */
+}
+/* END Dashboard */

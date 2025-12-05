@@ -16,6 +16,7 @@ final class SalesTypeUpdateAction extends BaseBackOfficeAction
     public ?string $can  = 'taxonomies.manage';
     public ?string $modelClass = SalesTypeForm::class;
     public ?string $view = '@app/views/back_office/sales_type/' . SalesTypeForm::FORM_NAME;
+    public ?array $indexRoute = ['back-office/sales-types'];
     public string $idParam = 'hash';
 
     public function run()
@@ -47,7 +48,7 @@ final class SalesTypeUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($salesType->id, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/sales-types']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update sales type.');
@@ -55,6 +56,7 @@ final class SalesTypeUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

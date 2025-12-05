@@ -14,6 +14,7 @@ final class CountryCreateAction extends BaseBackOfficeAction
     public ?string $can  = 'taxonomies.manage';
     public ?string $modelClass = CountryForm::class;
     public ?string $view = '@app/views/back_office/country/' . CountryForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/countries'];
 
     public function run()
     {
@@ -28,7 +29,7 @@ final class CountryCreateAction extends BaseBackOfficeAction
 
             if ($ok) {
                 \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
-                return $this->controller->redirect(['back-office/countries']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to create country.');
@@ -36,6 +37,7 @@ final class CountryCreateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

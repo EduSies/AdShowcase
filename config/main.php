@@ -171,7 +171,7 @@ $config = [
 
         Yii::$app->language = $lang;
     },
-    'as accessBackoffice' => [
+/*    'as accessBackoffice' => [
         'class' => \yii\filters\AccessControl::class,
         'ruleConfig' => ['class' => \yii\filters\AccessRule::class],
         'only' => ['backoffice/*'],
@@ -184,7 +184,7 @@ $config = [
         'rules' => [
             ['allow' => true, 'roles' => ['admin', 'editor', 'sales']], // viewer, guest fuera
         ],
-    ],
+    ],*/
     'params' => $params,
     'vendorPath' => ADSHOWCASE_BASE_PATH . '/vendor',
 ];

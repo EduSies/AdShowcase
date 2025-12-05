@@ -16,6 +16,7 @@ final class AgencyUpdateAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = AgencyForm::class;
     public ?string $view = '@app/views/back_office/agency/' . AgencyForm::FORM_NAME;
+    public ?array $indexRoute = ['back-office/agencies'];
     public string $idParam = 'hash';
 
     public function run()
@@ -48,7 +49,7 @@ final class AgencyUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($agency->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/agencies']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update agency.');
@@ -56,6 +57,7 @@ final class AgencyUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

@@ -61,7 +61,7 @@ final class FormatIndexAction extends BaseDataTableAction
         );
 
         return $this->controller->render($this->view ?? 'index', [
-            'title' => Yii::t('app', 'Formats list'),
+            'title' => Yii::t('app', 'Formats'),
             'idDataTable' => $idDataTable,
             'dataTableConfig' => $dataTableConfig,
         ]);

@@ -42,12 +42,12 @@ if (Yii::$app->session->hasFlash('error')) {
 
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?= Yii::$app->language ?>" class="min-vh-100">
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="login-layout d-flex flex-column h-100">
+<body class="login-layout d-flex flex-column min-vh-100">
 <?php $this->beginBody() ?>
 <main id="main" class="flex-shrink-0" role="main">
     <div class="container d-flex flex-column align-items-center">

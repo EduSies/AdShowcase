@@ -16,6 +16,7 @@ final class CountryUpdateAction extends BaseBackOfficeAction
     public ?string $can  = 'taxonomies.manage';
     public ?string $modelClass = CountryForm::class;
     public ?string $view = '@app/views/back_office/country/' . CountryForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/countries'];
     public string $idParam = 'hash';
 
     public function run()
@@ -52,7 +53,7 @@ final class CountryUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($country->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/countries']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update country.');
@@ -60,6 +61,7 @@ final class CountryUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

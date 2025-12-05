@@ -16,6 +16,7 @@ final class FormatUpdateAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = FormatForm::class;
     public ?string $view = '@app/views/back_office/format/' . FormatForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/formats'];
     public string $idParam = 'hash';
 
     public function run()
@@ -52,7 +53,7 @@ final class FormatUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($format->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/formats']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update format.');
@@ -60,6 +61,7 @@ final class FormatUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

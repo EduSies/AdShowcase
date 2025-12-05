@@ -7,7 +7,9 @@
 /** @var array $rows */
 
 use app\assets\DataTablesAsset;
+use app\widgets\Icon;
 use nullref\datatable\DataTable;
+use yii\bootstrap5\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
 
@@ -27,10 +29,25 @@ $this->registerJsVar('deleteConfirmJs', Json::htmlEncode(Yii::t('app', 'Are you 
 <div class="card bg-transparent">
     <div class="card-content">
         <div class="level mb-4">
-            <div class="level-left"><h1 class="title is-4"><?= $this->title ?></h1></div>
+            <div class="level-left">
+                <h1 class="title is-4">
+                    <?= Yii::t('app', '{title} list', ['title' => $this->title]) ?>
+                </h1>
+            </div>
             <div class="level-right">
-                <a class="btn btn-outline-primary"
-                   href="<?= Url::to(['back-office/country-create']) ?>"><?= Yii::t('app', 'New Country') ?></a>
+                <?= Html::a(
+                    Icon::widget([
+                        'icon' => 'bi-globe',
+                        'size' => Icon::SIZE_24,
+                        'options' => ['class' => 'flex-shrink-0 me-2'],
+                    ]) .
+                    Html::tag('span', Yii::t('app', 'New Country'), ['class' => 'align-middle']),
+                    ['back-office/country-create'],
+                    [
+                        'class' => 'btn btn-outline-primary d-inline-flex align-items-center',
+                        'encode' => false,
+                    ]
+                ) ?>
             </div>
         </div>
 

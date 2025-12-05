@@ -56,7 +56,7 @@ final class DeviceIndexAction extends BaseDataTableAction
         );
 
         return $this->controller->render($this->view ?? 'index', [
-            'title' => Yii::t('app','Devices list'),
+            'title' => Yii::t('app','Devices'),
             'idDataTable' => $idDataTable,
             'dataTableConfig' => $dataTableConfig,
         ]);

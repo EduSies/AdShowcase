@@ -2,55 +2,69 @@
 
 namespace app\controllers;
 
-use app\models\ContactForm;
-use yii\filters\VerbFilter;
+use Yii;
+use yii\filters\AccessControl;
 
 class SiteController extends BaseWebController
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors(): array
-    {
-        $behaviors = parent::behaviors();
-
-        $behaviors['verbs'] = [
-            'class' => VerbFilter::class,
-            'actions' => [
-                'logout' => ['post'],
-            ],
-        ];
-
-        return $behaviors;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
-        ];
-    }
-
     /**
      * Displays homepage.
      *
      * @return string
      */
-    public function actionIndex()
+    public function behaviors(): array
     {
-        return $this->render('index');
+        $parent = parent::behaviors();
+
+        $parent['accessSite'] = [
+            'class' => AccessControl::class,
+            'denyCallback' => function () {
+                if (Yii::$app->user->isGuest) {
+                    return Yii::$app->response->redirect(['auth/login']);
+                }
+
+                // Authenticated user without backoffice.access
+                // redirect to the public catalog.
+                return Yii::$app->response->redirect(['catalog/index']);
+            },
+            'rules' => [
+                ['allow' => true, 'roles' => ['@'], 'matchCallback' => function () {
+                    return Yii::$app->user->can('backoffice.access');
+                }],
+            ],
+        ];
+
+        return $parent;
     }
 
-    public function actionContact()
+    public function actions(): array
+    {
+        return [
+            // ===== Dashboard =====
+            'index' => [
+                'class' => \app\controllers\actions\site\DashboardIndexAction::class,
+                'sections' => $this->getSectionsMenu(),
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    /*    public function actions()
+        {
+            return [
+                'error' => [
+                    'class' => 'yii\web\ErrorAction',
+                ],
+                'captcha' => [
+                    'class' => 'yii\captcha\CaptchaAction',
+                    'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                ],
+            ];
+        }*/
+
+/*    public function actionContact()
     {
         $model = new ContactForm();
 
@@ -63,5 +77,5 @@ class SiteController extends BaseWebController
         return $this->render('contact', [
             'model' => $model,
         ]);
-    }
+    }*/
 }

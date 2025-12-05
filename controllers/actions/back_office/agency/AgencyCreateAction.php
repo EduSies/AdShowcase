@@ -14,6 +14,7 @@ final class AgencyCreateAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = AgencyForm::class;
     public ?string $view = '@app/views/back_office/agency/' . AgencyForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/agencies'];
 
     public function run()
     {
@@ -28,7 +29,7 @@ final class AgencyCreateAction extends BaseBackOfficeAction
 
             if ($ok) {
                 \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
-                return $this->controller->redirect(['back-office/agencies']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to create agency.');
@@ -36,6 +37,7 @@ final class AgencyCreateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

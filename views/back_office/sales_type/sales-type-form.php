@@ -2,6 +2,7 @@
 
 /** @var yii\web\View $this */
 /** @var app\models\forms\back_office\SalesTypeForm $model */
+/** @var array $indexRoute */
 
 use yii\bootstrap5\ActiveForm;
 
@@ -28,6 +29,7 @@ $isUpdate = !empty($model->hash);
 
     <?= $this->render('@adshowcase.layouts/partials/_form-section', [
             'title' => Yii::t('app', 'Sales Type'),
+            'indexRoute' => $indexRoute,
             'content' => $this->render('form_sections/_content', [
                 'model' => $model,
                 'form' => $form,

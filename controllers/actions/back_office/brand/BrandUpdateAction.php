@@ -16,6 +16,7 @@ final class BrandUpdateAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = BrandForm::class;
     public ?string $view = '@app/views/back_office/brand/' . BrandForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/brands'];
     public string $idParam = 'hash';
 
     public function run()
@@ -48,7 +49,7 @@ final class BrandUpdateAction extends BaseBackOfficeAction
 
             if ($service->update($brand->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
-                return $this->controller->redirect(['back-office/brands']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to update brand.');
@@ -56,6 +57,7 @@ final class BrandUpdateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
         ]);
     }

@@ -56,7 +56,7 @@ final class SalesTypeIndexAction extends BaseDataTableAction
         );
 
         return $this->controller->render($this->view ?? 'index', [
-            'title' => Yii::t('app','Sales Types list'),
+            'title' => Yii::t('app','Sales Types'),
             'idDataTable' => $idDataTable,
             'dataTableConfig' => $dataTableConfig,
         ]);

@@ -15,6 +15,7 @@ final class UserCreateAction extends BaseBackOfficeAction
     public ?string $can = 'users.manage';
     public ?string $modelClass = UserForm::class;
     public ?string $view = '@app/views/back_office/user/' . UserForm::FORM_NAME;
+    public ?array $indexRoute = ['back-office/users'];
 
     public function run()
     {
@@ -29,7 +30,7 @@ final class UserCreateAction extends BaseBackOfficeAction
 
             if ($ok) {
                 \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
-                return $this->controller->redirect(['back-office/users']);
+                return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to create user.');
@@ -37,6 +38,7 @@ final class UserCreateAction extends BaseBackOfficeAction
         }
 
         return $this->controller->render($this->view, [
+            'indexRoute' => $this->indexRoute,
             'model' => $model,
             'roles' => (new RbacRolesService)->getRolesDropDown(),
         ]);
