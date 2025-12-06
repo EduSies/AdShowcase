@@ -16,7 +16,7 @@ $this->title = $name;
 <div class="container my-5 site-error">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6 mt-5">
-            <div class="card shadow-sm border-0 mt-5">
+            <div class="card shadow-lg border-0 mt-5">
                 <div class="card-body text-center p-4 p-md-5">
 
                     <div class="mb-3 display-4">

@@ -23,7 +23,6 @@
     "yiisoft/yii2-symfonymailer": "~2.0.3",
     "vlucas/phpdotenv": "*",
     "twbs/bootstrap-icons": "*",
-    "powerkernel/yii2-flag-icon-css": "*",
     "nullref/yii2-datatables": "~2.0"
   },
   "require-dev": {

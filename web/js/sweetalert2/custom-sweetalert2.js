@@ -61,6 +61,7 @@ const swalDefault = Swal.mixin({
     title: 'Are you sure you want to perform this action?',
     icon: 'warning',
     html: 'Once deleted, you will not be able to recover it!',
+    width: '600px',
     showCloseButton: false,
     showCancelButton: true,
     focusConfirm: false,
@@ -76,7 +77,8 @@ const swalDefault = Swal.mixin({
 
 function swalFire(options, callback = null) {
     if ('title' in options) {
-        options.title = '<h3>'+options.title+'</h3>';
+        let cleanTitle = String(options.title).replace(/^"|"$/g, '');
+        options.title = '<h3>' + cleanTitle + '</h3>';
     }
     if ('html' in options) {
         options.html = '<div>'+options.html+'</div>';

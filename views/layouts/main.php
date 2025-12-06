@@ -4,6 +4,7 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
+use app\helpers\LangHelper;
 use app\widgets\Icon;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -40,7 +41,7 @@ if (Yii::$app->session->hasFlash('error')) {
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100" style="padding-top: 68px;padding-bottom: 59px;">
 <?php $this->beginBody() ?>
 
 <header id="header">
@@ -48,7 +49,7 @@ if (Yii::$app->session->hasFlash('error')) {
         NavBar::begin([
             'brandLabel' => Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['class' => 'navbar-expand-md bg-white'],
+            'options' => ['class' => 'navbar-expand-md bg-white fixed-top shadow-sm'],
         ]);
 
         // Left side navigation (Catalog, Back Office)
@@ -89,8 +90,19 @@ if (Yii::$app->session->hasFlash('error')) {
 
         // Right side navigation (Logout)
         echo Nav::widget([
-            'options' => ['class' => 'navbar-nav'],
+            'options' => ['class' => 'navbar-nav gap-2'],
             'items' => [
+                [
+                    'label' => Icon::widget([
+                            'icon' => 'bi-globe',
+                            'size' => Icon::SIZE_24,
+                            'options' => ['class' => 'flex-shrink-0 me-1'],
+                        ]),
+                    'encode' => false,
+                    'dropdownOptions' => ['class' => 'mt-2 shadow-lg'],
+                    'items' => LangHelper::getLanguageItems(),
+                    'linkOptions' => ['title' => Yii::t('app', 'Select language'), 'class' => 'nav-link'],
+                ],
                 '<li class="nav-item">'
                     . Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-inline'])
                     . Html::submitButton(
@@ -138,7 +150,7 @@ if (Yii::$app->session->hasFlash('error')) {
     </div>
 </main>
 
-<footer id="footer" class="mt-auto py-3 bg-white">
+<footer id="footer" class="fixed-bottom py-3 bg-white border-top">
     <div class="container">
         <div class="row text-muted">
             <div class="col-md-6 text-center text-md-start">&copy; AdShowcase <?= date('Y') ?></div>

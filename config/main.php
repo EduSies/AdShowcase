@@ -128,11 +128,7 @@ $config = [
         ],
     ],
     'on beforeRequest' => function () {
-        $req = Yii::$app->request;
-        $cookies = $req->cookies;
         $session = Yii::$app->session;
-
-        //dump($cookies, $session);
 
         // Lista blanca de idiomas soportados
         $allowed = [
@@ -140,15 +136,13 @@ $config = [
             ArrayHelper::getValue($_ENV, 'LANGUAGE_CA'),
             ArrayHelper::getValue($_ENV, 'LANGUAGE_EN'),
         ];
-        // Fallback: usa el configurado por defecto en la app
+        // Idioma por defecto de la aplicación
         $default = Yii::$app->language;
 
-        //dump($default);
+        // 1) Intentar leer SOLO de la SESIÓN
+        $lang = $session->get('_lang');
 
-        // 1) Sesión / cookie
-        $lang = $session->get('_lang') ?? $cookies->getValue('_lang');
-//dump($lang);
-        // 2) Si el usuario está logueado y tiene idioma guardado, priorízalo
+        // 2) Si no hay nada en sesión, mirar si el usuario tiene preferencia guardada en BD
         if (!$lang && !Yii::$app->user->isGuest) {
             $u = Yii::$app->user->identity;
             if ($u && !empty($u->language)) {
@@ -156,35 +150,25 @@ $config = [
             }
         }
 
-        // 3) Si aún no hay idioma, negociar con el navegador (Accept-Language)
+        // 3) Si sigue sin haber idioma, detectar del navegador
         if (!$lang) {
-            // Devuelve la mejor coincidencia de $allowed con el header del navegador
-            $detected = Yii::$app->request->getPreferredLanguage($allowed);
-            //dump($detected);
-            $lang = $detected ?: $default;
+            $lang = Yii::$app->request->getPreferredLanguage($allowed);
         }
 
-        // 4) Validar contra la whitelist y aplicar
-        if (!in_array($lang, $allowed, true)) {
+        // 4) Validar contra la whitelist (fallback al default si no es válido)
+        if (!$lang || !in_array($lang, $allowed, true)) {
             $lang = $default;
         }
 
+        // 5) Aplicar el idioma
         Yii::$app->language = $lang;
+
+        // 6) GUARDAR EN SESIÓN (si ha cambiado o no existía)
+        // Esto asegura que en la siguiente petición (F5) se recuerde lo elegido/detectado
+        if ($session->get('_lang') !== $lang) {
+            $session->set('_lang', $lang);
+        }
     },
-/*    'as accessBackoffice' => [
-        'class' => \yii\filters\AccessControl::class,
-        'ruleConfig' => ['class' => \yii\filters\AccessRule::class],
-        'only' => ['backoffice/*'],
-        'denyCallback' => function() {
-            if (Yii::$app->user->isGuest) {
-                return Yii::$app->response->redirect(['auth/login']);
-            }
-            throw new \yii\web\ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
-        },
-        'rules' => [
-            ['allow' => true, 'roles' => ['admin', 'editor', 'sales']], // viewer, guest fuera
-        ],
-    ],*/
     'params' => $params,
     'vendorPath' => ADSHOWCASE_BASE_PATH . '/vendor',
 ];

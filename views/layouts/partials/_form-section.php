@@ -20,7 +20,7 @@ use yii\bootstrap5\Html;
     ) ?>
 </div>
 
-<section class="form row">
+<section class="form row shadow-lg">
     <div class="col-xl-3 form-title">
         <h5><?= $title ?? '' ?></h5>
     </div>

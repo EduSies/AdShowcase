@@ -26,7 +26,7 @@ $this->registerJsVar('deleteConfirmJs', Json::htmlEncode(Yii::t('app', 'Are you 
 ?>
 
 <div class="card bg-transparent">
-    <div class="card-content">
+    <div class="card-content shadow-lg">
         <div class="level mb-4">
             <div class="level-left">
                 <h1 class="title is-4">

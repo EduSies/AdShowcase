@@ -1,13 +1,16 @@
 <?php
 
 /* @var $this \yii\web\View */
+
 /* @var $content string */
 
 use app\assets\AppAsset;
+use app\helpers\LangHelper;
+use app\widgets\Icon;
+use powerkernel\flagiconcss\FlagiconcssAsset;
+use yii\bootstrap5\Nav;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\web\JqueryAsset;
 
 AppAsset::register($this);
 
@@ -41,21 +44,42 @@ if (Yii::$app->session->hasFlash('error')) {
 ?>
 
 <?php $this->beginPage() ?>
-<!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="min-vh-100">
-<head>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-</head>
-<body class="login-layout d-flex flex-column min-vh-100">
-<?php $this->beginBody() ?>
-<main id="main" class="flex-shrink-0" role="main">
-    <div class="container d-flex flex-column align-items-center">
-        <h1 class="logo-adshowcase mb-5"><?= ArrayHelper::getValue($_ENV, 'APP_NAME') ?></h1>
-        <?= $content ?>
+    <!DOCTYPE html>
+    <html lang="<?= Yii::$app->language ?>" class="min-vh-100">
+    <head>
+        <title><?= Html::encode($this->title) ?></title>
+        <?php $this->head() ?>
+    </head>
+    <body class="login-layout d-flex flex-column min-vh-100">
+    <?php $this->beginBody() ?>
+    <div class="position-absolute top-0 end-0 my-3 mx-4">
+        <?= Nav::widget([
+            'options' => ['class' => 'nav-pills navbar-nav gap-2 text-secondary'],
+            'items' => [
+                [
+                    'label' => Icon::widget([
+                        'icon' => 'bi-globe',
+                        'size' => Icon::SIZE_24,
+                        'options' => ['class' => 'flex-shrink-0 me-1'],
+                    ]),
+                    'encode' => false,
+                    'dropdownOptions' => ['class' => 'mt-2 shadow-lg dropdown-menu-end'],
+                    'items' => LangHelper::getLanguageItems(),
+                    'linkOptions' => [
+                        'title' => Yii::t('app', 'Select language'),
+                        'class' => 'nav-link'
+                    ],
+                ],
+            ],
+        ]) ?>
     </div>
-</main>
-<?php $this->endBody() ?>
-</body>
-</html>
+    <main id="main" class="flex-shrink-0" role="main">
+        <div class="container d-flex flex-column align-items-center">
+            <h1 class="logo-adshowcase mb-5"><?= ArrayHelper::getValue($_ENV, 'APP_NAME') ?></h1>
+            <?= $content ?>
+        </div>
+    </main>
+    <?php $this->endBody() ?>
+    </body>
+    </html>
 <?php $this->endPage() ?>

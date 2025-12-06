@@ -55,7 +55,7 @@ $this->title = $title;
                             ?>
                             <div class="col">
                                 <a href="<?= Url::to($url) ?>" class="text-decoration-none">
-                                    <div class="card h-100 shadow-lg border-1 <?= $isActive ? 'border-primary' : '' ?>">
+                                    <div class="card h-100 shadow-sm border-1 <?= $isActive ? 'border-primary' : '' ?>">
                                         <?php if ($icon): ?>
                                             <div class="mt-3 d-flex justify-content-center">
                                                 <?= Icon::widget([
