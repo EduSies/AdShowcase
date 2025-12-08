@@ -9,6 +9,7 @@ use app\models\Country;
 use app\models\forms\back_office\CountryForm;
 use app\services\back_office\country\BackOfficeCountryUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class CountryUpdateAction extends BaseBackOfficeAction
@@ -47,6 +48,10 @@ final class CountryUpdateAction extends BaseBackOfficeAction
             'status' => $country->status,
             'url_slug' => $country->url_slug,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeCountryUpdateService();

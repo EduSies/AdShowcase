@@ -8,6 +8,7 @@ use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\forms\back_office\BrandForm;
 use app\services\back_office\brand\BackOfficeBrandCreateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 
 final class BrandCreateAction extends BaseBackOfficeAction
 {
@@ -22,6 +23,10 @@ final class BrandCreateAction extends BaseBackOfficeAction
 
         $class = $this->modelClass;
         $model = new $class(['scenario' => BrandForm::SCENARIO_CREATE]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeBrandCreateService();

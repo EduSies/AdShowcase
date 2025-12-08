@@ -9,6 +9,7 @@ use app\models\forms\back_office\ProductForm;
 use app\models\Product;
 use app\services\back_office\product\BackOfficeProductUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class ProductUpdateAction extends BaseBackOfficeAction
@@ -43,6 +44,10 @@ final class ProductUpdateAction extends BaseBackOfficeAction
             'url_slug' => $product->url_slug,
             'status' => $product->status,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeProductUpdateService();

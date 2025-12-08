@@ -56,11 +56,7 @@ final class Agency extends ActiveRecord
                 'targetAttribute' => ['country_id' => 'id'],
             ],
 
-            ['status', 'in', 'range' => [
-                StatusHelper::STATUS_ACTIVE,
-                StatusHelper::STATUS_ARCHIVED,
-                StatusHelper::STATUS_PENDING,
-            ]],
+            ['status', 'in', 'range' => StatusHelper::getRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
             [['created_at', 'updated_at'], 'safe'],

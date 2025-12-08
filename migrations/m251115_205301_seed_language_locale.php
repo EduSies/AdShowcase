@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m251130_191126_seed_language_locale extends Migration
+class m251115_205301_seed_language_locale extends Migration
 {
     public function safeUp()
     {
@@ -11,8 +11,6 @@ class m251130_191126_seed_language_locale extends Migration
             'region_code',
             'locale_code',
             'display_name_en',
-            'display_name_es',
-            'display_name_ca',
             'is_default',
             'status',
         ], [
@@ -22,8 +20,6 @@ class m251130_191126_seed_language_locale extends Migration
                 'US',
                 'en-US',
                 'English (United States)',
-                'Inglés (Estados Unidos)',
-                'Anglès (Estats Units)',
                 0,
                 'active',
             ],
@@ -33,8 +29,6 @@ class m251130_191126_seed_language_locale extends Migration
                 'ES',
                 'es-ES',
                 'Spanish (Spain)',
-                'Español (España)',
-                'Espanyol (Espanya)',
                 1,
                 'active',
             ],
@@ -44,8 +38,6 @@ class m251130_191126_seed_language_locale extends Migration
                 'ES',
                 'ca-ES',
                 'Catalan (Spain)',
-                'Catalán (España)',
-                'Català (Espanya)',
                 0,
                 'active',
             ],

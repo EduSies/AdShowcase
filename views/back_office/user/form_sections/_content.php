@@ -66,11 +66,9 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 
 <div class="row g-3">
     <div class="col-md-5">
-        <?= $form->field($model, 'language_id')
-            ->textInput([
-                'type' => 'number',
-                'placeholder' => Yii::t('app', 'Language ID (optional)'),
-            ]
+        <?= $form->field($model, 'language_id')->dropDownList(
+            \app\helpers\LangHelper::getLanguageOptions(),
+            ['prompt' => Yii::t('app', 'Select language')]
         ) ?>
     </div>
 </div>
@@ -80,7 +78,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
         <?= $form->field($model, 'avatar_url')
             ->textInput([
                 'maxlength' => true,
-                'placeholder' => Yii::t('app', 'Avatar URL (optional)'),
+                'placeholder' => Yii::t('app', 'Avatar'),
             ]
         ) ?>
     </div>

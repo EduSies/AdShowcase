@@ -65,14 +65,10 @@ final class BrandForm extends Model
             ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'message' => 'Use lowercase letters, numbers and dashes only.'],
 
             ['status', 'in',
-                'range' => [
-                    StatusHelper::STATUS_ACTIVE,
-                    StatusHelper::STATUS_ARCHIVED,
-                    StatusHelper::STATUS_PENDING,
-                ],
+                'range' => StatusHelper::getRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
-            ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
+            ['status', 'default', 'value' => $this->status],
 
             [
                 'name', 'unique',

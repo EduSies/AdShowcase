@@ -19,11 +19,7 @@ class ChangeAction extends Action
         }
 
         // Lista blanca de idiomas permitidos
-        $allowedLanguages = [
-            ArrayHelper::getValue($_ENV, 'LANGUAGE_ES'),
-            ArrayHelper::getValue($_ENV, 'LANGUAGE_CA'),
-            ArrayHelper::getValue($_ENV, 'LANGUAGE_EN'),
-        ];
+        $allowedLanguages = \app\helpers\LangHelper::getAllowedLanguages();
 
         // Si el idioma es válido, lo guardamos en sesión
         if (in_array($lang, $allowedLanguages)) {

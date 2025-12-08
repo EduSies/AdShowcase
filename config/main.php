@@ -19,8 +19,15 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
     ],
-    'language' => ArrayHelper::getValue($_ENV, 'LANGUAGE'),
+    'language' => ArrayHelper::getValue($_ENV, 'SOURCE_LANGUAGE'),
     'sourceLanguage' => ArrayHelper::getValue($_ENV, 'SOURCE_LANGUAGE'),
+    'container' => [
+        'definitions' => [
+            \yii\bootstrap5\ActiveForm::class => [
+                'successCssClass' => '', // Dejándolo vacío evitas que se añada 'is-valid'
+            ],
+        ],
+    ],
     'components' => [
         'request' => [
             'cookieValidationKey' => ArrayHelper::getValue($_ENV, 'COOKIE_VALIDATION_KEY'),
@@ -129,14 +136,7 @@ $config = [
     ],
     'on beforeRequest' => function () {
         $session = Yii::$app->session;
-
-        // Lista blanca de idiomas soportados
-        $allowed = [
-            ArrayHelper::getValue($_ENV, 'LANGUAGE_ES'),
-            ArrayHelper::getValue($_ENV, 'LANGUAGE_CA'),
-            ArrayHelper::getValue($_ENV, 'LANGUAGE_EN'),
-        ];
-        // Idioma por defecto de la aplicación
+        $allowed = \app\helpers\LangHelper::getAllowedLanguages();
         $default = Yii::$app->language;
 
         // 1) Intentar leer SOLO de la SESIÓN
@@ -144,9 +144,10 @@ $config = [
 
         // 2) Si no hay nada en sesión, mirar si el usuario tiene preferencia guardada en BD
         if (!$lang && !Yii::$app->user->isGuest) {
-            $u = Yii::$app->user->identity;
-            if ($u && !empty($u->language)) {
-                $lang = $u->language;
+            $user = Yii::$app->user->identity;
+
+            if ($user && !empty($user->language->locale_code)) {
+                $lang = $user->language->locale_code;
             }
         }
 

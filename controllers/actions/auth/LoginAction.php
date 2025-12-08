@@ -3,8 +3,10 @@
 namespace app\controllers\actions\auth;
 
 use app\models\forms\auth\LoginForm;
+use app\services\auth\AuthLoginService;
 use Yii;
 use yii\base\Action;
+use yii\bootstrap5\ActiveForm;
 
 class LoginAction extends Action
 {
@@ -18,8 +20,16 @@ class LoginAction extends Action
 
         $model = new LoginForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->controller->goBack($this->successUrl ?? (Yii::$app->user->getReturnUrl() ?: Yii::$app->homeUrl));
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $service = new AuthLoginService();
+
+            if ($service->loginAttempt($model)) {
+                return $this->controller->goBack($this->successUrl ?? (Yii::$app->user->getReturnUrl() ?: Yii::$app->homeUrl));
+            }
         }
 
         $model->password = '';

@@ -16,7 +16,7 @@ $isUpdate = !empty($model->hash);
     <?php $form = ActiveForm::begin([
         'id' => $model->formName(),
         'enableClientValidation' => true,
-        'enableAjaxValidation' => false,
+        'enableAjaxValidation' => true,
         'validateOnBlur' => true,
         'validateOnChange' => true,
         'options' => ['autocomplete' => 'off'],

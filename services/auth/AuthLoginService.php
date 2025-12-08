@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace app\services\auth;
 
+use app\helpers\LangHelper;
 use app\models\User;
 use app\models\forms\auth\LoginForm;
 use Yii;
@@ -48,8 +49,21 @@ final class AuthLoginService
 
         $duration = $form->rememberMe ? (int)(Yii::$app->params['auth.rememberDuration'] ?? ArrayHelper::getValue($_ENV, 'REMEMBER_DURATION')) : 0;
 
-        Yii::$app->user->login($user, $duration);
+        $isLoggedIn = Yii::$app->user->login($user, $duration);
 
-        return true;
+        // SOLO si el login fue exitoso Y el usuario tiene idioma configurado
+        if ($isLoggedIn && !empty($user->language_id)) {
+            $configs = LangHelper::getLanguagesConfig();
+
+            // Buscamos qué código (ej: 'es-ES') corresponde a este ID
+            foreach ($configs as $locale => $conf) {
+                if ((int)($conf['id'] ?? 0) === (int)$user->language_id) {
+                    Yii::$app->session->set('_lang', $locale);
+                    break;
+                }
+            }
+        }
+
+        return $isLoggedIn;
     }
 }

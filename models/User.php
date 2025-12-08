@@ -72,7 +72,7 @@ class User extends ActiveRecord implements IdentityInterface
             'name' => Yii::t('app', 'Name'),
             'surname' => Yii::t('app', 'Surname'),
             'status' => Yii::t('app', 'Status'),
-            'language_id' => Yii::t('app', 'Language'),
+            'language_id' => Yii::t('app', 'Default Language'),
             'avatar_url' => Yii::t('app', 'Avatar'),
             'password_hash' => Yii::t('app', 'Password'),
             'auth_key' => Yii::t('app', 'Auth Key'),
@@ -227,5 +227,18 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         $this->save(false, ['failed_login_attempts', 'locked_until', 'last_login_at', 'last_login_ip', 'auth_key']);
+    }
+
+    /**
+     * Relación con LanguageLocale.
+     * Un usuario tiene un idioma preferido asociado.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguage()
+    {
+        // 'id' es la PK de LanguageLocale
+        // 'language_id' es la FK en User
+        return $this->hasOne(LanguageLocale::class, ['id' => 'language_id']);
     }
 }

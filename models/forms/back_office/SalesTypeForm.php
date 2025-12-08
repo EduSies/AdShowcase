@@ -72,14 +72,10 @@ final class SalesTypeForm extends Model
             ],
 
             ['status', 'in',
-                'range' => [
-                    StatusHelper::STATUS_ACTIVE,
-                    StatusHelper::STATUS_ARCHIVED,
-                    StatusHelper::STATUS_PENDING,
-                ],
+                'range' => StatusHelper::getRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
-            ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
+            ['status', 'default', 'value' => $this->status],
         ];
     }
 

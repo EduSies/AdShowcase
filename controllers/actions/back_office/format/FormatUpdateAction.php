@@ -9,6 +9,7 @@ use app\models\Format;
 use app\models\Forms\back_office\FormatForm;
 use app\services\back_office\format\BackOfficeFormatUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class FormatUpdateAction extends BaseBackOfficeAction
@@ -47,6 +48,10 @@ final class FormatUpdateAction extends BaseBackOfficeAction
             'status' => $format->status,
             'url_slug' => $format->url_slug,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeFormatUpdateService();

@@ -26,6 +26,17 @@ return [
     'Account temporarily locked for {n, plural, =1{# minute} other{# minutes}}.' => 'Cuenta bloqueada temporalmente por {n, plural, =1{# minuto} other{# minutos}}.',
     'Please verify your email before logging in.' => 'Por favor, verifica tu correo electrónico antes de iniciar sesión.',
     'You do not have access permissions.' => 'No tienes permisos de acceso.',
+    'This is not a valid email address.' => 'No es una dirección de correo válida.',
+    'Username must be 10 characters or less.' => 'El usuario debe tener 10 caracteres o menos.',
+    'Username can only contain letters, numbers, dots, hyphens, and underscores.' => 'El usuario solo puede contener letras, números, puntos, guiones y guiones bajos.',
+
+    // --- Validación de Contraseña (Reglas Individuales) ---
+    'Password must be at least 8 characters long.' => 'La contraseña debe tener al menos 8 caracteres.',
+    'Password must contain at least one uppercase letter.' => 'La contraseña debe contener al menos una letra mayúscula.',
+    'Password must contain at least one lowercase letter.' => 'La contraseña debe contener al menos una letra minúscula.',
+    'Password must contain at least one number.' => 'La contraseña debe contener al menos un número.',
+    'Password must contain at least one symbol.' => 'La contraseña debe contener al menos un símbolo.',
+    'Passwords do not match.' => 'Las contraseñas no coinciden.',
 
     // --- Roles de Usuario (Dinámicos) ---
     'Admin' => 'Administrador',
@@ -202,10 +213,10 @@ return [
     'Showing 0 - 0 of 0' => 'Mostrando 0 - 0 de 0',
     'Loading...' => 'Cargando...',
 
-    // --- Selector de Idioma ---
-    'Spanish' => 'Español',
-    'Catalan' => 'Catalán',
-    'English' => 'Inglés',
+    // --- Selector de Idioma (Nombres completos) ---
+    'English (United States)' => 'Inglés (Estados Unidos)',
+    'Spanish (Spain)' => 'Español (España)',
+    'Catalan (Spain)' => 'Catalán (España)',
 
     // --- Descripciones del Menú (Back Office) ---
     'Browse and manage creatives' => 'Explorar y gestionar creatividades',
@@ -226,4 +237,7 @@ return [
     'If you believe this is a server error, please contact the administrator.' => 'Si crees que se trata de un error del servidor, por favor contacta con el administrador.',
     'Go back' => 'Volver atrás',
     'Go to homepage' => 'Ir al inicio',
+
+    'Default Language' => 'Idioma por defecto',
+    'Back to list' => 'Volver a la lista',
 ];

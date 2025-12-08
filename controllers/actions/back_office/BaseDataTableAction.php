@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace app\controllers\actions\back_office;
 
+use app\helpers\LangHelper;
 use yii\web\JsExpression;
 
 abstract class BaseDatatableAction extends BaseBackofficeAction
 {
     /**
-     * Default common DataTable options for BackOffice listings.
+     * Opciones comunes por defecto para DataTables en listados de BackOffice.
      *
-     * Individual actions/views can merge/override these as needed.
+     * Las acciones o vistas individuales pueden combinar (merge) o sobrescribir
+     * estas opciones según sea necesario.
+     * * @return array Configuración base del DataTable.
      */
     protected function getDefaultDataTableOptions(): array
     {
@@ -41,15 +44,15 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
     }
 
     /**
-     * Helper to build a complete DataTable configuration array
-     * merging the common defaults with specific settings.
+     * Ayudante para construir la configuración completa de DataTable, fusionando
+     * los valores por defecto con las configuraciones específicas.
      *
-     * @param string $id           DOM id for the table.
-     * @param array  $data         Rows to feed into DataTables.
-     * @param array  $columns      Column configuration array.
-     * @param array  $extraOptions Extra options to override/extend defaults.
+     * @param string $id           ID del DOM para la tabla.
+     * @param array  $data         Filas de datos para alimentar el DataTable.
+     * @param array  $columns      Array de configuración de columnas.
+     * @param array  $extraOptions Opciones extra para sobrescribir o extender los valores por defecto.
      *
-     * @return array
+     * @return array Configuración final fusionada.
      */
     protected function buildDataTableConfig(string $id, array $data, array $columns, array $extraOptions = []): array
     {
@@ -65,15 +68,15 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
     }
 
     /**
-     * Helper to attach a pre-rendered HTML column to each row for DataTables.
+     * Ayudante para adjuntar una columna HTML pre-renderizada a cada fila para DataTables.
      *
-     * @param array         $rows           Raw rows from a back office list service.
-     * @param string        $column         Name of the column to inject into each row (e.g. 'actions').
-     * @param string        $view           View name or path (as used by Controller::renderPartial) that renders the HTML.
-     * @param callable|null $paramsBuilder  Callback that receives the row and must return an array of params for the view.
-     *                                      If null, the whole row is passed as ['row' => $row].
+     * @param array         $rows           Filas crudas obtenidas de un servicio de lista de back office.
+     * @param string        $column         Nombre de la columna a inyectar en cada fila (ej. 'actions').
+     * @param string        $view           Nombre o ruta de la vista (usada por Controller::renderPartial) que renderiza el HTML.
+     * @param callable|null $paramsBuilder  Callback que recibe la fila y debe retornar un array de parámetros para la vista.
+     * Si es null, se pasa la fila completa como ['row' => $row].
      *
-     * @return array
+     * @return array Array de filas modificado.
      */
     protected function addRenderedColumn(array $rows, string $column, string $view, ?callable $paramsBuilder = null): array
     {
@@ -89,25 +92,79 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
     }
 
     /**
-     * Convenience helper specialized for an "actions" column
-     * that expects a "hash" key in each row.
+     * Agrega una columna renderizada específicamente para las Acciones (Botones).
      *
-     * @param array  $rows    Raw rows from a back office list service.
-     * @param string $view    View name or path that renders the actions HTML.
-     * @param string $hashKey Array key that contains the hash in each row.
+     * Prepara las variables necesarias ('nameClassUrl' y 'hash') para pasar
+     * a la vista encargada de renderizar los botones de acción.
      *
-     * @return array
+     * @param array       $rows         El conjunto de datos original.
+     * @param string      $view         Ruta a la vista parcial (ej: '_actions').
+     * @param string      $hashKey      La clave en el array $row que contiene el hash único (ej: 'hash').
+     * @param string|null $nameClassUrl El prefijo/nombre base para construir URLs y clases CSS (ej: 'user').
+     *
+     * @return array El array de filas modificado con la columna renderizada.
      */
     protected function addActionsColumn(array $rows, string $view, string $hashKey = 'hash', ?string $nameClassUrl = null): array
     {
         return $this->addRenderedColumn(
             $rows,
-            'actions',
+            'actions', // Nombre fijo para identificar la columna en el DataTable
             $view,
             static function (array $row) use ($hashKey, $nameClassUrl): array {
                 return [
+                    // Variable de configuración (estática para todas las filas)
                     'nameClassUrl' => $nameClassUrl,
+                    // Variable de datos (dinámica por cada fila)
                     'hash' => $row[$hashKey] ?? null,
+                ];
+            }
+        );
+    }
+
+    /**
+     * Agrega una columna de Idioma usando la configuración centralizada de LangHelper.
+     * Busca el idioma comparando el ID de la fila con el ID de la configuración.
+     *
+     * @param array  $rows      Datos de la tabla.
+     * @param string $view      Vista parcial ('_language').
+     * @param string $labelKey  La clave con el nombre del idioma (ej: 'language_name').
+     * @param string $idKey     La clave con el ID del idioma en la fila (ej: 'language_id').
+     */
+    protected function addLanguageColumn(array $rows, string $view, string $labelKey = 'language_name', string $idKey = 'language_id'): array
+    {
+        // 1. Obtenemos la configuración maestra del Helper
+        $langConfig = LangHelper::getLanguagesConfig();
+
+        return $this->addRenderedColumn(
+            $rows,
+            $labelKey,
+            $view,
+            static function (array $row) use ($labelKey, $idKey, $langConfig): array {
+                // Obtenemos el ID de idioma de la fila (ej: 2)
+                $rowLangId = $row[$idKey] ?? null;
+
+                $flag = 'xx';
+                $label = $row[$labelKey] ?? 'Unknown';
+
+                if ($rowLangId) {
+                    // 2. Buscamos en la config qué idioma tiene este ID
+                    foreach ($langConfig as $conf) {
+                        // Comparamos el ID de la fila con el ID del Helper
+                        if (isset($conf['id']) && (int)$conf['id'] === (int)$rowLangId) {
+                            $flag = $conf['flag'];
+
+                            // Si el nombre viene vacío en la fila, usamos el del Helper
+                            if (empty($label) || $label === 'Unknown') {
+                                $label = $conf['label'];
+                            }
+                            break; // Ya lo encontramos, salimos del bucle
+                        }
+                    }
+                }
+
+                return [
+                    'flag'  => $flag,
+                    'label' => $label,
                 ];
             }
         );

@@ -33,6 +33,7 @@ help:
 	@echo "  make down-all                   # para local + global-traefik"
 	@echo "  make logs / ps                  # logs o listado de servicios (LOCAL por defecto)"
 	@echo "  make migrate / migrate-create   # migraciones de Yii2 (LOCAL)"
+	@echo "  make cache-flush                # borra la caché de Yii2 (flush-all)"
 	@echo ""
 	@echo "Composer (DEV, sobre composer-dev.json/lock):"
 	@echo "  make composer-install-DEV       # instala dependencias (usa composer-dev.json / composer-dev.lock)"
@@ -153,3 +154,7 @@ build:
 rbac-migrate:
 	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase exec -T php \
 	  php yii migrate --migrationPath=@yii/rbac/migrations --interactive=0
+
+cache-flush:
+	@docker compose -f $(LOCAL_DIR)/docker-compose.yml -p adshowcase exec -T php \
+	  sh -c "yes | php yii cache/flush-all"

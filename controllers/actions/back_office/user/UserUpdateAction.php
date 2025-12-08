@@ -10,6 +10,7 @@ use app\models\User;
 use app\services\back_office\user\BackOfficeUserUpdateService;
 use app\services\rbac\RbacRolesService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class UserUpdateAction extends BaseBackOfficeAction
@@ -49,6 +50,10 @@ final class UserUpdateAction extends BaseBackOfficeAction
             'language_id' => $user->language_id,
             'avatar_url' => $user->avatar_url,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeUserUpdateService();

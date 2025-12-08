@@ -9,6 +9,7 @@ use app\models\forms\back_office\SalesTypeForm;
 use app\models\SalesType;
 use app\services\back_office\sales_type\BackOfficeSalesTypeUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class SalesTypeUpdateAction extends BaseBackOfficeAction
@@ -42,6 +43,10 @@ final class SalesTypeUpdateAction extends BaseBackOfficeAction
             'name' => $salesType->name,
             'status' => $salesType->status,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeSalesTypeUpdateService();

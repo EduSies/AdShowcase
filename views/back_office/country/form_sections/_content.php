@@ -44,7 +44,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 <div class="row g-3">
     <div class="col-md-6">
         <?= $form->field($model, 'status')->dropDownList(
-            \app\helpers\StatusHelper::statusesFilters(),
+            \app\helpers\StatusHelper::statusesFilters(3),
             ['prompt' => Yii::t('app', 'Select status')]
         ) ?>
     </div>

@@ -26,6 +26,17 @@ return [
     'Account temporarily locked for {n, plural, =1{# minute} other{# minutes}}.' => 'Compte bloquejat temporalment durant {n, plural, =1{# minut} other{# minuts}}.',
     'Please verify your email before logging in.' => 'Si us plau, verifica el teu correu electrònic abans d\'iniciar sessió.',
     'You do not have access permissions.' => 'No tens permisos d\'accés.',
+    'This is not a valid email address.' => 'No és una adreça de correu vàlida.',
+    'Username must be 10 characters or less.' => 'L\'usuari ha de tenir 10 caràcters o menys.',
+    'Username can only contain letters, numbers, dots, hyphens, and underscores.' => 'L\'usuari només pot contenir lletres, números, punts, guions i guions baixos.',
+
+    // --- Validació de Contrasenya (Regles Individuals) ---
+    'Password must be at least 8 characters long.' => 'La contrasenya ha de tenir almenys 8 caràcters.',
+    'Password must contain at least one uppercase letter.' => 'La contrasenya ha de contenir almenys una lletra majúscula.',
+    'Password must contain at least one lowercase letter.' => 'La contrasenya ha de contenir almenys una lletra minúscula.',
+    'Password must contain at least one number.' => 'La contrasenya ha de contenir almenys un número.',
+    'Password must contain at least one symbol.' => 'La contrasenya ha de contenir almenys un símbol.',
+    'Passwords do not match.' => 'Les contrasenyes no coincideixen.',
 
     // --- Rols d'Usuari (Dinàmics) ---
     'Admin' => 'Administrador',
@@ -202,10 +213,10 @@ return [
     'Showing 0 - 0 of 0' => 'Mostrant 0 - 0 de 0',
     'Loading...' => 'Carregant...',
 
-    // --- Selector d'Idioma ---
-    'Spanish' => 'Espanyol',
-    'Catalan' => 'Català',
-    'English' => 'Anglès',
+    // --- Selector d'Idioma (Noms complets) ---
+    'English (United States)' => 'Anglès (Estats Units)',
+    'Spanish (Spain)' => 'Espanyol (Espanya)',
+    'Catalan (Spain)' => 'Català (Espanya)',
 
     // --- Descripcions del Menú (Back Office) ---
     'Browse and manage creatives' => 'Explorar i gestionar creativitats',
@@ -226,4 +237,7 @@ return [
     'If you believe this is a server error, please contact the administrator.' => 'Si creus que es tracta d\'un error del servidor, si us plau contacta amb l\'administrador.',
     'Go back' => 'Tornar enrere',
     'Go to homepage' => 'Anar a l\'inici',
+
+    'Default Language' => 'Idioma per defecte',
+    'Back to list' => 'Tornar a la llista',
 ];

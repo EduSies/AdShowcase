@@ -92,24 +92,28 @@ class UserForm extends Model
 
             // Types & lengths
             ['email', 'email'],
-            [['email', 'username', 'name', 'surname', 'avatar_url'], 'string', 'max' => 255],
+            [['email', 'name', 'surname', 'avatar_url'], 'string', 'max' => 255],
+
             ['type', 'string', 'max' => 32],
             ['language_id', 'integer'],
+
+            ['username', 'string', 'max' => 10], // Máximo 10 caracteres
+            [
+                'username',
+                'match',
+                // Regex: Inicio (^), solo a-z, A-Z, 0-9, ., -, _, Fin ($)
+                'pattern' => '/^[a-zA-Z0-9._-]+$/',
+                'message' => Yii::t('app', 'Username can contain only letters, numbers, dots, hyphens, and underscores.')
+            ],
 
             // Status validation
             [
                 'status',
                 'in',
-                'range' => [
-                    StatusHelper::STATUS_ACTIVE,
-                    StatusHelper::STATUS_ARCHIVED,
-                    StatusHelper::STATUS_PENDING,
-                    StatusHelper::STATUS_BANNED,
-                    StatusHelper::STATUS_INACTIVE,
-                ],
+                'range' => StatusHelper::getRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
-            ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
+            ['status', 'default', 'value' => StatusHelper::STATUS_PENDING],
 
             ['hash', 'string', 'min' => 16, 'max' => 16],
             ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => Yii::t('app', 'Invalid hash format.')],
@@ -124,8 +128,11 @@ class UserForm extends Model
 
             // Password: required only on create
             [['password', 'password_repeat'], 'required', 'on' => self::SCENARIO_CREATE],
-            [['password', 'password_repeat'], 'string', 'min' => 8],
-            ['password_repeat', 'compare', 'compareAttribute' => 'password'],
+            ['password', 'validatePasswordStrength'],
+            ['password_repeat', 'compare',
+                'compareAttribute' => 'password',
+                'message' => Yii::t('app', 'Passwords do not match.')
+            ],
 
             // Unique email (ignoring current record on update)
             [
@@ -166,10 +173,42 @@ class UserForm extends Model
             'name' => Yii::t('app', 'Name'),
             'surname' => Yii::t('app', 'Surname'),
             'status' => Yii::t('app', 'Status'),
-            'language_id' => Yii::t('app', 'Language'),
+            'language_id' => Yii::t('app', 'Default Language'),
             'avatar_url' => Yii::t('app', 'Avatar'),
             'password' => Yii::t('app', 'Password'),
             'password_repeat' => Yii::t('app', 'Repeat password'),
         ];
+    }
+
+    /**
+     * Validador personalizado de fortaleza de contraseña.
+     * Quitada la variable $params de la firma ya que no se usa.
+     */
+    public function validatePasswordStrength($attribute)
+    {
+        if (!$this->hasErrors()) {
+            $password = $this->$attribute;
+
+            // Validación solo si no está vacío (para escenarios de update donde es opcional)
+            if (empty($password)) {
+                return;
+            }
+
+            if (strlen($password) < 8) {
+                $this->addError($attribute, Yii::t('app', 'Password must be at least 8 characters long.'));
+            }
+            if (!preg_match('/[A-Z]/', $password)) {
+                $this->addError($attribute, Yii::t('app', 'Password must contain at least one uppercase letter.'));
+            }
+            if (!preg_match('/[a-z]/', $password)) {
+                $this->addError($attribute, Yii::t('app', 'Password must contain at least one lowercase letter.'));
+            }
+            if (!preg_match('/[0-9]/', $password)) {
+                $this->addError($attribute, Yii::t('app', 'Password must contain at least one number.'));
+            }
+            if (!preg_match('/[\W_]/', $password)) {
+                $this->addError($attribute, Yii::t('app', 'Password must contain at least one symbol.'));
+            }
+        }
     }
 }

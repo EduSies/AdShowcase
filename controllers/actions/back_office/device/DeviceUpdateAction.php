@@ -9,6 +9,7 @@ use app\models\Device;
 use app\models\forms\back_office\DeviceForm;
 use app\services\back_office\device\BackOfficeDeviceUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class DeviceUpdateAction extends BaseBackOfficeAction
@@ -42,6 +43,10 @@ final class DeviceUpdateAction extends BaseBackOfficeAction
             'name' => $device->name,
             'status' => $device->status,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeDeviceUpdateService();

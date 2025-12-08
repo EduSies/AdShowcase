@@ -6,9 +6,11 @@ namespace app\controllers\actions\back_office\user;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\forms\back_office\UserForm;
+use app\models\LanguageLocale;
 use app\services\back_office\user\BackOfficeUserCreateService;
 use app\services\rbac\RbacRolesService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 
 final class UserCreateAction extends BaseBackOfficeAction
 {
@@ -23,6 +25,17 @@ final class UserCreateAction extends BaseBackOfficeAction
 
         $class = $this->modelClass;
         $model = new $class(['scenario' => UserForm::SCENARIO_CREATE]);
+
+        if (Yii::$app->request->isGet) {
+            $defaultLang = LanguageLocale::findOne(['is_default' => 1]);
+            if ($defaultLang) {
+                $model->language_id = $defaultLang->id;
+            }
+        }
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeUserCreateService();

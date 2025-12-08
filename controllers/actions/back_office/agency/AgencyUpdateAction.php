@@ -9,6 +9,7 @@ use app\models\Agency;
 use app\models\forms\back_office\AgencyForm;
 use app\services\back_office\agency\BackOfficeAgencyUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class AgencyUpdateAction extends BaseBackOfficeAction
@@ -43,6 +44,10 @@ final class AgencyUpdateAction extends BaseBackOfficeAction
             'country_id' => $agency->country_id,
             'status' => $agency->status,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeAgencyUpdateService();

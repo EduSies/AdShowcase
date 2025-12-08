@@ -9,6 +9,7 @@ use app\models\Brand;
 use app\models\forms\back_office\BrandForm;
 use app\services\back_office\brand\BackOfficeBrandUpdateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class BrandUpdateAction extends BaseBackOfficeAction
@@ -43,6 +44,10 @@ final class BrandUpdateAction extends BaseBackOfficeAction
             'url_slug' => $brand->url_slug,
             'status' => $brand->status,
         ]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeBrandUpdateService();

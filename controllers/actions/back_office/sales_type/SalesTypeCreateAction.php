@@ -8,6 +8,7 @@ use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\forms\back_office\SalesTypeForm;
 use app\services\back_office\sales_type\BackOfficeSalesTypeCreateService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 
 final class SalesTypeCreateAction extends BaseBackOfficeAction
 {
@@ -22,6 +23,10 @@ final class SalesTypeCreateAction extends BaseBackOfficeAction
 
         $class = $this->modelClass;
         $model = new $class(['scenario' => SalesTypeForm::SCENARIO_CREATE]);
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeSalesTypeCreateService();

@@ -47,11 +47,7 @@ final class Product extends ActiveRecord
 
             ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
 
-            ['status', 'in', 'range' => [
-                StatusHelper::STATUS_ACTIVE,
-                StatusHelper::STATUS_ARCHIVED,
-                StatusHelper::STATUS_PENDING,
-            ]],
+            ['status', 'in', 'range' => StatusHelper::getRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
             [['created_at', 'updated_at'], 'safe'],

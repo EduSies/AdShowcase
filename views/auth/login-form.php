@@ -24,14 +24,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin([
             'id' => $model->formName(),
-            'options' => ['class' => 'shadow-lg'],
+            'enableClientValidation' => true,
+            'enableAjaxValidation' => true,
+            'validateOnBlur' => true,
+            'validateOnChange' => true,
+            'options' => [
+                'autocomplete' => 'off',
+                'class' => 'shadow-lg'
+            ],
         ]); ?>
 
         <?= $form->field($model, 'login', [
             'options' => ['class' => 'form-floating mb-3'],
             'template' => "{input}\n{label}\n{error}",
         ])->textInput([
-            'id' => 'loginInput',
             'autofocus' => true,
             'placeholder' => '',
             'class' => 'form-control',
@@ -41,7 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'options' => ['class' => 'form-floating mb-3'],
             'template' => "{input}\n{label}\n{error}",
         ])->passwordInput([
-            'id' => 'passwordInput',
             'placeholder' => '',
             'class' => 'form-control',
         ])->label(Yii::t('app', 'Password')) ?>

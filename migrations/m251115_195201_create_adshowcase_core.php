@@ -49,9 +49,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'language_code' => $this->char(2)->notNull(), // en, es, ca
             'region_code' => $this->char(2)->null(), // ES, US, GB...
             'locale_code' => $this->string(10)->notNull()->unique(), // es-ES, en-US, ca-ES...
-            'display_name_en' => $this->string(128)->notNull(), // Catalan (Spain)
-            'display_name_es' => $this->string(128)->notNull(), // Catalán (España)
-            'display_name_ca' => $this->string(128)->notNull(), // Català (Espanya)
+            'display_name_en' => $this->string(128)->notNull(),
             'is_default' => $this->boolean()->notNull()->defaultValue(false),
             'status' => $statusEnum . " DEFAULT 'active'",
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -75,7 +73,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'id' => $this->primaryKey(),
             'hash' => $this->char(16)->notNull()->unique(),
             'email' => $this->string(255)->notNull()->unique(),
-            'username' => $this->string(255)->notNull()->unique(),
+            'username' => $this->string(10)->notNull()->unique(),
             'type' => $this->string(32)->notNull(), // tipología interna (admin/editor/sales/...)
             'name' => $this->string(255)->notNull(),
             'surname' => $this->string(255)->notNull(),

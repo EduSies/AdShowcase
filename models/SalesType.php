@@ -44,11 +44,7 @@ final class SalesType extends ActiveRecord
             ['name', 'string', 'max' => 150],
             ['name', 'unique'],
 
-            ['status', 'in', 'range' => [
-                StatusHelper::STATUS_ACTIVE,
-                StatusHelper::STATUS_ARCHIVED,
-                StatusHelper::STATUS_PENDING,
-            ]],
+            ['status', 'in', 'range' => StatusHelper::getRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
             [['created_at', 'updated_at'], 'safe'],

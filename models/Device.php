@@ -29,11 +29,7 @@ final class Device extends ActiveRecord
             ['name', 'string', 'max' => 100],
             ['name', 'unique'],
 
-            ['status', 'in', 'range' => [
-                StatusHelper::STATUS_ACTIVE,
-                StatusHelper::STATUS_ARCHIVED,
-                StatusHelper::STATUS_PENDING,
-            ]],
+            ['status', 'in', 'range' => StatusHelper::getRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
         ];
     }

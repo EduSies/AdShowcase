@@ -28,6 +28,13 @@ final class UserIndexAction extends BaseDataTableAction
             $nameClassUrl
         );
 
+        $rows = $this->addLanguageColumn(
+            $rows,
+            '/layouts/partials/datatables/back_office/_language',
+            'language_name',
+            'language_id'
+        );
+
         $idDataTable = $nameClassUrl . 'Table';
 
         $dataTableConfig = $this->buildDataTableConfig(
@@ -39,6 +46,7 @@ final class UserIndexAction extends BaseDataTableAction
                 ['data' => 'full_name', 'title' => Yii::t('app', 'Name')],
                 ['data' => 'email_username', 'title' => Yii::t('app', 'Email & Username')],
                 ['data' => 'type', 'title' => Yii::t('app', 'Type')],
+                ['data' => 'language_name', 'title' => Yii::t('app', 'Default Language')],
                 [
                     'data' => 'status',
                     'title' => Yii::t('app', 'Status'),
