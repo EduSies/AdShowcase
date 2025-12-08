@@ -21,6 +21,12 @@ final class SalesTypeIndexAction extends BaseDataTableAction
 
         $nameClassUrl = 'sales-type';
 
+        $rows = $this->addStatusColumn(
+            $rows,
+            '/layouts/partials/datatables/back_office/_status',
+            'status'
+        );
+
         $rows = $this->addActionsColumn(
             $rows,
             '/layouts/partials/datatables/back_office/_actions',
@@ -41,7 +47,7 @@ final class SalesTypeIndexAction extends BaseDataTableAction
                     'data' => 'status',
                     'title' => Yii::t('app', 'Status'),
                     'className' => 'dt-head-center dt-body-center text-center',
-                    'width' => '200px',
+                    'width' => '100px',
                 ],
                 ['data' => 'created_at', 'title' => Yii::t('app', 'Created At')],
                 ['data' => 'updated_at', 'title' => Yii::t('app', 'Updated At')],

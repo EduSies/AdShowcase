@@ -31,7 +31,7 @@ class UserForm extends Model
     public ?string $type = null;
     public ?string $name = null;
     public ?string $surname = null;
-    public string $status = StatusHelper::STATUS_ACTIVE;
+    public string $status = StatusHelper::STATUS_PENDING;
     public ?int $language_id = null;
     public ?string $avatar_url = null;
 
@@ -110,10 +110,10 @@ class UserForm extends Model
             [
                 'status',
                 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getRange(),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
-            ['status', 'default', 'value' => StatusHelper::STATUS_PENDING],
+            ['status', 'default', 'value' => $this->status],
 
             ['hash', 'string', 'min' => 16, 'max' => 16],
             ['hash', 'match', 'pattern' => '/^[A-Za-z0-9_-]{16}$/', 'message' => Yii::t('app', 'Invalid hash format.')],

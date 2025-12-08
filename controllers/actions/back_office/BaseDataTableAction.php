@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office;
 
 use app\helpers\LangHelper;
+use app\helpers\StatusHelper;
 use yii\web\JsExpression;
 
 abstract class BaseDatatableAction extends BaseBackofficeAction
@@ -92,36 +93,6 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
     }
 
     /**
-     * Agrega una columna renderizada específicamente para las Acciones (Botones).
-     *
-     * Prepara las variables necesarias ('nameClassUrl' y 'hash') para pasar
-     * a la vista encargada de renderizar los botones de acción.
-     *
-     * @param array       $rows         El conjunto de datos original.
-     * @param string      $view         Ruta a la vista parcial (ej: '_actions').
-     * @param string      $hashKey      La clave en el array $row que contiene el hash único (ej: 'hash').
-     * @param string|null $nameClassUrl El prefijo/nombre base para construir URLs y clases CSS (ej: 'user').
-     *
-     * @return array El array de filas modificado con la columna renderizada.
-     */
-    protected function addActionsColumn(array $rows, string $view, string $hashKey = 'hash', ?string $nameClassUrl = null): array
-    {
-        return $this->addRenderedColumn(
-            $rows,
-            'actions', // Nombre fijo para identificar la columna en el DataTable
-            $view,
-            static function (array $row) use ($hashKey, $nameClassUrl): array {
-                return [
-                    // Variable de configuración (estática para todas las filas)
-                    'nameClassUrl' => $nameClassUrl,
-                    // Variable de datos (dinámica por cada fila)
-                    'hash' => $row[$hashKey] ?? null,
-                ];
-            }
-        );
-    }
-
-    /**
      * Agrega una columna de Idioma usando la configuración centralizada de LangHelper.
      * Busca el idioma comparando el ID de la fila con el ID de la configuración.
      *
@@ -165,6 +136,83 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
                 return [
                     'flag'  => $flag,
                     'label' => $label,
+                ];
+            }
+        );
+    }
+
+    /**
+     * Agrega una columna renderizada para el Estado (Status).
+     *
+     * Combina la lógica de StatusHelper (para textos) con un mapa visual
+     * (iconos y colores) para generar un badge elegante.
+     *
+     * @param array  $rows      Datos de la tabla.
+     * @param string $view      Vista parcial (ej: '_status').
+     * @param string $statusKey La clave con el valor del estado en la BD (ej: 'status').
+     */
+    protected function addStatusColumn(array $rows, string $view, string $statusKey = 'status'): array
+    {
+        // 1. Pre-cargamos las traducciones del Helper para no llamar a la función en cada fila
+        $statusLabels = StatusHelper::statusesFilters();
+
+        return $this->addRenderedColumn(
+            $rows,
+            $statusKey,
+            $view,
+            static function (array $row) use ($statusKey, $statusLabels): array {
+
+                $status = $row[$statusKey] ?? null;
+
+                // 2. Definimos el mapa visual usando las CONSTANTES del Helper
+                $visualMap = [
+                    StatusHelper::STATUS_ACTIVE => ['color' => 'success', 'icon' => 'bi bi-check-circle-fill'],
+                    StatusHelper::STATUS_PENDING => ['color' => 'warning', 'icon' => 'bi bi-hourglass-split'],
+                    StatusHelper::STATUS_INACTIVE => ['color' => 'secondary', 'icon' => 'bi bi-slash-circle'],
+                    StatusHelper::STATUS_BANNED => ['color' => 'danger', 'icon' => 'bi bi-slash-circle-fill'],
+                    StatusHelper::STATUS_ARCHIVED => ['color' => 'dark', 'icon' => 'bi bi-archive-fill'],
+                ];
+
+                // 3. Obtenemos la configuración o un fallback por defecto
+                $config = $visualMap[$status] ?? ['color' => 'secondary', 'icon' => 'bi bi-question-circle'];
+
+                // 4. Obtenemos la traducción oficial del Helper
+                $label = $statusLabels[$status] ?? $status; // Si no hay traducción, muestra el código crudo
+
+                return [
+                    'label' => $label,
+                    'color' => $config['color'],
+                    'icon' => $config['icon'],
+                ];
+            }
+        );
+    }
+
+    /**
+     * Agrega una columna renderizada específicamente para las Acciones (Botones).
+     *
+     * Prepara las variables necesarias ('nameClassUrl' y 'hash') para pasar
+     * a la vista encargada de renderizar los botones de acción.
+     *
+     * @param array       $rows         El conjunto de datos original.
+     * @param string      $view         Ruta a la vista parcial (ej: '_actions').
+     * @param string      $hashKey      La clave en el array $row que contiene el hash único (ej: 'hash').
+     * @param string|null $nameClassUrl El prefijo/nombre base para construir URLs y clases CSS (ej: 'user').
+     *
+     * @return array El array de filas modificado con la columna renderizada.
+     */
+    protected function addActionsColumn(array $rows, string $view, string $hashKey = 'hash', ?string $nameClassUrl = null): array
+    {
+        return $this->addRenderedColumn(
+            $rows,
+            'actions', // Nombre fijo para identificar la columna en el DataTable
+            $view,
+            static function (array $row) use ($hashKey, $nameClassUrl): array {
+                return [
+                    // Variable de configuración (estática para todas las filas)
+                    'nameClassUrl' => $nameClassUrl,
+                    // Variable de datos (dinámica por cada fila)
+                    'hash' => $row[$hashKey] ?? null,
                 ];
             }
         );

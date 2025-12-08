@@ -21,6 +21,12 @@ final class AgencyIndexAction extends BaseDataTableAction
 
         $nameClassUrl = 'agency';
 
+        $rows = $this->addStatusColumn(
+            $rows,
+            '/layouts/partials/datatables/back_office/_status',
+            'status'
+        );
+
         $rows = $this->addActionsColumn(
             $rows,
             '/layouts/partials/datatables/back_office/_actions',
