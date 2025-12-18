@@ -35,4 +35,9 @@ class LanguageLocale extends ActiveRecord
             [['locale_code'], 'unique'],
         ];
     }
+
+    public function getCreatives()
+    {
+        return $this->hasMany(Creative::class, ['language_id' => 'id']);
+    }
 }

@@ -44,6 +44,7 @@ final class SalesTypeCreateAction extends BaseBackOfficeAction
         return $this->controller->render($this->view, [
             'indexRoute' => $this->indexRoute,
             'model' => $model,
+            'status' => \app\helpers\StatusHelper::statusFilter(3),
         ]);
     }
 }

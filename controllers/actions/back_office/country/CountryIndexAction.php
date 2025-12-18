@@ -55,7 +55,7 @@ final class CountryIndexAction extends BaseDataTableAction
                     'width' => '100px',
                 ],
                 ['data' => 'created_at', 'title' => Yii::t('app', 'Created At')],
-                ['data' => 'updated_at', 'title' => Yii::t('app', 'Updated')],
+                ['data' => 'updated_at', 'title' => Yii::t('app', 'Updated At')],
                 [
                     'data' => 'actions',
                     'title' => Yii::t('app', 'Actions'),

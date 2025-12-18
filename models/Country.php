@@ -20,7 +20,7 @@ use yii\db\Expression;
  * - url_slug varchar(255) null
  * - created_at, updated_at
  */
-final class Country extends ActiveRecord
+class Country extends ActiveRecord
 {
     public static function tableName(): string
     {
@@ -58,7 +58,7 @@ final class Country extends ActiveRecord
             ['currency_code', 'match', 'pattern' => '/^[A-Z]{3}$/', 'skipOnEmpty' => true],
             ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/'],
 
-            ['status', 'in', 'range' => StatusHelper::getRange(3)],
+            ['status', 'in', 'range' => StatusHelper::getStatusRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
             [['created_at', 'updated_at'], 'safe'],
@@ -88,8 +88,8 @@ final class Country extends ActiveRecord
         return $this->hasMany(Agency::class, ['country_id' => 'id']);
     }
 
-/*    public function getCreatives()
+    public function getCreatives()
     {
         return $this->hasMany(Creative::class, ['country_id' => 'id']);
-    }*/
+    }
 }

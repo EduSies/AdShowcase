@@ -11,7 +11,7 @@ use yii\db\ActiveRecord;
  * - name varchar(100) UNIQUE
  * - status enum
  */
-final class Device extends ActiveRecord
+class Device extends ActiveRecord
 {
     public static function tableName(): string
     {
@@ -29,14 +29,14 @@ final class Device extends ActiveRecord
             ['name', 'string', 'max' => 100],
             ['name', 'unique'],
 
-            ['status', 'in', 'range' => StatusHelper::getRange(3)],
+            ['status', 'in', 'range' => StatusHelper::getStatusRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
         ];
     }
 
     // Relaciones
-/*    public function getCreatives()
+    public function getCreatives()
     {
         return $this->hasMany(Creative::class, ['device_id' => 'id']);
-    }*/
+    }
 }

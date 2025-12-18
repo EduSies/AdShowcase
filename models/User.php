@@ -237,8 +237,6 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getLanguage()
     {
-        // 'id' es la PK de LanguageLocale
-        // 'language_id' es la FK en User
         return $this->hasOne(LanguageLocale::class, ['id' => 'language_id']);
     }
 }

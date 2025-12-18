@@ -2,6 +2,8 @@
 
 /** @var yii\web\View $this */
 /** @var app\models\forms\back_office\AgencyForm $model */
+/** @var array $countries */
+/** @var array $status */
 /** @var array $indexRoute */
 
 use yii\bootstrap5\ActiveForm;
@@ -28,13 +30,15 @@ $isUpdate = !empty($model->hash);
     ]); ?>
 
     <?= $this->render('@adshowcase.layouts/partials/_form-section', [
-            'title' => Yii::t('app', 'Agency'),
-            'indexRoute' => $indexRoute,
-            'content' => $this->render('form_sections/_content', [
-                'model' => $model,
-                'form' => $form,
-                'isUpdate' => $isUpdate,
-            ])
+        'title' => Yii::t('app', 'Agency'),
+        'indexRoute' => $indexRoute,
+        'content' => $this->render('form_sections/_content', [
+            'model' => $model,
+            'form' => $form,
+            'isUpdate' => $isUpdate,
+            'countries' => $countries,
+            'status' => $status,
+        ])
     ]) ?>
 
     <?php ActiveForm::end(); ?>

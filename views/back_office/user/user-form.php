@@ -4,6 +4,7 @@
 /** @var app\models\forms\back_office\UserForm $model */
 /** @var array $roles */
 /** @var array $indexRoute */
+/** @var array $status */
 
 use yii\bootstrap5\ActiveForm;
 
@@ -29,14 +30,15 @@ $isUpdate = !empty($model->hash);
     ]); ?>
 
     <?= $this->render('@adshowcase.layouts/partials/_form-section', [
-            'title' => Yii::t('app', 'User'),
-            'indexRoute' => $indexRoute,
-            'content' => $this->render('form_sections/_content', [
-                'model' => $model,
-                'form' => $form,
-                'isUpdate' => $isUpdate,
-                'roles' => $roles,
-            ])
+        'title' => Yii::t('app', 'User'),
+        'indexRoute' => $indexRoute,
+        'content' => $this->render('form_sections/_content', [
+            'model' => $model,
+            'form' => $form,
+            'isUpdate' => $isUpdate,
+            'roles' => $roles,
+            'status' => $status,
+        ])
     ]) ?>
 
     <?php ActiveForm::end(); ?>

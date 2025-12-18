@@ -7,8 +7,8 @@
  * - Claves primarias BIGINT para entidades con crecimiento potencial (creative, logs, etc.).
  * - Índices pensados para filtros habituales (brand/agency/device/format/country/sales_type).
  * - FKs con acciones ON DELETE adecuadas:
- *     * CASCADE cuando la entidad hija no tiene sentido sin su padre (p. ej. fav_list_item).
- *     * SET NULL cuando el vínculo es referencial pero no esencial (p. ej. product en creative).
+ * * CASCADE cuando la entidad hija no tiene sentido sin su padre (p. ej. fav_list_item).
+ * * SET NULL cuando el vínculo es referencial pero no esencial (p. ej. product en creative).
  *
  * Nota: las tablas de RBAC (auth_*) NO se crean aquí; se aplican con las migraciones oficiales de Yii2.
  */
@@ -225,6 +225,7 @@ class m251115_195201_create_adshowcase_core extends Migration
          */
         $this->createTable('{{%creative}}', [
             'id' => $this->bigPrimaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'asset_file_id' => $this->bigInteger()->notNull(),
             'url_thumbnail' => $this->string(500)->notNull(),
             'title' => $this->string(255)->notNull(),
@@ -234,8 +235,8 @@ class m251115_195201_create_adshowcase_core extends Migration
             'country_id' => $this->integer()->notNull(),
             'format_id' => $this->integer()->notNull(),
             'sales_type_id' => $this->integer()->notNull(),
-            'product_id' => $this->integer()->null(),
-            'language' => $this->char(2)->notNull(),
+            'product_id' => $this->integer()->notNull(),
+            'language_id' => $this->integer()->notNull(),
             'click_url' => $this->string(500)->null(),
             'workflow_status' => $workflowStatusEnum . " DEFAULT 'draft'",
             'status' => $statusEnum . " DEFAULT 'active'",
@@ -252,6 +253,7 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->createIndex('idx_creative_country', '{{%creative}}', 'country_id');
         $this->createIndex('idx_creative_sales_type', '{{%creative}}', 'sales_type_id');
         $this->createIndex('idx_creative_status', '{{%creative}}', 'status');
+        $this->createIndex('idx_creative_language_id', '{{%creative}}', 'language_id');
 
         // FKs (ver políticas de borrado)
         $this->addForeignKey('fk_creative_asset', '{{%creative}}', 'asset_file_id', '{{%asset_file}}', 'id', 'RESTRICT', 'CASCADE');
@@ -261,8 +263,9 @@ class m251115_195201_create_adshowcase_core extends Migration
         $this->addForeignKey('fk_creative_format', '{{%creative}}', 'format_id', '{{%format}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_country', '{{%creative}}', 'country_id', '{{%country}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_sales_type', '{{%creative}}', 'sales_type_id', '{{%sales_type}}', 'id', 'RESTRICT', 'CASCADE');
-        $this->addForeignKey('fk_creative_product', '{{%creative}}', 'product_id', '{{%product}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('fk_creative_product', '{{%creative}}', 'product_id', '{{%product}}', 'id', 'RESTRICT', 'CASCADE');
         $this->addForeignKey('fk_creative_user', '{{%creative}}', 'user_id', '{{%user}}', 'id', 'RESTRICT', 'CASCADE');
+        $this->addForeignKey('fk_creative_language_id', '{{%creative}}', 'language_id', '{{%language_locale}}', 'id', 'RESTRICT', 'CASCADE');
 
         /*
          * =========================

@@ -7,7 +7,7 @@ use app\models\Device;
 use Yii;
 use yii\base\Model;
 
-final class DeviceForm extends Model
+class DeviceForm extends Model
 {
     public const FORM_NAME = 'device-form';
 
@@ -51,7 +51,7 @@ final class DeviceForm extends Model
             [['name'], 'string', 'max' => 100],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],

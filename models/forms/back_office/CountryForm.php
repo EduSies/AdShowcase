@@ -7,7 +7,7 @@ use app\models\Country;
 use Yii;
 use yii\base\Model;
 
-final class CountryForm extends Model
+class CountryForm extends Model
 {
     public const FORM_NAME = 'country-form';
 
@@ -78,7 +78,7 @@ final class CountryForm extends Model
             ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'skipOnEmpty' => true, 'message' => Yii::t('app','Use lowercase letters, numbers and dashes only.')],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],

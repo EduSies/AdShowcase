@@ -4,7 +4,11 @@
 /** @var app\models\forms\back_office\UserForm $model */
 /** @var bool $isUpdate */
 /** @var array $roles */
+/** @var array $status */
 /** @var yii\bootstrap5\ActiveForm $form */
+
+use app\widgets\Icon;
+use yii\helpers\Html;
 
 $submitIcon  = $isUpdate ? 'bi-pencil-square' : 'bi-plus-circle';
 $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
@@ -24,7 +28,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
         <?= $form->field($model, 'username')
             ->textInput([
                 'maxlength' => true,
-                'placeholder' => Yii::t('app', 'Username'),
+                'placeholder' => Yii::t('app', 'User name'),
             ]
         ) ?>
     </div>
@@ -58,7 +62,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
     </div>
     <div class="col-md-5">
         <?= $form->field($model, 'status')->dropDownList(
-            \app\helpers\StatusHelper::statusesFilters(),
+            $status,
             ['prompt' => Yii::t('app', 'Select status')]
         ) ?>
     </div>
@@ -109,17 +113,17 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 <div class="row g-3">
     <div class="col-md-10">
         <div class="mt-4 d-flex justify-content-end gap-2">
-            <?= \yii\bootstrap5\Html::submitButton(
-                    \app\widgets\Icon::widget([
-                        'icon' => $submitIcon,
-                        'size' => \app\widgets\Icon::SIZE_24,
-                        'options' => ['class' => 'flex-shrink-0'],
-                    ]) .
-                    \yii\helpers\Html::tag('span', $submitLabel, ['class' => 'ms-2']),
-                    [
-                        'class'  => $isUpdate ? 'btn btn-primary' : 'btn btn-success',
-                        'encode' => false,
-                    ]
+            <?= Html::submitButton(
+                Icon::widget([
+                    'icon' => $submitIcon,
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]) .
+                Html::tag('span', $submitLabel, ['class' => 'ms-2']),
+                [
+                    'class'  => $isUpdate ? 'btn btn-primary' : 'btn btn-success',
+                    'encode' => false,
+                ]
             ) ?>
         </div>
     </div>

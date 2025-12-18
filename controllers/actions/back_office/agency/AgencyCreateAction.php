@@ -7,6 +7,7 @@ namespace app\controllers\actions\back_office\agency;
 use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\forms\back_office\AgencyForm;
 use app\services\back_office\agency\BackOfficeAgencyCreateService;
+use app\services\back_office\country\CountryListService;
 use Yii;
 use yii\bootstrap5\ActiveForm;
 
@@ -44,6 +45,8 @@ final class AgencyCreateAction extends BaseBackOfficeAction
         return $this->controller->render($this->view, [
             'indexRoute' => $this->indexRoute,
             'model' => $model,
+            'countries' => (new CountryListService())->getCountriesDropDown(),
+            'status' => \app\helpers\StatusHelper::statusFilter(3),
         ]);
     }
 }

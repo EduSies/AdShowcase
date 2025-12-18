@@ -14,7 +14,7 @@ use yii\db\Expression;
  * - status enum
  * - created_at, updated_at
  */
-final class SalesType extends ActiveRecord
+class SalesType extends ActiveRecord
 {
     public static function tableName(): string
     {
@@ -44,7 +44,7 @@ final class SalesType extends ActiveRecord
             ['name', 'string', 'max' => 150],
             ['name', 'unique'],
 
-            ['status', 'in', 'range' => StatusHelper::getRange(3)],
+            ['status', 'in', 'range' => StatusHelper::getStatusRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
             [['created_at', 'updated_at'], 'safe'],
@@ -52,8 +52,8 @@ final class SalesType extends ActiveRecord
     }
 
     // Relaciones
-/*    public function getCreatives()
+    public function getCreatives()
     {
         return $this->hasMany(Creative::class, ['sales_type_id' => 'id']);
-    }*/
+    }
 }

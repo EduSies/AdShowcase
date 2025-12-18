@@ -51,7 +51,7 @@ final class UserIndexAction extends BaseDataTableAction
                 ['data' => 'id', 'title' => Yii::t('app', 'ID')],
                 ['data' => 'full_name', 'title' => Yii::t('app', 'Name')],
                 ['data' => 'email_username', 'title' => Yii::t('app', 'Email & Username')],
-                ['data' => 'type', 'title' => Yii::t('app', 'Type')],
+                ['data' => 'type', 'title' => Yii::t('app', 'User type')],
                 ['data' => 'language_name', 'title' => Yii::t('app', 'Default Language')],
                 [
                     'data' => 'status',

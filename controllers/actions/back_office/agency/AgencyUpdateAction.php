@@ -8,6 +8,7 @@ use app\controllers\actions\back_office\BaseBackOfficeAction;
 use app\models\Agency;
 use app\models\forms\back_office\AgencyForm;
 use app\services\back_office\agency\BackOfficeAgencyUpdateService;
+use app\services\back_office\country\CountryListService;
 use Yii;
 use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
@@ -64,6 +65,8 @@ final class AgencyUpdateAction extends BaseBackOfficeAction
         return $this->controller->render($this->view, [
             'indexRoute' => $this->indexRoute,
             'model' => $model,
+            'countries' => (new CountryListService())->getCountriesDropDown(),
+            'status' => \app\helpers\StatusHelper::statusFilter(3),
         ]);
     }
 }

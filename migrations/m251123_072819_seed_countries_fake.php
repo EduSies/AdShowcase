@@ -27,7 +27,9 @@ class m251123_072819_seed_countries_fake extends Migration
 {
     /** @var array[] [iso, iso3, name, continent_code, currency_code, status] */
     private array $rows = [
+        // --- EUROPA ---
         ['ES','ESP','Spain','EU','EUR','active'],
+        ['AD','AND','Andorra','EU','EUR','active'],
         ['PT','PRT','Portugal','EU','EUR','active'],
         ['FR','FRA','France','EU','EUR','active'],
         ['DE','DEU','Germany','EU','EUR','active'],
@@ -51,26 +53,40 @@ class m251123_072819_seed_countries_fake extends Migration
         ['SK','SVK','Slovakia','EU','EUR','active'],
         ['SI','SVN','Slovenia','EU','EUR','active'],
         ['HR','HRV','Croatia','EU','EUR','active'],
+        ['UA','UKR','Ukraine','EU','UAH','active'],
 
+        // --- NORTEAMÉRICA ---
         ['US','USA','United States','NA','USD','active'],
         ['CA','CAN','Canada','NA','CAD','active'],
         ['MX','MEX','Mexico','NA','MXN','active'],
 
+        // --- SUDAMÉRICA ---
         ['BR','BRA','Brazil','SA','BRL','active'],
         ['AR','ARG','Argentina','SA','ARS','active'],
         ['CL','CHL','Chile','SA','CLP','active'],
+        ['CO','COL','Colombia','SA','COP','active'],
+        ['PE','PER','Peru','SA','PEN','active'],
 
+        // --- ASIA / ORIENTE MEDIO ---
         ['JP','JPN','Japan','AS','JPY','active'],
         ['CN','CHN','China','AS','CNY','active'],
+        ['KR','KOR','South Korea','AS','KRW','active'],
         ['IN','IND','India','AS','INR','active'],
+        ['SG','SGP','Singapore','AS','SGD','active'],
         ['AE','ARE','United Arab Emirates','AS','AED','active'],
+        ['SA','SAU','Saudi Arabia','AS','SAR','active'],
+        ['IL','ISR','Israel','AS','ILS','active'],
+        ['TR','TUR','Türkiye','AS','TRY','active'],
+        ['TH','THA','Thailand','AS','THB','active'],
 
+        // --- OCEANÍA ---
         ['AU','AUS','Australia','OC','AUD','active'],
         ['NZ','NZL','New Zealand','OC','NZD','active'],
 
+        // --- ÁFRICA ---
         ['ZA','ZAF','South Africa','AF','ZAR','active'],
         ['EG','EGY','Egypt','AF','EGP','active'],
-        ['TR','TUR','Türkiye','AS','TRY','active'],
+        ['MA','MAR','Morocco','AF','MAD','active'],
     ];
 
     public function safeUp()

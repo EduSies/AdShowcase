@@ -154,7 +154,7 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
     protected function addStatusColumn(array $rows, string $view, string $statusKey = 'status'): array
     {
         // 1. Pre-cargamos las traducciones del Helper para no llamar a la función en cada fila
-        $statusLabels = StatusHelper::statusesFilters();
+        $statusLabels = StatusHelper::statusFilter();
 
         return $this->addRenderedColumn(
             $rows,

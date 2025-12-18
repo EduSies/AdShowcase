@@ -2,8 +2,13 @@
 
 /** @var yii\web\View $this */
 /** @var app\models\forms\back_office\AgencyForm $model */
-/** @var $isUpdate */
+/** @var bool $isUpdate */
 /** @var Yii\bootstrap5\ActiveForm $form */
+/** @var array $countries */
+/** @var array $status */
+
+use app\widgets\Icon;
+use yii\helpers\Html;
 
 $submitIcon  = $isUpdate ? 'bi-pencil-square' : 'bi-plus-circle';
 $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
@@ -18,14 +23,16 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 </div>
 <div class="row g-3">
     <div class="col-md-6">
-        <?= $form->field($model, 'country_id')
-            ->textInput(['maxlength' => true, 'placeholder' => Yii::t('app', 'Select country')]) ?>
+        <?= $form->field($model, 'country_id')->dropDownList(
+            $countries,
+            ['prompt' => Yii::t('app', 'Select country')]
+        ) ?>
     </div>
 </div>
 <div class="row g-3">
     <div class="col-md-6">
         <?= $form->field($model, 'status')->dropDownList(
-            \app\helpers\StatusHelper::statusesFilters(3),
+            $status,
             ['prompt' => Yii::t('app', 'Select status')]
         ) ?>
     </div>
@@ -34,13 +41,13 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 <div class="row g-3">
     <div class="col-md-6">
         <div class="mt-4 d-flex justify-content-end gap-2">
-            <?= \yii\bootstrap5\Html::submitButton(
-                    \app\widgets\Icon::widget([
+            <?= Html::submitButton(
+                    Icon::widget([
                         'icon' => $submitIcon,
-                        'size' => \app\widgets\Icon::SIZE_24,
+                        'size' => Icon::SIZE_24,
                         'options' => ['class' => 'flex-shrink-0'],
                     ]) .
-                    \yii\helpers\Html::tag('span', $submitLabel, ['class' => 'ms-2']),
+                    Html::tag('span', $submitLabel, ['class' => 'ms-2']),
                     [
                         'class'  => $isUpdate ? 'btn btn-primary' : 'btn btn-success',
                         'encode' => false,

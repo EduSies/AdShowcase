@@ -54,6 +54,7 @@ final class UserCreateAction extends BaseBackOfficeAction
             'indexRoute' => $this->indexRoute,
             'model' => $model,
             'roles' => (new RbacRolesService)->getRolesDropDown(),
+            'status' => \app\helpers\StatusHelper::statusFilter(),
         ]);
     }
 }

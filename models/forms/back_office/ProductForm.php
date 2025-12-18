@@ -7,7 +7,7 @@ use app\models\Product;
 use Yii;
 use yii\base\Model;
 
-final class ProductForm extends Model
+class ProductForm extends Model
 {
     public const FORM_NAME = 'product-form';
 
@@ -67,7 +67,7 @@ final class ProductForm extends Model
             ],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],

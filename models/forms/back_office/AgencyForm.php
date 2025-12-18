@@ -8,7 +8,7 @@ use app\models\Country;
 use Yii;
 use yii\base\Model;
 
-final class AgencyForm extends Model
+class AgencyForm extends Model
 {
     public const FORM_NAME = 'agency-form';
 
@@ -85,7 +85,7 @@ final class AgencyForm extends Model
             ],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],

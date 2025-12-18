@@ -150,7 +150,7 @@ if (Yii::$app->session->hasFlash('error')) {
     </div>
 </main>
 
-<footer id="footer" class="fixed-bottom py-3 bg-white border-top">
+<footer id="footer" class="fixed-bottom py-3 bg-white border-top shadow-sm">
     <div class="container">
         <div class="row text-muted">
             <div class="col-md-6 text-center text-md-start">&copy; AdShowcase <?= date('Y') ?></div>

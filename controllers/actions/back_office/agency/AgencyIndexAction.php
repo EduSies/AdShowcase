@@ -43,7 +43,7 @@ final class AgencyIndexAction extends BaseDataTableAction
                 ['data' => 'hash', 'title' => Yii::t('app', 'Hash'), 'visible' => false],
                 ['data' => 'id', 'title' => Yii::t('app', 'ID')],
                 ['data' => 'name', 'title' => Yii::t('app', 'Name')],
-                ['data' => 'country_id', 'title' => Yii::t('app', 'Country')],
+                ['data' => 'country_name', 'title' => Yii::t('app', 'Country')],
                 [
                     'data' => 'status',
                     'title' => Yii::t('app', 'Status'),

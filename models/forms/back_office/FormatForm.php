@@ -7,7 +7,7 @@ use app\models\Format;
 use app\helpers\StatusHelper;
 use Yii;
 
-final class FormatForm extends Model
+class FormatForm extends Model
 {
     public const FORM_NAME = 'format-form';
 
@@ -67,7 +67,7 @@ final class FormatForm extends Model
             ],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],

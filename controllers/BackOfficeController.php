@@ -110,7 +110,7 @@ class BackOfficeController extends BaseWebController
             'country-delete' => ['class' => \app\controllers\actions\back_office\country\CountryDeleteAction::class],
 
             // ===== Creatives =====
-            //'creatives' => ['class' => \app\controllers\actions\back_office\creative\CreativeIndexAction::class],
+            'creatives' => ['class' => \app\controllers\actions\back_office\creative\CreativeIndexAction::class],
             'creatives-datatable' => ['class' => \app\controllers\actions\back_office\creative\CreativeDatatableAction::class],
             'creative-create' => ['class' => \app\controllers\actions\back_office\creative\CreativeCreateAction::class],
             'creative-update' => ['class' => \app\controllers\actions\back_office\creative\CreativeUpdateAction::class],

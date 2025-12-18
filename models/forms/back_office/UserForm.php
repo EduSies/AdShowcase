@@ -110,7 +110,7 @@ class UserForm extends Model
             [
                 'status',
                 'in',
-                'range' => StatusHelper::getRange(),
+                'range' => StatusHelper::getStatusRange(),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],
@@ -169,9 +169,9 @@ class UserForm extends Model
         return [
             'email' => Yii::t('app', 'Email'),
             'username' => Yii::t('app', 'User name'),
-            'type' => Yii::t('app', 'Type'),
+            'type' => Yii::t('app', 'User type'),
             'name' => Yii::t('app', 'Name'),
-            'surname' => Yii::t('app', 'Surname'),
+            'surname' => Yii::t('app', 'Last name'),
             'status' => Yii::t('app', 'Status'),
             'language_id' => Yii::t('app', 'Default Language'),
             'avatar_url' => Yii::t('app', 'Avatar'),

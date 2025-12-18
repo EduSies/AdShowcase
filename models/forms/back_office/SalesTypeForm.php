@@ -7,7 +7,7 @@ use yii\base\Model;
 use app\models\SalesType;
 use Yii;
 
-final class SalesTypeForm extends Model
+class SalesTypeForm extends Model
 {
     public const FORM_NAME = 'sales-type-form';
 
@@ -72,7 +72,7 @@ final class SalesTypeForm extends Model
             ],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],

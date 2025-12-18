@@ -11,7 +11,6 @@ use app\widgets\Icon;
 use nullref\datatable\DataTable;
 use yii\bootstrap5\Html;
 use yii\helpers\Json;
-use yii\helpers\Url;
 
 $this->title = $title;
 

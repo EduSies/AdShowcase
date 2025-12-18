@@ -17,7 +17,7 @@ use Yii;
  * - country_id int -> Country(id)
  * - created_at, updated_at
  */
-final class Agency extends ActiveRecord
+class Agency extends ActiveRecord
 {
     public static function tableName(): string
     {
@@ -56,7 +56,7 @@ final class Agency extends ActiveRecord
                 'targetAttribute' => ['country_id' => 'id'],
             ],
 
-            ['status', 'in', 'range' => StatusHelper::getRange(3)],
+            ['status', 'in', 'range' => StatusHelper::getStatusRange(3)],
             ['status', 'default', 'value' => StatusHelper::STATUS_ACTIVE],
 
             [['created_at', 'updated_at'], 'safe'],
@@ -77,8 +77,8 @@ final class Agency extends ActiveRecord
         return $this->hasOne(Country::class, ['id' => 'country_id']);
     }
 
-    /*    public function getCreatives()
-        {
-            return $this->hasMany(Creative::class, ['agency_id' => 'id']);
-        }*/
+    public function getCreatives()
+    {
+        return $this->hasMany(Creative::class, ['agency_id' => 'id']);
+    }
 }

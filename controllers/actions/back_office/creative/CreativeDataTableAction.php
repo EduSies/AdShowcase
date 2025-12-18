@@ -12,14 +12,14 @@ final class CreativeDataTableAction extends BaseDataTableAction
 {
     public ?string $can = 'creative.view';
     public ?string $modelClass = \app\models\Creative::class;
-    public ?string $view = '@app/views/back_office/creatives/index';
+    public ?string $view = '@app/views/back_office/creative/index';
 
     public function run()
     {
         $this->ensureCan($this->can);
 
         Yii::$app->response->format = Response::FORMAT_JSON;
-        // TODO: Implementar query real (filtros, orden, paginación)
+
         return [
             'data' => [],
             'recordsTotal' => 0,

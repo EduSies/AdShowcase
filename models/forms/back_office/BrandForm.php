@@ -7,7 +7,7 @@ use app\models\Brand;
 use Yii;
 use yii\base\Model;
 
-final class BrandForm extends Model
+class BrandForm extends Model
 {
     public const FORM_NAME = 'brand-form';
 
@@ -65,7 +65,7 @@ final class BrandForm extends Model
             ['url_slug', 'match', 'pattern' => '/^[a-z0-9]+(?:-[a-z0-9]+)*$/', 'message' => 'Use lowercase letters, numbers and dashes only.'],
 
             ['status', 'in',
-                'range' => StatusHelper::getRange(3),
+                'range' => StatusHelper::getStatusRange(3),
                 'message' => Yii::t('app', 'Invalid status.'),
             ],
             ['status', 'default', 'value' => $this->status],
