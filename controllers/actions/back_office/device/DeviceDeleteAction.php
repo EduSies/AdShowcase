@@ -16,7 +16,7 @@ final class DeviceDeleteAction extends BaseBackOfficeAction
     public ?string $can  = 'taxonomies.manage';
     public ?string $modelClass = Device::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/device/index';
+    public ?array $indexRoute = ['/back-office/devices'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class DeviceDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/brands']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

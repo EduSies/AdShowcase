@@ -15,7 +15,6 @@ final class BackOfficeSalesTypeUpdateService
         $salesType = SalesType::findOne(['hash' => $hash]);
 
         if (!$salesType) {
-            $form->addErrors($salesType->getErrors());
             return false;
         }
 

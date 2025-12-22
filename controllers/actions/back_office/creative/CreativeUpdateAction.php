@@ -15,8 +15,10 @@ use app\services\back_office\country\CountryListService;
 use app\services\back_office\creative\BackOfficeCreativeUpdateService;
 use app\services\back_office\device\DeviceListService;
 use app\services\back_office\format\FormatListService;
+use app\services\back_office\product\ProductListService;
 use app\services\back_office\sales_type\SalesTypeListService;
 use Yii;
+use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 
 final class CreativeUpdateAction extends BaseBackOfficeAction
@@ -24,6 +26,7 @@ final class CreativeUpdateAction extends BaseBackOfficeAction
     public ?string $can = 'creative.manage';
     public ?string $modelClass = CreativeForm::class;
     public ?string $view = '@app/views/back_office/creative/' . CreativeForm::FORM_NAME;
+    public ?array $indexRoute = ['/back-office/creatives'];
     public string $idParam = 'hash';
 
     public function run()
@@ -36,7 +39,7 @@ final class CreativeUpdateAction extends BaseBackOfficeAction
         }
 
         $class = $this->modelClass;
-        $creative = Creative::findOne($hash);
+        $creative = Creative::findOne(['hash' => $hash]);
 
         if (!$creative) {
             throw new NotFoundHttpException('Not found.');
@@ -56,13 +59,22 @@ final class CreativeUpdateAction extends BaseBackOfficeAction
             'format_id' => $creative->format_id,
             'sales_type_id' => $creative->sales_type_id,
             'product_id' => $creative->product_id,
-            'language_id' => $creative->language,
+            'language_id' => $creative->language_id,
             'click_url' => $creative->click_url,
             'workflow_status' => $creative->workflow_status,
             'status' => $creative->status,
         ]);
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($creative->assetFile) {
+            $model->preview_asset_url = $creative->assetFile->storage_path;
+            $model->preview_asset_mime = $creative->assetFile->mime;
+        }
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            return $this->controller->asJson(ActiveForm::validate($model));
+        }
+
+        if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
             $service = new BackOfficeCreativeUpdateService();
 
             if ($service->update($creative->hash, $model)) {
@@ -79,6 +91,7 @@ final class CreativeUpdateAction extends BaseBackOfficeAction
             'model' => $model,
             'brands' => (new BrandListService())->getBrandsDropDown(),
             'agencies' => (new AgencyListService())->getAgenciesDropDown(),
+            'products' => (new ProductListService())->getProductsDropDown(),
             'formats' => (new FormatListService())->getFormatsDropDown(),
             'devices' => (new DeviceListService())->getDevicesDropDown(),
             'salesTypes' => (new SalesTypeListService())->getSalesTypesDropDown(),

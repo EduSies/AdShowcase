@@ -14,7 +14,6 @@ final class BackOfficeCountryUpdateService
         $country = Country::findOne(['hash' => $hash]);
 
         if (!$country) {
-            $form->addErrors($country->getErrors());
             return false;
         }
 

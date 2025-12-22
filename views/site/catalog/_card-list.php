@@ -1,0 +1,49 @@
+<?php
+
+/** @var yii\web\View $this */
+/** @var array $creatives */
+
+use app\widgets\Icon;
+use yii\helpers\Url;
+
+?>
+
+<?php if (empty($creatives)): ?>
+
+    <div class="col-12">
+        <div class="d-flex flex-column justify-content-center align-items-center py-5 text-center fade-in-card">
+
+            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 120px; height: 120px;">
+
+                <?= Icon::widget([
+                    'icon' => 'bi-search',
+                    'options' => [
+                        'class' => 'text-secondary opacity-50',
+                        'style' => 'font-size: 3rem;'
+                    ]
+                ]) ?>
+
+            </div>
+
+            <h4 class="fw-bold text-dark mb-2"><?= Yii::t('app', 'No results found') ?></h4>
+            <p class="text-muted mb-4" style="max-width: 450px;">
+                <?= Yii::t('app', 'We couldn\'t find any creatives matching your filters. Try searching for a different term or clearing some filters.') ?>
+            </p>
+
+            <button class="btn btn-outline-primary rounded-pill px-4" onclick="window.location.href='<?= Url::to(['site/catalog']) ?>'">
+                <?= Yii::t('app', 'Clear all filters') ?>
+            </button>
+        </div>
+    </div>
+
+<?php else: ?>
+
+    <?php foreach ($creatives as $creative): ?>
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4 fade-in-card">
+            <?= $this->render('_item-creative', [
+                'creative' => $creative
+            ]) ?>
+        </div>
+    <?php endforeach; ?>
+
+<?php endif; ?>

@@ -5,6 +5,7 @@
 /** @var array $indexRoute */
 /** @var array $brands */
 /** @var array $agencies */
+/** @var array $products */
 /** @var array $formats */
 /** @var array $devices */
 /** @var array $salesTypes */
@@ -48,6 +49,7 @@ $isUpdate = !empty($model->hash);
             'isUpdate' => $isUpdate,
             'brands' => $brands,
             'agencies' => $agencies,
+            'products' => $products,
             'formats' => $formats,
             'devices' => $devices,
             'salesTypes' => $salesTypes,

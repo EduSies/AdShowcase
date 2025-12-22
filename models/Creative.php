@@ -64,7 +64,7 @@ class Creative extends ActiveRecord
     {
         return [
             // Campos Requeridos
-            [['hash', 'asset_file_id', 'url_thumbnail', 'title', 'brand_id', 'agency_id', 'device_id', 'country_id', 'format_id', 'sales_type_id', 'product_id', 'language_id', 'user_id'], 'required'],
+            [['hash', 'asset_file_id', 'url_thumbnail', 'title', 'brand_id', 'agency_id', 'device_id', 'country_id', 'format_id', 'sales_type_id', 'product_id', 'language_id', 'user_id', 'click_url'], 'required'],
 
             [['hash'], 'string', 'min' => 16, 'max' => 16],
             [['hash'], 'unique'],

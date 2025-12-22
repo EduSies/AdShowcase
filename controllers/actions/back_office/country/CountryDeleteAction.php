@@ -16,7 +16,7 @@ final class CountryDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public string $idParam = 'hash';
     public ?string $modelClass = Country::class;
-    public ?string $view = '@app/views/back_office/country/index';
+    public ?array $indexRoute = ['/back-office/countries'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class CountryDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/countries']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

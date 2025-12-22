@@ -14,12 +14,10 @@ final class BackOfficeProductDeleteService
         $product = Product::findOne(['hash' => $hash]);
 
         if (!$product) {
-            $product->addErrors($product->getErrors());
             return false;
         }
 
         if ($product->delete() === false) {
-            $product->addErrors($product->getErrors());
             return false;
         }
 

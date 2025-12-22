@@ -15,7 +15,6 @@ final class BackOfficeDeviceUpdateService
         $device = Device::findOne(['hash' => $hash]);
 
         if (!$device) {
-            $form->addErrors($device->getErrors());
             return false;
         }
 

@@ -16,7 +16,7 @@ final class UserDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'users.manage';
     public ?string $modelClass = User::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/user/index';
+    public ?array $indexRoute = ['/back-office/users'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class UserDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/users']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

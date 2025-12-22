@@ -10,76 +10,84 @@ use Yii;
 
 final class BackOfficeUserCreateService
 {
+    use UserAssetTrait;
+
+    public function __construct()
+    {
+        $this->initUploadPath();
+    }
+
     /**
      * Create entity from form (SCENARIO_CREATE). Returns model or null on error.
      */
     public function create(UserForm $form): ?User
     {
-        $user = new User();
+        // Reiniciar registro de archivos temporales del trait
+        $this->tempFiles = [];
 
-        $user->setAttributes([
-            'email' => mb_strtolower($form->email),
-            'username' => $form->username,
-            'type' => $form->type,
-            'name' => $form->name,
-            'surname' => $form->surname,
-            'status' => $form->status,
-            'language_id' => $form->language_id,
-            'avatar_url' => $form->avatar_url,
-        ]);
-
-        $user->generateAuthKey();
-
-        if (empty($user->hash)) {
-            $user->hash = Yii::$app->security->generateRandomString(16);
-        }
-
-        if ($form->password !== '') {
-            $user->setPassword($form->password);
-        }
-
-        if (!$user->save()) {
-            $form->addErrors($user->getErrors());
+        // Validamos el form antes de abrir transacción
+        if (!$form->validate()) {
             return null;
         }
 
-        if (null !== ($rbacError = $this->syncRbacRole($user, $form->type))) {
-            $form->addError('type', $rbacError);
-            return null;
-        }
+        $transaction = Yii::$app->db->beginTransaction();
 
-        return $user;
-    }
+        try {
+            $user = new User();
 
-    /**
-     * Assign RBAC role matching $type to given User.
-     *
-     * @param User   $user
-     * @param string $type Role name (same as user type)
-     *
-     * @return string|null Error message on failure, or null on success.
-     */
-    private function syncRbacRole(User $user, string $type): ?string
-    {
-        if ($type === '') return null;
+            // Procesar Avatar (Base64 -> Archivo) usando el Trait
+            // Si esto crea un archivo, se añade a $this->tempFiles
+            $processedAvatar = $this->processAvatar($form->avatar_url);
 
-        $auth = Yii::$app->authManager;
-        $role = $auth->getRole($type);
-
-        if ($role === null) {
-            $message = Yii::t('app', 'RBAC role "{role}" not found while creating user #{id}', [
-                'role' => $type,
-                'id' => $user->id,
+            $user->setAttributes([
+                'email' => mb_strtolower($form->email),
+                'username' => $form->username,
+                'type' => $form->type,
+                'name' => $form->name,
+                'surname' => $form->surname,
+                'status' => $form->status,
+                'language_id' => $form->language_id,
+                'avatar_url' => $processedAvatar,
             ]);
-            Yii::warning($message, __METHOD__);
 
-            return $message;
+            $user->generateAuthKey();
+
+            if (empty($user->hash)) {
+                $user->hash = Yii::$app->security->generateRandomString(16);
+            }
+
+            if ($form->password !== '') {
+                $user->setPassword($form->password);
+            }
+
+            // Guardar Usuario
+            if (!$user->save()) {
+                $form->addErrors($user->getErrors());
+                throw new \Exception(Yii::t('app', 'Error saving user.'));
+            }
+
+            // Asignar Rol (RBAC) dentro de la transacción
+            if (null !== ($rbacError = $this->syncRbacRole($user, $form->type))) {
+                $form->addError('type', $rbacError);
+                throw new \Exception($rbacError);
+            }
+
+            // Confirmar transacción
+            $transaction->commit();
+
+            // Limpiamos el array temporal para que NO se borren los archivos (éxito)
+            $this->tempFiles = [];
+
+            return $user;
+
+        } catch (\Exception $e) {
+            // En caso de error: Rollback BD y Rollback Archivos
+            $transaction->rollBack();
+            $this->rollbackFiles(); // Borra la foto si se llegó a crear
+
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Creation failed: ') . $e->getMessage());
+
+            return null;
         }
-
-        // Por si acaso alguien ha asignado algo antes (no debería en create), eliminamos cualquier permiso existente
-        $auth->revokeAll((string) $user->id);
-        $auth->assign($role, (string) $user->id);
-
-        return null;
     }
 }

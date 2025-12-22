@@ -10,77 +10,96 @@ use Yii;
 
 final class BackOfficeUserUpdateService
 {
+    use UserAssetTrait;
+
+    public function __construct()
+    {
+        $this->initUploadPath();
+    }
+
     /**
      * Update existing user from form (SCENARIO_UPDATE).
      */
     public function update(string $hash, UserForm $form): bool
     {
+        $this->tempFiles = []; // Reiniciar temporales
+
         $user = User::findOne(['hash' => $hash]);
 
         if (!$user) {
-            $form->addErrors($user->getErrors());
             return false;
         }
 
-        $user->setAttributes([
-            'email' => mb_strtolower($form->email),
-            'username' => $form->username,
-            'type' => $form->type,
-            'name' => $form->name,
-            'surname' => $form->surname,
-            'status' => $form->status,
-            'language_id' => $form->language_id,
-            'avatar_url' => $form->avatar_url,
-        ]);
+        // Guardar URL antigua para limpieza posterior (fuera de la transacción)
+        $oldAvatarUrl = $user->avatar_url;
 
-        if ($form->password !== '') {
-            $user->setPassword($form->password);
-        }
-
-        if (!$user->save()) {
-            $form->addErrors($user->getErrors());
+        // Validar antes de iniciar transacción
+        if (!$form->validate()) {
             return false;
         }
 
-        if (null !== ($rbacError = $this->syncRbacRole($user, $form->type))) {
-            $form->addError('type', $rbacError);
-            return false;
-        }
+        $transaction = Yii::$app->db->beginTransaction();
 
-        return true;
-    }
+        try {
+            // Procesar nuevo Avatar (si hay cambio, se crea fichero físico)
+            $processedAvatar = $this->processAvatar($form->avatar_url);
 
-    /**
-     * Sync RBAC role with current user type:
-     * - revoke all existing roles
-     * - assign the role that matches $type (if exists).
-     *
-     * @param User   $user
-     * @param string $type
-     *
-     * @return string|null Error message on failure, or null on success.
-     */
-    private function syncRbacRole(User $user, string $type): ?string
-    {
-        if ($type === '') return null;
+            if ($processedAvatar) {
+                $user->avatar_url = $processedAvatar;
+            }
 
-        $auth = Yii::$app->authManager;
-        $role = $auth->getRole($type);
-
-        if ($role === null) {
-            $message = Yii::t('app', 'RBAC role "{role}" not found while updating user #{id}', [
-                'role' => $type,
-                'id' => $user->id,
+            $user->setAttributes([
+                'email' => mb_strtolower($form->email),
+                'username' => $form->username,
+                'type' => $form->type,
+                'name' => $form->name,
+                'surname' => $form->surname,
+                'status' => $form->status,
+                'language_id' => $form->language_id,
             ]);
-            Yii::warning($message, __METHOD__);
 
-            return $message;
+            if ($form->password !== '') {
+                $user->setPassword($form->password);
+            }
+
+            // Guardar cambios
+            if (!$user->save()) {
+                $form->addErrors($user->getErrors());
+                throw new \Exception(Yii::t('app', 'Error updating user.'));
+            }
+
+            // Sync RBAC
+            if (null !== ($rbacError = $this->syncRbacRole($user, $form->type))) {
+                $form->addError('type', $rbacError);
+                throw new \Exception($rbacError);
+            }
+
+            $transaction->commit();
+
+            // Éxito: vaciamos tempFiles para no borrar el nuevo avatar
+            $this->tempFiles = [];
+
+            // --- LIMPIEZA DE ARCHIVOS ANTIGUOS (POST-COMMIT) ---
+            try {
+                // Si el avatar cambió y el antiguo no es null, intentar borrarlo
+                if ($oldAvatarUrl && $oldAvatarUrl !== $user->avatar_url) {
+                    $this->deleteOrphanedAvatar($oldAvatarUrl);
+                }
+            } catch (\Exception $e) {
+                // Si falla la limpieza, solo logueamos (no fallamos la acción principal)
+                Yii::error('Error cleaning up orphaned avatar: ' . $e->getMessage());
+            }
+
+            return true;
+
+        } catch (\Exception $e) {
+            // Fallo: Rollback de DB y de Archivos nuevos
+            $transaction->rollBack();
+            $this->rollbackFiles(); // Borra el avatar nuevo que se acababa de subir
+
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Update failed: ') . $e->getMessage());
+
+            return false;
         }
-
-        // Por si acaso alguien ha asignado algo antes (no debería en create), eliminamos cualquier permiso existente
-        $auth->revokeAll((string) $user->id);
-        $auth->assign($role, (string) $user->id);
-
-        return null;
     }
 }

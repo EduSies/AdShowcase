@@ -14,12 +14,10 @@ final class BackOfficeSalesTypeDeleteService
         $salesType = SalesType::findOne(['hash' => $hash]);
 
         if (!$salesType) {
-            $salesType->addErrors($salesType->getErrors());
             return false;
         }
 
         if ($salesType->delete() === false) {
-            $salesType->addErrors($salesType->getErrors());
             return false;
         }
 

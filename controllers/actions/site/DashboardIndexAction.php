@@ -8,6 +8,7 @@ use Yii;
 
 final class DashboardIndexAction extends BaseSiteAction
 {
+    public ?string $layout = 'main';
     public ?string $view = '@app/views/site/index';
 
     public function run()

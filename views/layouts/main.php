@@ -10,6 +10,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 
@@ -20,6 +21,10 @@ $this->registerMetaTag(['name' => 'viewport', 'content' => 'width=device-width, 
 $this->registerMetaTag(['name' => 'description', 'content' => $this->params['meta_description'] ?? '']);
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
 $this->registerMetaTag(['http-equiv' => 'X-UA-Compatible', 'content' => 'IE=edge']);
+
+$this->registerMetaTag(['property' => 'og:image', 'content' => Url::to('@web/images/ad-showcase-og-image.png', true)]);
+$this->registerMetaTag(['property' => 'og:image:width', 'content' => '1200']);
+$this->registerMetaTag(['property' => 'og:image:height', 'content' => '630']);
 
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.svg')]);
 $this->registerLinkTag(['rel' => 'stylesheet', 'href' => 'https://fonts.googleapis.com/css2?family=Allerta+Stencil']);
@@ -41,7 +46,7 @@ if (Yii::$app->session->hasFlash('error')) {
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="d-flex flex-column min-vh-100" style="padding-top: 68px;padding-bottom: 59px;">
+<body class="d-flex flex-column min-vh-100" style="padding-top: 72px;padding-bottom: 57px;">
 <?php $this->beginBody() ?>
 
 <header id="header">
@@ -49,30 +54,30 @@ if (Yii::$app->session->hasFlash('error')) {
         NavBar::begin([
             'brandLabel' => Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['class' => 'navbar-expand-md bg-white fixed-top shadow-sm'],
+            'options' => ['id' => 'nav', 'class' => 'navbar-expand-md bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
+            'innerContainerOptions' => ['class' => 'container-fluid mx-4 mx-sm-5'],
+            'brandOptions' => ['style' => 'font-size: 30px;'],
         ]);
 
-        // Left side navigation (Catalog, Back Office)
+        // Left side navigation (Creative Catalog, Back Office)
         $leftItems = [
             [
                 'label' => Icon::widget([
-                        'icon' => 'bi-collection-play',
-                        'size' => Icon::SIZE_24,
-                        'options' => ['class' => 'flex-shrink-0'],
-                    ]) .
-                    Html::tag('span', Yii::t('app', 'Catalog'), ['class' => 'ms-2']),
-                'url' => ['/catalog/index'],
+                    'icon' => 'bi-grid-3x3-gap',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]),
+                'url' => ['/catalog'],
             ],
         ];
 
         if (!Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access')) {
             $leftItems[] = [
                 'label' => Icon::widget([
-                        'icon' => 'bi-gear',
-                        'size' => Icon::SIZE_24,
-                        'options' => ['class' => 'flex-shrink-0'],
-                    ]) .
-                    Html::tag('span', Yii::t('app', 'Back Office'), ['class' => 'ms-2']),
+                    'icon' => 'bi-gear',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]),
                 'url' => '#',
                 'linkOptions' => [
                     'data-bs-toggle' => 'offcanvas',
@@ -83,52 +88,89 @@ if (Yii::$app->session->hasFlash('error')) {
         }
 
         echo Nav::widget([
-            'options' => ['class' => 'navbar-nav mx-auto'],
+            'options' => ['class' => 'navbar-nav w-100 position-absolute align-items-center justify-content-center start-0'],
             'encodeLabels' => false,
             'items' => $leftItems,
         ]);
 
+        // Preparamos los datos del usuario actual
+        $identity = Yii::$app->user->identity;
+
+        // Asumimos que tienes una propiedad avatar_url. Si es null, usamos una imagen por defecto.
+        $avatarUrl = $identity->avatar_url ?? Yii::getAlias('@web/images/default-avatar.png');
+
+        // Nombre completo y Rol (Ajusta 'type' si tu campo de rol se llama diferente)
+        $fullName = Html::encode($identity->name . ' ' . $identity->surname);
+        $username = Html::encode($identity->username);
+        $roleName = Html::encode($identity->type ?? 'User'); // O usa RBAC si es necesario
+
         // Right side navigation (Logout)
         echo Nav::widget([
-            'options' => ['class' => 'navbar-nav gap-2'],
+            'options' => ['class' => 'navbar-nav gap-2 align-items-center justify-content-end w-100'],
             'items' => [
                 [
                     'label' => Icon::widget([
-                            'icon' => 'bi-globe',
-                            'size' => Icon::SIZE_24,
-                            'options' => ['class' => 'flex-shrink-0 me-1'],
-                        ]),
+                        'icon' => 'bi-globe',
+                        'size' => Icon::SIZE_24,
+                        'options' => ['class' => 'flex-shrink-0 me-1'],
+                    ]),
                     'encode' => false,
-                    'dropdownOptions' => ['class' => 'mt-2 shadow-lg'],
+                    'dropdownOptions' => ['class' => 'dropdown-menu-end mt-2 shadow-lg'],
                     'items' => LangHelper::getLanguageItems(),
-                    'linkOptions' => ['title' => Yii::t('app', 'Select language'), 'class' => 'nav-link'],
+                    'linkOptions' => [
+                        'id' => 'langDropdown',
+                        'class' => 'nav-link',
+                        'title' => Yii::t('app', 'Select language'),
+                    ],
                 ],
-                '<li class="nav-item">'
-                    . Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-inline'])
-                    . Html::submitButton(
-                        Icon::widget([
-                            'icon' => 'bi-box-arrow-right',
-                            'size' => Icon::SIZE_24,
-                            'options' => ['class' => 'flex-shrink-0 me-1'],
-                        ]) .
-                        Html::tag(
-                            'span',
-                            Html::encode(
-                                Yii::t(
-                                    'app',
-                                    'Logout ({username})',
-                                    ['username' => Yii::$app->user->identity->username]
-                                )
-                            ),
-                            ['class' => 'align-middle']
+                [
+                    // Imagen del Avatar
+                    'label' => Html::img($avatarUrl, [
+                        'class' => 'rounded-circle object-fit-cover border shadow-sm',
+                        'style' => 'width: 40px; height: 40px;', // Tamaño fijo para el círculo
+                        'alt' => $username,
+                    ]),
+                    'encode' => false, // Permite que se vea el icono
+
+                    // Opciones del menú desplegable
+                    'dropdownOptions' => [
+                        'class' => 'dropdown-menu-end mt-2 shadow-lg',
+                        'style' => 'min-width: 220px;',
+                    ],
+                    'linkOptions' => [
+                        'class' => 'nav-link p-0 ms-2',
+                        'id' => 'userDropdown',
+                        'role' => 'button',
+                        'data-bs-toggle' => 'dropdown',
+                        'aria-expanded' => 'false',
+                        'title' => Yii::t('app', 'Click to open user dropdown'),
+                    ],
+
+                    // El Contenido del Dropdown
+                    'items' => [
+                        Html::tag('div',
+                            Html::tag('div', $fullName, ['class' => 'fw-bold text-dark']) .
+                            Html::tag('div', '@' . $username, ['class' => 'text-muted small']) .
+                            Html::tag('div', $roleName, ['class' => 'badge rounded-pill text-bg-secondary mt-3']),
+                            ['class' => 'px-4 py-3']
                         ),
+                        Html::tag('hr','', ['class' => 'm-0 mx-4']),
                         [
-                            'class' => 'btn btn-sm btn-outline-danger logout d-inline-flex align-items-center gap-1',
-                            'encode' => false,
-                        ]
-                    )
-                    . Html::endForm() .
-                '</li>',
+                            'label' => Icon::widget([
+                                'icon' => 'bi-box-arrow-right',
+                                'size' => Icon::SIZE_16,
+                                'options' => ['class' => 'flex-shrink-0'],
+                            ]) . Html::tag('span', Yii::t('app', 'Logout'), ['class' => 'ms-2']),
+                            'url' => ['/auth/logout'],
+                            'linkOptions' => [
+                                'data-method' => 'post',
+                                'class' => 'dropdown-item text-danger py-2 px-4 fw-medium d-flex align-items-center',
+                                'id' => 'logout',
+                            ],
+                            'encode' => false, // Permite que se vea el icono
+                        ],
+                    ],
+                ],
             ],
         ]);
 

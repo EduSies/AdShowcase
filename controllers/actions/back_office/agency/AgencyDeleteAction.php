@@ -16,7 +16,7 @@ final class AgencyDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = Agency::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/agency/index';
+    public ?array $indexRoute = ['/back-office/agencies'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class AgencyDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/agencies']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

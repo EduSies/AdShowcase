@@ -8,6 +8,7 @@ use app\helpers\StatusHelper;
 use app\models\User;
 use Yii;
 use yii\base\Model;
+use yii\web\UploadedFile;
 
 /**
  * UserForm
@@ -56,7 +57,6 @@ class UserForm extends Model
         $scenarios[self::SCENARIO_UPDATE] = [
             'id', 'hash', 'email', 'username', 'type', 'name', 'surname', 'status',
             'language_id', 'avatar_url',
-            // password fields are optional on update
             'password', 'password_repeat',
         ];
         $scenarios[self::SCENARIO_DELETE] = ['hash'];
@@ -92,10 +92,18 @@ class UserForm extends Model
 
             // Types & lengths
             ['email', 'email'],
-            [['email', 'name', 'surname', 'avatar_url'], 'string', 'max' => 255],
+            [['email', 'name', 'surname'], 'string', 'max' => 255],
 
             ['type', 'string', 'max' => 32],
             ['language_id', 'integer'],
+
+            // Avatar URL (Puede ser URL corta o Base64 largo)
+            ['avatar_url', 'required',
+                'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE],
+                'message' => Yii::t('app', 'Please upload and crop a thumbnail image.')
+            ],
+            ['avatar_url', 'string'],
+            ['avatar_url', 'validateAvatarSize'],
 
             ['username', 'string', 'max' => 10], // Máximo 10 caracteres
             [
@@ -209,6 +217,30 @@ class UserForm extends Model
             if (!preg_match('/[\W_]/', $password)) {
                 $this->addError($attribute, Yii::t('app', 'Password must contain at least one symbol.'));
             }
+        }
+    }
+
+    /**
+     * Valida que el string Base64 del avatar no exceda el tamaño límite (2MB).
+     * Lógica idéntica a CreativeForm::validateThumbnailSize.
+     */
+    public function validateAvatarSize($attribute, $params)
+    {
+        $value = $this->$attribute;
+
+        // Si está vacío, es corto (ruta existente) o no es base64, ignoramos.
+        if (empty($value) || strlen($value) < 255 || !str_starts_with($value, 'data:image')) {
+            return;
+        }
+
+        // Estimación del tamaño en Bytes: (Carácteres * 3) / 4
+        // Restamos cabecera para mayor precisión si se desea, pero la estimación bruta es segura.
+        $sizeInBytes = (int) (strlen($value) * (3/4));
+
+        $limitBytes = 2 * 1024 * 1024; // 2MB
+
+        if ($sizeInBytes > $limitBytes) {
+            $this->addError($attribute, Yii::t('app', 'Avatar image cannot exceed 2MB.'));
         }
     }
 }

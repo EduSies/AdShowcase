@@ -46,6 +46,9 @@ class CreativeForm extends Model
     // ID generado para la BD
     public ?int $asset_file_id = null;
 
+    public ?string $preview_asset_url = null;
+    public ?string $preview_asset_mime = null;
+
     public function formName(): string
     {
         return self::FORM_NAME;
@@ -85,29 +88,24 @@ class CreativeForm extends Model
     public function rules(): array
     {
         return [
-            // --- 1. REGLAS DE SUBIDA DE VIDEO (Estricto: MP4, Max 25MB) ---
-            ['upload_asset', 'file',
-                'skipOnEmpty' => false,
-                // Permitimos MP4 y formatos de imagen
-                'extensions' => ['mp4', 'jpg', 'jpeg', 'png', 'webp'],
-                'checkExtensionByMimeType' => true,
-                // Ponemos el límite máximo global aquí (Video), el específico lo validamos abajo
-                'maxSize' => 25 * 1024 * 1024,
-                'on' => self::SCENARIO_CREATE
-            ],
-            ['upload_asset', 'file',
+            // --- REGLAS DE SUBIDA DE VIDEO (Estricto: MP4, Max 25MB) ---
+            [['upload_asset'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['upload_asset'], 'file',
                 'skipOnEmpty' => true,
                 'extensions' => ['mp4', 'jpg', 'jpeg', 'png', 'webp'],
                 'checkExtensionByMimeType' => true,
                 'maxSize' => 25 * 1024 * 1024,
-                'on' => self::SCENARIO_UPDATE
+                'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]
             ],
-
             ['upload_asset', 'validateAssetConstraints'],
 
-            // --- 2. REGLAS DE THUMBNAIL (Base64 o URL) ---
-            ['url_thumbnail', 'required', 'on' => self::SCENARIO_CREATE, 'message' => Yii::t('app', 'Please upload and crop a thumbnail image.')],
+            // --- REGLAS DE THUMBNAIL (Base64 o URL) ---
+            ['url_thumbnail', 'required',
+                'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE],
+                'message' => Yii::t('app', 'Please upload and crop a thumbnail image.')
+            ],
             ['url_thumbnail', 'string'],
+            ['url_thumbnail', 'validateThumbnailSize'],
 
             // --- 3. ID DE ASSET ---
             ['asset_file_id', 'integer'],
@@ -127,8 +125,8 @@ class CreativeForm extends Model
             // --- 5. CAMPOS DE TEXTO REQUERIDOS ---
             [[
                 'title', 'brand_id', 'agency_id', 'device_id', 'country_id',
-                'format_id', 'sales_type_id', 'language_id',
-                'workflow_status', 'status'
+                'format_id', 'sales_type_id', 'product_id', 'language_id',
+                'workflow_status', 'status', 'click_url'
             ], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
 
             // --- 5. REQUERIDO EN DELETE/UPDATE ---
@@ -216,6 +214,34 @@ class CreativeForm extends Model
             if ($size > $limit) {
                 $this->addError($attribute, Yii::t('app', 'Videos must not exceed 25MB.'));
             }
+        }
+    }
+
+    /**
+     * Valida que el string Base64 del thumbnail no exceda el tamaño límite (2MB).
+     * Fórmula: El tamaño en bytes es aprox (longitud_string * 3) / 4.
+     */
+    public function validateThumbnailSize($attribute, $params)
+    {
+        $value = $this->$attribute;
+
+        // Si está vacío o es una URL corta (ruta de archivo existente), no validamos tamaño
+        if (empty($value) || strlen($value) < 255 || !str_starts_with($value, 'data:image')) {
+            return;
+        }
+
+        // Cálculo aproximado del tamaño en Bytes desde Base64
+        // Quitamos la cabecera "data:image/jpeg;base64," para ser más precisos,
+        // aunque calcular sobre el total también sirve como aproximación segura.
+        $sizeInBytes = (int) (strlen($value) * (3/4));
+
+        // Padding: el '=' al final indica bytes vacíos, restamos si queremos precisión milimétrica,
+        // pero para un límite de seguridad, la estimación de arriba es suficiente.
+
+        $limitBytes = 2 * 1024 * 1024; // 2MB
+
+        if ($sizeInBytes > $limitBytes) {
+            $this->addError($attribute, Yii::t('app', 'The thumbnail image is too large. Max allowed size is 2MB.'));
         }
     }
 }

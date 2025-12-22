@@ -12,7 +12,9 @@ class CropperJsAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
 
-    public $css = [];
+    public $css = [
+        'css/cropper/custom-cropper.css',
+    ];
 
     public $js = [
         // Librería Core

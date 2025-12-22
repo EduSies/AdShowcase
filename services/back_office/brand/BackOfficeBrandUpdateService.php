@@ -17,7 +17,6 @@ final class BackOfficeBrandUpdateService
         $brand = Brand::findOne(['hash' => $hash]);
 
         if (!$brand) {
-            $form->addErrors($brand->getErrors());
             return false;
         }
 

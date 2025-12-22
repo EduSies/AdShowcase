@@ -1,0 +1,4 @@
+/* Estilo para que el área de selección del cropper sea redonda */
+cropper-selection.cropper-round, cropper-shade.cropper-round {
+    border-radius: 50%;
+}

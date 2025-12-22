@@ -14,7 +14,6 @@ final class BackOfficeAgencyUpdateService
         $agency = Agency::findOne(['hash' => $hash]);
 
         if (!$agency) {
-            $form->addErrors($agency->getErrors());
             return false;
         }
 

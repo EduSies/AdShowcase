@@ -16,7 +16,7 @@ final class BrandDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = Brand::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/brand/index';
+    public ?array $indexRoute = ['/back-office/brands'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class BrandDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/brands']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

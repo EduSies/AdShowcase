@@ -16,7 +16,7 @@ final class FormatDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = Format::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/format/index';
+    public ?array $indexRoute = ['/back-office/formats'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class FormatDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/formats']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

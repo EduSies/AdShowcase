@@ -1,5 +1,5 @@
 /**
- * Lógica para CropperJS v2.1.0
+ * Lógica para CropperJS v2.1.0 (Parametrizada)
  */
 document.addEventListener('DOMContentLoaded', function () {
     const elements = {
@@ -9,24 +9,33 @@ document.addEventListener('DOMContentLoaded', function () {
         previewContainer: document.getElementById('preview-container'),
         cropModalEl: document.getElementById('crop-modal'),
         cropBtn: document.getElementById('btn-crop-save'),
-
-        // Elementos Cropper
         cropperImage: document.querySelector('cropper-image'),
         cropperSelection: document.querySelector('cropper-selection'),
-
-        // Referencias para redimensionar
-        modalDialog: document.querySelector('#crop-modal .modal-dialog'),
-        modalBody: document.querySelector('#crop-modal .modal-body')
+        cropperShade: document.querySelector('cropper-shade')
     };
 
-    if (!elements.fileInput || !elements.cropModalEl || !elements.cropperImage) return;
+    if (!elements.fileInput || !elements.hiddenInput || !elements.cropModalEl) return;
+
+    if (elements.previewImage) {
+        elements.previewImage.addEventListener('click', function() {
+            elements.fileInput.click();
+        });
+    }
 
     const bs = window.bootstrap || bootstrap;
     const cropModal = new bs.Modal(elements.cropModalEl);
-
     let tempImageSrc = '';
 
-    // 1. Selección de archivo
+    // Leemos los data-attributes del input file. Si no existen, usamos los defaults (Creative Banner)
+    const getSettings = () => {
+        return {
+            aspectRatio: parseFloat(elements.fileInput.dataset.aspectRatio) || 1,
+            width: parseInt(elements.fileInput.dataset.cropWidth) || 400,
+            height: parseInt(elements.fileInput.dataset.cropHeight) || 400
+        };
+    };
+
+    // Selección de archivo
     elements.fileInput.addEventListener('change', function (e) {
         const files = e.target.files;
         if (files && files.length > 0) {
@@ -40,51 +49,94 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const reader = new FileReader();
             reader.onload = function (evt) {
-                // ★ CLAVE: No asignamos el src todavía. Lo guardamos.
                 tempImageSrc = evt.target.result;
-
-                // Abrimos el modal primero. La imagen se cargará cuando termine la animación.
                 cropModal.show();
             };
+
             reader.readAsDataURL(file);
         }
     });
 
-    // 2. Evento: Modal Visible
+    // Evento: Modal Visible (Configurar Aspect Ratio)
     elements.cropModalEl.addEventListener('shown.bs.modal', function () {
-        if (!tempImageSrc) return;
+        if (!tempImageSrc || !elements.cropperImage) return;
 
         elements.cropperImage.src = tempImageSrc;
 
         if (elements.cropperSelection) {
-            elements.cropperSelection.$center();
-            Object.assign(elements.cropperSelection, {
-                aspectRatio: 35 / 9,
-                initialCoverage: 0.8
-            });
+            const settings = getSettings();
+
+            if (settings.aspectRatio === 1) {
+                // Modo Redondo (Avatar)
+                elements.cropperSelection.classList.add('cropper-round');
+                if (elements.cropperShade) {
+                    elements.cropperShade.classList.add('cropper-round');
+                }
+            } else {
+                // Modo Rectangular (Banner)
+                elements.cropperSelection.classList.remove('cropper-round');
+                if (elements.cropperShade) {
+                    elements.cropperShade.classList.remove('cropper-round');
+                }
+            }
+
+            setTimeout(() => {
+                elements.cropperSelection.$center();
+
+                // Aplicar Aspect Ratio dinámico
+                Object.assign(elements.cropperSelection, {
+                    aspectRatio: settings.aspectRatio,
+                    initialCoverage: 0.5
+                });
+            }, 100);
         }
     });
 
-    // 3. Limpieza
+    // Limpieza al cerrar
     elements.cropModalEl.addEventListener('hidden.bs.modal', function () {
-        elements.cropperImage.src = '';
+        if (elements.cropperImage) elements.cropperImage.src = '';
         elements.fileInput.value = '';
         tempImageSrc = '';
     });
 
-    // 4. Guardar (Sin cambios)
-    elements.cropBtn.addEventListener('click', async function () {
-        if (!elements.cropperSelection) return;
-        try {
-            const canvas = await elements.cropperSelection.$toCanvas({ width: 1400, height: 360 });
-            const base64Data = canvas.toDataURL('image/jpeg', 0.9);
-            elements.hiddenInput.value = base64Data;
-            elements.previewImage.src = base64Data;
-            if (elements.previewContainer) {
-                elements.previewContainer.classList.remove('d-none');
-                elements.previewContainer.style.setProperty('display', 'flex', 'important');
+    // Guardar (Usar dimensiones dinámicas)
+    if (elements.cropBtn) {
+        elements.cropBtn.addEventListener('click', async function () {
+            if (!elements.cropperSelection) return;
+
+            const settings = getSettings();
+
+            try {
+                // Usar Width/Height dinámicos
+                const canvas = await elements.cropperSelection.$toCanvas({
+                    width: settings.width,
+                    height: settings.height
+                });
+
+                const base64Data = canvas.toDataURL('image/jpeg', 0.9); // Calidad 90%
+
+                elements.hiddenInput.value = base64Data;
+
+                if (elements.previewImage) elements.previewImage.src = base64Data;
+                if (elements.previewContainer) {
+                    elements.previewContainer.classList.remove('d-none');
+                    elements.previewContainer.style.setProperty('display', 'flex', 'important');
+                }
+
+                elements.fileInput.classList.remove('is-invalid');
+                elements.hiddenInput.classList.remove('is-invalid');
+
+                const parentDiv = elements.fileInput.closest('.mb-3');
+                if (parentDiv) {
+                    const errorMsg = parentDiv.querySelector('.invalid-feedback');
+                    if (errorMsg) errorMsg.textContent = '';
+                }
+
+                cropModal.hide();
+
+            } catch (error) {
+                console.error(error);
             }
-            cropModal.hide();
-        } catch (error) { console.error(error); }
-    });
+        });
+    }
 });

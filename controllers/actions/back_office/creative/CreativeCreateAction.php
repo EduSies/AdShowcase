@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\creative;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\controllers\actions\back_office\product\ProductCreateAction;
 use app\helpers\LangHelper;
 use app\helpers\StatusHelper;
 use app\models\forms\back_office\CreativeForm;
@@ -14,6 +15,7 @@ use app\services\back_office\country\CountryListService;
 use app\services\back_office\creative\BackOfficeCreativeCreateService;
 use app\services\back_office\device\DeviceListService;
 use app\services\back_office\format\FormatListService;
+use app\services\back_office\product\ProductListService;
 use app\services\back_office\sales_type\SalesTypeListService;
 use Yii;
 use yii\bootstrap5\ActiveForm;
@@ -54,6 +56,7 @@ final class CreativeCreateAction extends BaseBackOfficeAction
             'model' => $model,
             'brands' => (new BrandListService())->getBrandsDropDown(),
             'agencies' => (new AgencyListService())->getAgenciesDropDown(),
+            'products' => (new ProductListService())->getProductsDropDown(),
             'formats' => (new FormatListService())->getFormatsDropDown(),
             'devices' => (new DeviceListService())->getDevicesDropDown(),
             'salesTypes' => (new SalesTypeListService())->getSalesTypesDropDown(),

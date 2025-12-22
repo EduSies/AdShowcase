@@ -15,7 +15,6 @@ final class BackOfficeProductUpdateService
         $product = Product::findOne(['hash' => $hash]);
 
         if (!$product) {
-            $form->addErrors($product->getErrors());
             return false;
         }
 

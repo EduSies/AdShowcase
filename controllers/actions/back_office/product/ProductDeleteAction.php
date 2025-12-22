@@ -16,7 +16,7 @@ final class ProductDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = Product::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/product/index';
+    public ?array $indexRoute = ['/back-office/products'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class ProductDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/products']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

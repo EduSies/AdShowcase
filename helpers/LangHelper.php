@@ -74,7 +74,7 @@ class LangHelper
                         'country' => $config['flag'],
                         'options' => ['class' => 'me-2']
                     ]) . Yii::t('app', $config['label']),
-                'url' => ['/change-language/' . $code], // URL usa código (es-ES)
+                'url' => ['change-language/' . $code], // URL usa código (es-ES)
                 'active' => Yii::$app->language === $code,
                 'encode' => false,
             ];

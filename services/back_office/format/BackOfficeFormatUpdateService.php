@@ -15,7 +15,6 @@ final class BackOfficeFormatUpdateService
         $format = Format::findOne(['hash' => $hash]);
 
         if (!$format) {
-            $form->addErrors($format->getErrors());
             return false;
         }
 

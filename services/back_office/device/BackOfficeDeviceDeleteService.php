@@ -14,12 +14,10 @@ final class BackOfficeDeviceDeleteService
         $device = Device::findOne(['hash' => $hash]);
 
         if (!$device) {
-            $device->addErrors($device->getErrors());
             return false;
         }
 
         if ($device->delete() === false) {
-            $device->addErrors($device->getErrors());
             return false;
         }
 

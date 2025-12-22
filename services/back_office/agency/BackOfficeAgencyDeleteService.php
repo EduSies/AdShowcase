@@ -13,12 +13,10 @@ final class BackOfficeAgencyDeleteService
         $agency = Agency::findOne(['hash' => $hash]);
 
         if (!$agency) {
-            $agency->addErrors($agency->getErrors());
             return false;
         }
 
         if ($agency->delete() === false) {
-            $agency->addErrors($agency->getErrors());
             return false;
         }
 

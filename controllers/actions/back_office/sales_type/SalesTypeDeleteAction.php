@@ -16,7 +16,7 @@ final class SalesTypeDeleteAction extends BaseBackOfficeAction
     public ?string $can = 'taxonomies.manage';
     public ?string $modelClass = SalesType::class;
     public string $idParam = 'hash';
-    public ?string $view = '@app/views/back_office/sales_type/index';
+    public ?array $indexRoute = ['/back-office/sales-types'];
 
     public function run()
     {
@@ -45,6 +45,6 @@ final class SalesTypeDeleteAction extends BaseBackOfficeAction
             $ok ? Yii::t('app', 'Deleted successfully.') : Yii::t('app', 'Delete failed.')
         );
 
-        return $this->controller->redirect(['back-office/sales-types']);
+        return $this->controller->redirect($this->indexRoute);
     }
 }

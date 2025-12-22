@@ -27,4 +27,13 @@ abstract class BaseSiteAction extends Action
             throw new ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
         }
     }
+
+    protected function beforeRun()
+    {
+        if ($this->layout !== null) {
+            $this->controller->layout = $this->layout;
+        }
+
+        return parent::beforeRun();
+    }
 }

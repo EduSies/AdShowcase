@@ -10,6 +10,7 @@ return [
     'Dashboard' => 'Tablero de Control',
     'Back Office' => 'Panel de Administración',
     'Catalog' => 'Catálogo',
+    'Creative Catalog' => 'Catálogo de Creatividades',
     'Close' => 'Cerrar',
     'Actions' => 'Acciones',
     'Status' => 'Estado',
@@ -27,6 +28,8 @@ return [
     'Logout ({username})' => 'Cerrar sesión ({username})',
     'Email or username' => 'Correo o usuario',
     'Password' => 'Contraseña',
+    'Change password' => 'Cambiar contraseña',
+    'New password' => 'Nueva contraseña',
     'Remember' => 'Recordarme',
     'Did you forget password?' => '¿Olvidaste tu contraseña?',
     'Please fill out the following fields to login:' => 'Por favor, rellena los siguientes campos para iniciar sesión:',
@@ -122,31 +125,44 @@ return [
     'Email & Username' => 'Correo y Usuario',
     'User type' => 'Tipo de usuario',
     'Select user type' => 'Seleccionar tipo de usuario',
+    'User Data' => 'Datos de usuario',
     'Language ID (optional)' => 'ID de idioma (opcional)',
     'Avatar URL (optional)' => 'URL del avatar (opcional)',
     'Avatar' => 'Avatar',
+    'Avatar Image' => 'Imagen del avatar',
+    'Avatar Preview' => 'Vista previa del avatar',
+    'Click to change image' => 'Haz clic para cambiar la imagen',
     'Language' => 'Idioma',
 
     // ==========================================
-    // MÓDULO CREATIVIDADES (NUEVO)
+    // MÓDULO CREATIVIDADES
     // ==========================================
     'Creatives' => 'Creatividades',
     'Creative' => 'Creatividad',
     'New Creative' => 'Nueva creatividad',
-    'Creative Assets' => 'Material creativo',
+    'Creative assets' => 'Material creativo',
     'General Info' => 'Información general',
     'Technical Details' => 'Detalles técnicos',
+    'Technical details (filters)' => 'Detalles técnicos (Filtros)',
+    'Other technical details' => 'Otros detalles técnicos',
     'Status & Workflow' => 'Estado y flujo de trabajo',
 
     // Campos Específicos
     'Thumbnail gallery' => 'Imagen de galería',
-    'Video or Image File' => 'Fitxer de vídeo o imatge',
+    'Gallery Image Preview' => 'Vista previa de la galería',
+    'Preview Image Banner' => 'Vista previa del banner de imagen',
+    'Preview Video Banner' => 'Vista previa del banner de video',
+    'Video or Image File' => 'Archivo de vídeo o imagen',
     'Asset File ID' => 'ID de archivo activo',
     'Thumbnail URL' => 'URL de la miniatura',
     'Title' => 'Título',
     'Click URL' => 'URL de destino',
     'Destination URL' => 'URL de destino',
     'Created By' => 'Creado por',
+
+    // Modal Recorte
+    'Crop Image' => 'Recortar imagen',
+    'Crop & Save' => 'Recortar y Guardar',
 
     // Selects
     'Select Brand' => 'Seleccionar Marca',
@@ -156,6 +172,7 @@ return [
     'Select Sales Type' => 'Seleccionar Tipo de Venta',
     'Select Language' => 'Seleccionar Idioma',
     'Select Country' => 'Seleccionar País',
+    'Select Product' => 'Seleccionar Producto',
     'Select Status' => 'Seleccionar Estado',
     'Select Workflow' => 'Seleccionar Flujo',
 
@@ -173,6 +190,7 @@ return [
     'Video duration ({s}s) exceeds 30 seconds limit.' => 'La duración del vídeo ({s}s) excede el límite de 30 segundos.',
     'Please upload and crop a thumbnail image.' => 'Por favor, sube y recorta una imagen en miniatura.',
     'Only MP4 videos are allowed.' => 'Solo se permiten vídeos MP4.',
+    'Your browser does not support the video tag.' => 'Tu navegador no soporta la etiqueta de video.',
     'No asset file uploaded.' => 'No se ha subido ningún archivo de activo.',
     'Thumbnail processing failed.' => 'Error al procesar la miniatura.',
     'Failed to save asset file record.' => 'Error al guardar el registro del archivo de activo.',
@@ -327,4 +345,6 @@ return [
     // Errores HTTP
     'The above error occurred while the server was processing your request.' => 'El error anterior ocurrió mientras el servidor procesaba tu solicitud.',
     'If you believe this is a server error, please contact the administrator.' => 'Si crees que se trata de un error del servidor, por favor contacta con el administrador.',
+
+    'Click to open user dropdown' => 'Haz clic para abrir el menú de usuario',
 ];

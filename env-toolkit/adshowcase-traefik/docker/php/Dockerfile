@@ -19,6 +19,7 @@ RUN apt-get update  \
         libxml2-dev                               \
         libmagickwand-dev                         \
         openssh-client                            \
+        ffmpeg                                    \
     && rm -rf /var/lib/apt/lists/* \
     && pecl install imagick
 

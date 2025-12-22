@@ -14,12 +14,10 @@ final class BackOfficeFormatDeleteService
         $format = Format::findOne(['hash' => $hash]);
 
         if (!$format) {
-            $format->addErrors($format->getErrors());
             return false;
         }
 
         if ($format->delete() === false) {
-            $format->addErrors($format->getErrors());
             return false;
         }
 

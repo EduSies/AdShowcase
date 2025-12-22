@@ -45,6 +45,10 @@ class SiteController extends BaseWebController
                 'class' => \app\controllers\actions\site\DashboardIndexAction::class,
                 'sections' => $this->getSectionsMenu(),
             ],
+            'catalog' => [
+                'class' => \app\controllers\actions\site\CatalogIndexAction::class,
+                'sections' => $this->getSectionsMenu(),
+            ],
         ];
     }
 

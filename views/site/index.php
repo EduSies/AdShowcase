@@ -2,7 +2,6 @@
 
 /** @var yii\web\View $this */
 /** @var string $title */
-
 /** @var array $sections */
 
 use app\widgets\Icon;
@@ -25,7 +24,7 @@ $this->title = $title;
             <?php foreach ($sections as $section): ?>
                 <?php
                 $sectionLabel = Yii::t('app', $section['label'] ?? '');
-                $items        = $section['items'] ?? [];
+                $items = $section['items'] ?? [];
 
                 // Keep only visible items
                 $visibleItems = array_filter($items, static function (array $item): bool {
@@ -59,8 +58,8 @@ $this->title = $title;
                                         <?php if ($icon): ?>
                                             <div class="mt-3 d-flex justify-content-center">
                                                 <?= Icon::widget([
-                                                    'icon'    => $icon,
-                                                    'size'    => Icon::SIZE_56,
+                                                    'icon' => $icon,
+                                                    'size' => Icon::SIZE_56,
                                                     'options' => ['class' => 'text-muted'],
                                                 ]) ?>
                                             </div>

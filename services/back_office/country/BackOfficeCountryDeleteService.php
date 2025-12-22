@@ -13,12 +13,10 @@ final class BackOfficeCountryDeleteService
         $country = Country::findOne(['hash' => $hash]);
 
         if (!$country) {
-            $country->addErrors($country->getErrors());
             return false;
         }
 
         if ($country->delete() === false) {
-            $country->addErrors($country->getErrors());
             return false;
         }
 

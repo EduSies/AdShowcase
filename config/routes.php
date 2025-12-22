@@ -15,6 +15,9 @@ $rules = [
     'reset-password/<token:[A-Za-z0-9_\-\.]+>' => 'auth/reset-password',
     'verify-email/<token:[A-Za-z0-9_\-\.]+>' => 'auth/verify-email',
 
+    // --- Catalog Route ---
+    'catalog' => 'site/catalog',
+
     // --- Backoffice (module/prefix) ---
     'back-office' => 'back-office/index',
     'back-office/<action:[a-z0-9\-]+>/<hash:[A-Za-z0-9_\-]{16}>' => 'back-office/<action>',

@@ -10,6 +10,7 @@ return [
     'Dashboard' => 'Tauler de Control',
     'Back Office' => 'Panell d\'Administració',
     'Catalog' => 'Catàleg',
+    'Creative Catalog' => 'Catàleg de Creativitats',
     'Close' => 'Tancar',
     'Actions' => 'Accions',
     'Status' => 'Estat',
@@ -27,6 +28,8 @@ return [
     'Logout ({username})' => 'Tancar sessió ({username})',
     'Email or username' => 'Correu o usuari',
     'Password' => 'Contrasenya',
+    'Change password' => 'Canviar contrasenya',
+    'New password' => 'Nova contrasenya',
     'Remember' => 'Recorda\'m',
     'Did you forget password?' => 'Has oblidat la contrasenya?',
     'Please fill out the following fields to login:' => 'Si us plau, omple els camps següents per iniciar sessió:',
@@ -122,31 +125,44 @@ return [
     'Email & Username' => 'Correu i Usuari',
     'User type' => 'Tipus d\'usuari',
     'Select user type' => 'Selecciona tipus d\'usuari',
+    'User data' => 'Dades d\'usuari',
     'Language ID (optional)' => 'ID d\'idioma (opcional)',
     'Avatar URL (optional)' => 'URL de l\'avatar (opcional)',
     'Avatar' => 'Avatar',
+    'Avatar image' => 'Imatge de l\'avatar',
+    'Avatar Preview' => 'Vista prèvia de l\'avatar',
+    'Click to change image' => 'Fes clic per canviar la imatge',
     'Language' => 'Idioma',
 
     // ==========================================
-    // MÒDUL CREATIVITATS (NOU)
+    // MÒDUL CREATIVITATS
     // ==========================================
     'Creatives' => 'Creativitats',
     'Creative' => 'Creativitat',
     'New Creative' => 'Nova creativitat',
-    'Creative Assets' => 'Material creatiu',
-    'General Info' => 'Informació general',
+    'Creative assets' => 'Material creatiu',
+    'General info' => 'Informació general',
     'Technical Details' => 'Detalls tècnics',
+    'Technical details (filters)' => 'Detalls tècnics (Filtres)',
+    'Other technical details' => 'Altres detalls tècnics',
     'Status & Workflow' => 'Estat i flux de treball',
 
     // Camps Específics
     'Thumbnail gallery' => 'Imatge de galeria',
-    'Video or Image File' => 'Archivo de vídeo o imagen',
+    'Gallery Image Preview' => 'Vista prèvia de la galeria',
+    'Preview Image Banner' => 'Vista prèvia del bàner d\'imatge',
+    'Preview Video Banner' => 'Vista prèvia del bàner de vídeo',
+    'Video or Image File' => 'Fitxer de vídeo o imatge',
     'Asset File ID' => 'ID de fitxer actiu',
     'Thumbnail URL' => 'URL de la miniatura',
     'Title' => 'Títol',
     'Click URL' => 'URL de destí',
     'Destination URL' => 'URL de destí',
     'Created By' => 'Creat per',
+
+    // Modal Retall
+    'Crop Image' => 'Retallar imatge',
+    'Crop & Save' => 'Retallar i Desar',
 
     // Selects
     'Select Brand' => 'Selecciona Marca',
@@ -156,6 +172,7 @@ return [
     'Select Sales Type' => 'Selecciona Tipus de Venda',
     'Select Language' => 'Selecciona Idioma',
     'Select Country' => 'Selecciona País',
+    'Select Product' => 'Selecciona Producte',
     'Select Status' => 'Selecciona Estat',
     'Select Workflow' => 'Selecciona Flux',
 
@@ -173,6 +190,7 @@ return [
     'Video duration ({s}s) exceeds 30 seconds limit.' => 'La durada del vídeo ({s}s) excedeix el límit de 30 segons.',
     'Please upload and crop a thumbnail image.' => 'Si us plau, puja i retalla una imatge en miniatura.',
     'Only MP4 videos are allowed.' => 'Només es permeten vídeos MP4.',
+    'Your browser does not support the video tag.' => 'El teu navegador no suporta l\'etiqueta de vídeo.',
     'No asset file uploaded.' => 'No s\'ha pujat cap fitxer d\'actiu.',
     'Thumbnail processing failed.' => 'Error en processar la miniatura.',
     'Failed to save asset file record.' => 'Error en desar el registre del fitxer d\'actiu.',
@@ -327,4 +345,6 @@ return [
     // Errors HTTP
     'The above error occurred while the server was processing your request.' => 'L\'error anterior s\'ha produït mentre el servidor processava la teva sol·licitud.',
     'If you believe this is a server error, please contact the administrator.' => 'Si creus que es tracta d\'un error del servidor, si us plau contacta amb l\'administrador.',
+
+    'Click to open user dropdown' => 'Fes clic per obrir el menú d\'usuari',
 ];
