@@ -1,19 +1,34 @@
 <?php
 
-use kartik\select2\Select2;
-use yii\helpers\Inflector;
-use yii\helpers\Url;
+use app\widgets\Icon;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $filters array */
 /* @var $creatives array */
 /* @var $pageTitle string */
 /* @var $ajaxUrl string */
+/* @var $ajaxUrlCreateList string */
+/* @var $ajaxUrlToggleItem string */
+/* @var $ajaxUrlGetDropdown string */
+/* @var $availableOptions array */
 
 $this->title = $pageTitle;
 
-$this->registerJsVar('ajaxUrl', $ajaxUrl);
-$this->registerJsFile('@web/js/catalog-ajax.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+$id_filter_products = 'filter-products';
+$id_filter_formats = 'filter-formats';
+$id_filter_devices = 'filter-devices';
+$id_filter_countries = 'filter-countries';
+
+$this->registerJsVar('ajaxUrlCatalog', $ajaxUrl);
+$this->registerJsVar('ajaxUrlCreateList', $ajaxUrlCreateList);
+$this->registerJsVar('ajaxUrlToggleItem', $ajaxUrlToggleItem);
+$this->registerJsVar('ajaxUrlGetDropdown', $ajaxUrlGetDropdown);
+$this->registerJsVar('initialAvailableOptions', $availableOptions);
+
+$this->registerJsFile('@web/js/catalog.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+$this->registerJsFile('@web/js/modal-share.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+$this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 
 ?>
 
@@ -22,7 +37,7 @@ $this->registerJsFile('@web/js/catalog-ajax.js', ['depends' => [\yii\web\JqueryA
     <div class="container">
 
         <div class="row">
-            <div class="col-lg-6 col-md-12 col-12">
+            <div class="col-lg-7 col-md-12 col-12">
                 <div class="text-banner-adshowcase">
                     <div class="title-adshowcase mt-4 mt-sm-5"><?= Yii::t('app','AdShowcase') ?></div>
                     <div class="subtitle-adshowcase mt-4 mb-md-2 mb-xl-2"><?= Yii::t("app", "Browse innovative creatives from top advertisers and agencies to inspire your next campaign") ?></div>
@@ -30,224 +45,76 @@ $this->registerJsFile('@web/js/catalog-ajax.js', ['depends' => [\yii\web\JqueryA
             </div>
         </div>
 
-        <div id="search-filter" class="row mt-xl-4 mt-md-4 d-none d-lg-flex">
+        <div id="search-filter" class="position-relative row mt-xl-4 mt-md-4 d-none d-lg-flex">
+
             <div class="col-sm-3">
-<!--                    <?php
-/*                    $industryOptions = [];
-                foreach ($filters['industry'] as $key => $name) {
-                    $industryOptions[$key] = ['data-url_slug' => Inflector::slug($name)];
-                }
-                */?>
-                --><?php /*= exte\select2\Select2::widget([
+                <?= Html::dropDownList(
+                    'products',
+                    null,
+                    $filters['industry']['items'],
+                    array_merge([
                         'id' => $id_filter_products,
-                        'name' => 'format',
-                        'data' => $filters['industry'],
-                        'value' => ($isFilterProducts) ? array_keys($filtered_filters['industry']) : [],
-                        'options' => [
-                                'placeholder' => t('adshowcase', 'Industry'),
-                                'options' => $industryOptions,
-                        ],
-                        'valuesPreviewContainer' => '#search-filter-preview',
-                        'size' => \exte\select2\Select2::SMALL,
-                        'hideSearch' => true,
-                        'pluginOptions' => [
-                                'allowClear' => false,
-                                'multiple' => true,
-                                'tags' => false,
-                                'closeOnSelect' => false,
-                        ],
-                        'pluginEvents' => [
-                                'change' => 'function() {}',
-                        ]
-                ]); */?>
+                        'class' => 'form-select py-1 bg-white border-0 shadow-sm text-muted cursor-pointer',
+                        'prompt' => Yii::t('app', 'Industry'),
+                        'data-placeholder' => Yii::t('app', 'Industry'),
+                    ], $filters['industry']['attributes']) // Fusionamos los atributos data-slug
+                ) ?>
             </div>
 
             <div class="col-sm-3">
-<!--                    <?php
-/*                    $formatsOptions = [];
-                foreach ($filters['formats'] as $key => $name) {
-                    $formatsOptions[$key] = ['data-url_slug' => Inflector::slug($name)];
-                }
-                */?>
-                --><?php /*= exte\select2\Select2::widget([
+                <?= Html::dropDownList(
+                    'formats',
+                    null,
+                    $filters['formats']['items'],
+                    array_merge([
                         'id' => $id_filter_formats,
-                        'name' => 'format',
-                        'data' => $filters['formats'],
-                        'value' => ($isFilterFormats) ? array_keys($filtered_filters['formats']) : [],
-                        'options' => [
-                                'placeholder' => t('adshowcase','Formats'),
-                                'options' => $formatsOptions,
-                        ],
-                        'valuesPreviewContainer' => '#search-filter-preview',
-                        'size' => \exte\select2\Select2::SMALL,
-                        'hideSearch' => true,
-                        'pluginOptions' => [
-                                'allowClear' => false,
-                                'multiple' => true,
-                                'tags' => false,
-                                'closeOnSelect' => false,
-                        ],
-                        'pluginEvents' => [
-                                'change' => 'function() {}',
-                        ]
-                ]); */?>
+                        'class' => 'form-select py-1 bg-white border-0 shadow-sm text-muted cursor-pointer',
+                        'prompt' => Yii::t('app', 'Formats'),
+                        'data-placeholder' => Yii::t('app', 'Formats'),
+                    ], $filters['formats']['attributes'])
+                ) ?>
             </div>
 
             <div class="col-sm-3">
-<!--                    <?php
-/*                    $devicesOptions = [];
-                foreach ($filters['devices'] as $key => $name) {
-                    $devicesOptions[$key] = ['data-url_slug' => Inflector::slug($name)];
-                }
-                */?>
-                --><?php /*= exte\select2\Select2::widget([
+                <?= Html::dropDownList(
+                    'devices',
+                    null,
+                    $filters['devices']['items'],
+                    array_merge([
                         'id' => $id_filter_devices,
-                        'name' => 'format',
-                        'data' => $filters['devices'],
-                        'value' => ($isFilterDevices) ? array_keys($filtered_filters['devices']) : [],
-                        'options' => [
-                                'placeholder' => t('adshowcase','Devices'),
-                                'options' => $devicesOptions,
-                        ],
-                        'valuesPreviewContainer' => '#search-filter-preview',
-                        'size' => \exte\select2\Select2::SMALL,
-                        'hideSearch' => true,
-                        'pluginOptions' => [
-                                'allowClear' => false,
-                                'multiple' => true,
-                                'tags' => false,
-                                'closeOnSelect' => false,
-                        ],
-                        'pluginEvents' => [
-                                'change' => 'function() {}',
-                        ]
-                ]); */?>
+                        'class' => 'form-select py-1 bg-white border-0 shadow-sm text-muted cursor-pointer',
+                        'prompt' => Yii::t('app', 'Devices'),
+                        'data-placeholder' => Yii::t('app', 'Devices'),
+                    ], $filters['devices']['attributes'])
+                ) ?>
             </div>
 
             <div class="col-sm-3">
-<!--                    <?php
-/*                    $countriesOptions = [];
-                foreach ($filters['countries'] as $key => $name) {
-                    $countriesOptions[$key] = ['data-url_slug' => Inflector::slug($name)];
-                }
-                */?>
-                --><?php /*= exte\select2\Select2::widget([
+                <?= Html::dropDownList(
+                    'countries',
+                    null,
+                    $filters['countries']['items'],
+                    array_merge([
                         'id' => $id_filter_countries,
-                        'name' => 'format',
-                        'data' => $filters['countries'],
-                        'value' => ($isFilterCountries) ? array_keys($filtered_filters['countries']) : [],
-                        'options' => [
-                                'placeholder' => t('adshowcase','Country'),
-                                'options' => $countriesOptions,
-                        ],
-                        'valuesPreviewContainer' => '#search-filter-preview',
-                        'size' => \exte\select2\Select2::SMALL,
-                        'hideSearch' => true,
-                        'pluginOptions' => [
-                                'allowClear' => false,
-                                'multiple' => true,
-                                'tags' => false,
-                                'closeOnSelect' => false,
-                        ],
-                        'pluginEvents' => [
-                                'change' => 'function() {}',
-                        ]
-                ]); */?>
+                        'class' => 'form-select py-1 bg-white border-0 shadow-sm text-muted cursor-pointer',
+                        'prompt' => Yii::t('app', 'Country'),
+                        'data-placeholder' => Yii::t('app', 'Country'),
+                    ], $filters['countries']['attributes'])
+                ) ?>
             </div>
+
         </div>
 
     </div>
 </div>
 
-<div id="search-filter-tags" class="container-fluid bg-primary d-none d-lg-flex">
+<div id="search-filter-tags" class="container-fluid bg-primary position-relative" style="display: none;">
     <div class="container">
         <div class="row col-lg-12 col-md-12 col-sm-12 col-xs-12 m-0">
             <div id="search-filter-preview" class="p-0"></div>
         </div>
     </div>
 </div>
-
-<!--    <div class="row mb-4 align-items-center">
-    <div class="col-md-6">
-        <h2 class="fw-bold">EXTE Showcase</h2>
-        <p class="text-muted">Browse innovative creatives</p>
-    </div>
-</div>
-
-<div class="row g-3 mb-5" id="filters-container">
-
-    <div class="col-md-3">
-        <label for="filter_products" class="form-label small text-muted fw-bold"><?php /*= Yii::t('app', 'Industry') */?></label>
-        <?php /*= \yii\helpers\Html::dropDownList(
-                'filter_products',
-                null,
-                $filters['industry'],
-                [
-                        'id' => 'filter_products',
-                        'class' => 'form-select',
-                        'multiple' => true,
-                        'size' => 4, // Altura visible (4 líneas) para facilitar selección múltiple
-                        'onchange' => 'triggerFilter()',
-                        'aria-label' => Yii::t('app', 'Industry')
-                ]
-        ) */?>
-        <div class="form-text x-small text-end fst-italic mt-0" style="font-size: 0.7rem;">
-            <?php /*= Yii::t('app', 'Ctrl+Click to select multiple') */?>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <label for="filter_formats" class="form-label small text-muted fw-bold"><?php /*= Yii::t('app', 'Formats') */?></label>
-        <?php /*= \yii\helpers\Html::dropDownList(
-                'filter_formats',
-                null,
-                $filters['formats'],
-                [
-                        'id' => 'filter_formats',
-                        'class' => 'form-select',
-                        'multiple' => true,
-                        'size' => 4,
-                        'onchange' => 'triggerFilter()',
-                        'aria-label' => Yii::t('app', 'Formats')
-                ]
-        ) */?>
-    </div>
-
-    <div class="col-md-3">
-        <label for="filter_devices" class="form-label small text-muted fw-bold"><?php /*= Yii::t('app', 'Devices') */?></label>
-        <?php /*= \yii\helpers\Html::dropDownList(
-                'filter_devices',
-                null,
-                $filters['devices'],
-                [
-                        'id' => 'filter_devices',
-                        'class' => 'form-select',
-                        'multiple' => true,
-                        'size' => 4,
-                        'onchange' => 'triggerFilter()',
-                        'aria-label' => Yii::t('app', 'Devices')
-                ]
-        ) */?>
-    </div>
-
-    <div class="col-md-3">
-        <label for="filter_countries" class="form-label small text-muted fw-bold"><?php /*= Yii::t('app', 'Country') */?></label>
-        <?php /*= \yii\helpers\Html::dropDownList(
-                'filter_countries',
-                null,
-                $filters['countries'],
-                [
-                        'id' => 'filter_countries',
-                        'class' => 'form-select',
-                        'multiple' => true,
-                        'size' => 4,
-                        'onchange' => 'triggerFilter()',
-                        'aria-label' => Yii::t('app', 'Country')
-                ]
-        ) */?>
-    </div>
-
-</div>-->
 
 <div id="control-scroll-filter" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="container">
@@ -257,8 +124,38 @@ $this->registerJsFile('@web/js/catalog-ajax.js', ['depends' => [\yii\web\JqueryA
     </div>
 </div>
 
-<div id="loader" class="text-center py-5 d-none">
-    <div class="spinner-border text-primary" role="status"></div>
-</div>
+<template id="skeleton-template">
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4 fade-in-card skeleton-wrapper">
+        <?= $this->render('_item-creative-skeleton') ?>
+    </div>
+</template>
 
-<div id="scroll-trigger" class="py-5"></div>
+<template id="filter-pill-template">
+    <span class="badge rounded-pill text-bg-light shadow-sm d-flex align-items-center gap-1 color-main-2 fw-normal ps-3 filter-pill-item">
+        <span class="pill-text"></span>
+            <?= Icon::widget([
+                'icon' => 'bi-x',
+                'size' => Icon::SIZE_16,
+                'options' => ['class' => 'cursor-pointer btn-close-pill']
+            ]) ?>
+    </span>
+</template>
+
+<template id="filter-delete-all-template">
+    <div class="d-flex align-items-center w-100 justify-content-between filter-tags-wrapper">
+        <div class="d-flex flex-wrap gap-2 py-3 pills-container"></div>
+        <div class="ms-auto ps-3">
+            <?= Html::a(
+                Html::tag('span', Yii::t('app', 'Clear all filters'), ['class' => 'delete-text']) .
+                Icon::widget(['icon' => 'bi-trash', 'size' => Icon::SIZE_16, 'options' => ['class' => 'ms-2']]),
+                '#', // URL (hash porque el JS previene el default)
+                [
+                    'class' => 'btn-delete-all-filters text-white text-decoration-none d-flex align-items-center',
+                    'title' => Yii::t('app', 'Clear all filters')
+                ]
+            ) ?>
+        </div>
+    </div>
+</template>
+
+<?= $this->render('@adshowcase.layouts/partials/_modal-share') ?>

@@ -54,9 +54,9 @@ if (Yii::$app->session->hasFlash('error')) {
         NavBar::begin([
             'brandLabel' => Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['id' => 'nav', 'class' => 'navbar-expand-md bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
+            'options' => ['id' => 'nav', 'class' => 'navbar-expand-lg bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
             'innerContainerOptions' => ['class' => 'container-fluid mx-4 mx-sm-5'],
-            'brandOptions' => ['style' => 'font-size: 30px;'],
+            'brandOptions' => ['style' => 'font-size: 30px;z-index: 1040;'],
         ]);
 
         // Left side navigation (Creative Catalog, Back Office)
@@ -164,7 +164,7 @@ if (Yii::$app->session->hasFlash('error')) {
                             'url' => ['/auth/logout'],
                             'linkOptions' => [
                                 'data-method' => 'post',
-                                'class' => 'dropdown-item text-danger py-2 px-4 fw-medium d-flex align-items-center',
+                                'class' => 'dropdown-item text-danger py-2 px-4 d-flex align-items-center',
                                 'id' => 'logout',
                             ],
                             'encode' => false, // Permite que se vea el icono
@@ -183,7 +183,9 @@ if (Yii::$app->session->hasFlash('error')) {
     <?php endif; ?>
 </header>
 
-<main id="main" class="flex-shrink-0" role="main">
+<div class="position-fixed min-vh-100 min-vw-100" style="background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);"></div>
+
+<main id="main" class="flex-shrink-0 position-relative" role="main">
     <div class="container">
         <?php if (!empty($this->params['breadcrumbs'])): ?>
             <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>

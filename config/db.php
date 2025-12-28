@@ -13,9 +13,7 @@ return [
     'password' => ArrayHelper::getValue($_ENV, 'ADSHOWCASE_DB_PASSWORD'),
     'charset' => 'utf8mb4',
     'tablePrefix' => 'ADSHOWCASE_',
-
-    // Schema cache options (for production environment)
-    //'enableSchemaCache' => true,
-    //'schemaCacheDuration' => 60,
-    //'schemaCache' => 'cache',
+    'enableSchemaCache' => true,
+    'schemaCacheDuration' => 3600,
+    'schemaCache' => 'cache',
 ];

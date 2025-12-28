@@ -11,6 +11,7 @@ use powerkernel\flagiconcss\FlagiconcssAsset;
 use yii\bootstrap5\Nav;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 
@@ -29,6 +30,10 @@ $this->registerMetaTag(['name' => 'viewport', 'content' => 'width=device-width, 
 $this->registerMetaTag(['name' => 'description', 'content' => $this->params['meta_description'] ?? '']);
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
 $this->registerMetaTag(['http-equiv' => 'X-UA-Compatible', 'content' => 'IE=edge']);
+
+$this->registerMetaTag(['property' => 'og:image', 'content' => Url::to('@web/images/ad-showcase-og-image.png', true)]);
+$this->registerMetaTag(['property' => 'og:image:width', 'content' => '1200']);
+$this->registerMetaTag(['property' => 'og:image:height', 'content' => '630']);
 
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.svg')]);
 $this->registerLinkTag(['rel' => 'stylesheet', 'href' => 'https://fonts.googleapis.com/css2?family=Allerta+Stencil']);

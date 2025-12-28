@@ -54,7 +54,7 @@ if (Yii::$app->session->hasFlash('error')) {
         NavBar::begin([
             'brandLabel' => Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['id' => 'nav', 'class' => 'navbar-expand-md bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
+            'options' => ['id' => 'nav', 'class' => 'navbar-expand-lg bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
             'innerContainerOptions' => ['class' => 'container-fluid mx-4 mx-sm-5'],
             'brandOptions' => ['style' => 'font-size: 30px;'],
             'collapseOptions' => ['class' => 'w-100 align-items-center justify-content-end'],
@@ -169,7 +169,7 @@ if (Yii::$app->session->hasFlash('error')) {
                             'url' => ['/auth/logout'],
                             'linkOptions' => [
                                 'data-method' => 'post',
-                                'class' => 'dropdown-item text-danger py-2 px-4 fw-medium d-flex align-items-center',
+                                'class' => 'dropdown-item text-danger py-2 px-4 d-flex align-items-center',
                                 'id' => 'logout',
                             ],
                             'encode' => false, // Permite que se vea el icono
@@ -190,11 +190,21 @@ if (Yii::$app->session->hasFlash('error')) {
         <?php endif; ?>
     </header>
 
+    <div class="position-fixed min-vh-100 min-vw-100" style="background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);"></div>
+
     <main id="main" class="flex-shrink-0" role="main">
         <div class="container-fluid p-0">
             <?= $content ?>
         </div>
     </main>
+
+    <template id="spinner-template">
+        <div class="d-flex justify-content-center align-items-center w-100">
+            <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+                <span class="visually-hidden"><?= Yii::t('app', 'Loading') ?>...</span>
+            </div>
+        </div>
+    </template>
 
     <?php $this->endBody() ?>
     </body>

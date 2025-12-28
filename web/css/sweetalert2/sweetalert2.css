@@ -29,7 +29,7 @@
   --swal2-footer-border-color: #eee;
   --swal2-footer-background: transparent;
   --swal2-footer-color: inherit;
-  --swal2-timer-progress-bar-background: color-mix(in srgb, var(--main-color), transparent 15%);
+  --swal2-timer-progress-bar-background: color-mix(in srgb, var(--main-color-1), transparent 15%);
   --swal2-close-button-position: initial;
   --swal2-close-button-inset: auto;
   --swal2-close-button-font-size: 2.5em;

@@ -1,6 +1,8 @@
 
 :root {
-    --main-color: #FF4F00;
+    --main-color-1: #FF4F00;
+    --main-color-2: #0066FF;
+    --bg-back: #EAEFF8;
     --main-color-rgb: 255,79,0;
     --focus-shadow-size: 0 0 0 0.125em;
     --effects-shadow-card: 0px 2px 10px 0px rgba(0, 43, 72, 0.16), 0px 2px 40px 0px rgba(0, 41, 72, 0.08);
@@ -8,17 +10,43 @@
     --swal2-error-color: #f27474;
     --swal2-warning-color: #f8bb86;
     --filter-bg-color: #1B043F;
+    --bulma-input-focus-shadow-alpha: .35;
+}
+
+#shareModal .btn-close:hover {
+    opacity: 1;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FF4F00'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414Z'/%3e%3c/svg%3e") !important;
 }
 
 #logout:focus, #logout:hover {
     background-color: transparent !important;
 }
 
-/* Login layout */
-body {
-    background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);
+.cursor-pointer {
+    cursor: pointer !important;
 }
 
+.bg-main-1 {
+    background-color: var(--main-color-1) !important;
+}
+
+.color-main-1 {
+    color: var(--main-color-1) !important;
+}
+
+.bg-main-2 {
+    background-color: var(--main-color-2) !important;
+}
+
+.color-main-2 {
+    color: var(--main-color-2) !important;
+}
+
+.border-color-2 {
+    border-color: var(--main-color-2) !important;
+}
+
+/* Login layout */
 body.login-layout > main > .container {
     padding: 100px 15px 20px;
 }
@@ -38,23 +66,12 @@ body:not(.login-layout) > main > .container {
 .logo-adshowcase {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 72px;
-    color: var(--main-color);
+    color: var(--main-color-1);
     display: inline-block;
-}
-
-.bg-main {
-    background-color: var(--main-color) !important;
-}
-
-.color-main {
-    color: var(--main-color) !important;
 }
 /* END Login Layout */
 
-.cursor-pointer {
-    cursor: pointer !important;
-}
-
+/* SweetAlert2 */
 .swal2-fixed-width {
     width: 460px !important;
 }
@@ -62,8 +79,6 @@ body:not(.login-layout) > main > .container {
     border: 0 !important;
     margin: 20px !important;
 }
-
-/* SweetAlert2 */
 .swal2-close {
     position: absolute;
     top: -12px;
@@ -134,14 +149,18 @@ i.bi.icon-80px { font-size: 80px; }
 }
 .navbar-brand, .navbar-brand:hover, .navbar-brand:focus, .title-adshowcase {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--main-color);
+    color: var(--main-color-1);
 }
 /* END Home Page */
 
 /* Breadcrumb */
 .breadcrumb-item a {
-    color: var(--main-color);
+    color: var(--main-color-1);
     padding: 0px;
+    text-decoration: none;
+}
+.breadcrumb a:hover {
+    color: var(--main-color-1);
 }
 /* END Breadcrumb */
 
@@ -157,12 +176,12 @@ i.bi.icon-80px { font-size: 80px; }
     color: var(--bs-secondary);
 }
 .dt-container a.pagination-link.is-current, a.pagination-link.is-selected {
-    background-color: var(--main-color);
-    border-color: var(--main-color);
+    background-color: var(--main-color-1);
+    border-color: var(--main-color-1);
 }
 .dt-container .navbar-link:not(.is-arrowless):after,
 .dt-container .select:not(.is-multiple):not(.is-loading):after {
-    border-color: var(--main-color);
+    border-color: var(--main-color-1);
 }
 .dt-container table.dataTable thead > tr > th.dt-orderable-asc:hover,
 .dt-container table.dataTable thead > tr > th.dt-orderable-desc:hover,
@@ -184,7 +203,7 @@ i.bi.icon-80px { font-size: 80px; }
 .dt-container .select select:focus-within,
 .dt-container .textarea:focus,
 .dt-container .textarea:focus-within {
-    border-color: var(--main-color);
+    border-color: var(--main-color-1);
     box-shadow: var(--focus-shadow-size, 0 0 0 0.125em) rgba(var(--main-color-rgb, 255,79,0), var(--bulma-input-focus-shadow-alpha, .35));
 }
 .dt-container table.dataTable {
@@ -225,7 +244,7 @@ section.form .form-title {
 .nav-link:focus,
 .list-group-item-action:not(.active):hover,
 .list-group-item-action:not(.active):focus {
-    color: var(--main-color);
+    color: var(--main-color-1);
 }
 /* END Off Canvas */
 
@@ -244,14 +263,14 @@ section.form .form-title {
 
 .logo-adshowcase-dashboard {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--main-color);
+    color: var(--main-color-1);
     display: inline-block;
     margin: 0;
 }
 
 .list-group-item.active {
-    background-color: var(--main-color);
-    border-color: var(--main-color);
+    background-color: var(--main-color-1);
+    border-color: var(--main-color-1);
     color: var(--bs-white);
 }
 
@@ -267,7 +286,7 @@ section.form .form-title {
     -moz-transition: background-color 0.3s ease-in-out; /* Firefox */
     -webkit-transition: background-color 0.3s ease-in-out; /*safari and chrome */
 
-    border-color: var(--main-color);
+    border-color: var(--main-color-1);
     transition: border-color 0.3s ease-in-out; /* vendorless fallback */
     -o-transition: border-color 0.3s ease-in-out; /* opera */
     -ms-transition: border-color 0.3s ease-in-out; /* IE 10 */
@@ -277,7 +296,7 @@ section.form .form-title {
 
 .site-index .card:hover i,
 .site-index .card:hover .card-title {
-    color: var(--main-color) !important;
+    color: var(--main-color-1) !important;
     transition: color 0.3s ease-in-out; /* vendorless fallback */
     -o-transition: color 0.3s ease-in-out; /* opera */
     -ms-transition: color 0.3s ease-in-out; /* IE 10 */
@@ -289,11 +308,11 @@ section.form .form-title {
 /* Dropdown */
 .dropdown-item.active,
 .dropdown-item:active {
-    background-color: var(--main-color);
+    background-color: var(--main-color-1);
 }
 .dropdown-item:hover:not(.active):not(:active),
 .dropdown-item:focus:not(.active):not(:active) {
-    color: var(--main-color);
+    color: var(--main-color-1);
 }
 .navbar-nav .nav-link.show, .navbar-nav .nav-link:focus {
     color: var(--bs-nav-link-color) !important;
@@ -331,9 +350,7 @@ section.form .form-title {
     border: none;
     background-color: transparent;
 }
-.adshowcase-header-search .form-control:focus
-/*.adshowcase-header-search input.form-control:not(input[name="exte-dt-search"]):focus-visible*/
-{
+.adshowcase-header-search .form-control:focus {
     outline: none;
     background-color: unset;
     border-color: unset;
@@ -346,8 +363,10 @@ section.form .form-title {
     position: relative;
     margin-top: 48px;
     padding-bottom: 48px;
+    outline: none;
 }
 .filter-content {
+    position: relative;
     min-height: 265px;
     margin-top: 72px;
     z-index: 1029;
@@ -382,4 +401,78 @@ section.form .form-title {
 #search-filter {
     height: 32px;
 }
+#search-filter .form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230066FF' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-size: 24px 18px;
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    padding-right: 3.5rem;
+}
+#search-filter .form-select option:disabled {
+    display: none !important;
+}
 /* END Selects Catalog  */
+
+/* INIT Animation Overlay Card Catalog  */
+.card-hover-overlay,
+.creative-card:hover.is-active .card-hover-overlay {
+    top: 0;
+    left: 0;
+    z-index: 4;
+
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(101%);
+    backdrop-filter: blur(4px);
+
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0.5s;
+}
+
+/* Estado Hover */
+.creative-card:hover .card-hover-overlay {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0s;
+}
+
+.creative-card .btn-outline-light:hover {
+    color: var(--main-color-1);
+}
+
+.ovelay-card {
+    background-color: var(--main-color-2);
+    opacity: 0.5;
+}
+/* END Animation Overlay Card Catalog  */
+
+/* INIT Filter Tags Bar */
+#search-filter-tags {
+    z-index: 1029;
+}
+/* END Filter Tags Bar */
+
+/* INIT Toggle Favorites */
+.list-favorite:hover {
+    background-color: var(--bg-back);
+    border-radius: var(--bs-border-radius);
+}
+.dropdown-menu-center {
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(calc(-50% + (24px / 2))) !important;
+    inset: auto !important;
+}
+.content-loader .spinner-border {
+    width: 32px !important;
+    height: 32px !important;
+}
+.content-loader > div {
+    min-height: 300px;
+}
+/* END Toggle Favorites */

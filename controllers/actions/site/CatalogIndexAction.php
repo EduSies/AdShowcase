@@ -4,43 +4,33 @@ declare(strict_types=1);
 
 namespace app\controllers\actions\site;
 
+use app\services\catalog\CatalogListService;
+use app\services\favorite\FavoriteListService;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Response;
-use app\models\Creative;
-use app\models\Product;
-use app\models\Format;
-use app\models\Country;
-use app\models\Device;
-use app\helpers\StatusHelper;
 
 final class CatalogIndexAction extends BaseSiteAction
 {
     public ?string $layout = 'main-catalog';
     public ?string $view = '@app/views/site/catalog/index';
+    private CatalogListService $catalogListService;
+
+    public function init()
+    {
+        parent::init();
+        $this->catalogListService = new CatalogListService();
+    }
 
     public function run()
     {
-        $pageTitle = Yii::t('app', 'Creative Catalog');
-        $ajaxUrl = Url::to(['site/catalog']);
-
         $request = Yii::$app->request;
 
-        // 1. RECOGER DATOS (GET tiene prioridad si es acceso directo, POST si es filtro AJAX)
-        // Helper para normalizar inputs (String 'a,b' -> Array ['a','b'])
+        // Recoger y normalizar datos
         $normalizeInput = function ($paramName) use ($request) {
             $value = $request->post($paramName, $request->get($paramName));
-
-            if (empty($value)) {
-                return [];
-            }
-
-            // Si es un string (viene por URL), lo convertimos a array
-            if (is_string($value)) {
-                return explode(',', $value);
-            }
-
-            return $value;
+            if (empty($value)) return [];
+            return is_string($value) ? explode(',', $value) : $value;
         };
 
         $filters = [
@@ -49,134 +39,90 @@ final class CatalogIndexAction extends BaseSiteAction
             'devices' => $normalizeInput('devices'),
             'countries' => $normalizeInput('countries'),
             'search' => $request->post('search', $request->get('search')),
-            'limit' => $request->post('limit', 0),
+            'offset' => (int)$request->post('offset', 0),
+            'limit' => (int)$request->post('limit', 12),
         ];
 
-        // 2. OBTENER DATOS
-        $data = $this->getData($filters);
-        $countCurrentBatch = 0;
+        // Obtener datos del catálogo
+        $data = $this->catalogListService->getCatalogData($filters);
 
-        // 3. RESPUESTA AJAX (JSON)
+        // Obtener favoritos del usuario
+        $listsFavorites = (new FavoriteListService())->getUserFavorites();
+
+        // Iteramos sobre cada creatividad y le añadimos los campos calculados (iconos, urls, flags, favoritos)
+        $preparedCreatives = array_map(function ($creative) use ($listsFavorites) {
+            return $this->prepareCreativeDisplayData($creative, $listsFavorites);
+        }, $data['queryData']);
+
+        // Respuesta AJAX
         if ($request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
-
-            $countCurrentBatch = count($data['queryData']);
-
             return [
                 'creatives' => $this->controller->renderPartial('catalog/_card-list', [
-                    'creatives' => $data['queryData']
+                    'creatives' => $preparedCreatives,
+                    'listsFavorites' => $listsFavorites
                 ]),
                 'totalCards' => $data['totalCards'],
-                'count' => $countCurrentBatch,
+                'count' => count($data['queryData']),
+                'availableOptions' => $data['availableOptions'] ?? null
             ];
         }
 
-        // 4. CARGA INICIAL (HTML)
+        // Renderizado visita completa
         $initialCreativesHtml = $this->controller->renderPartial('catalog/_card-list', [
-            'creatives' => $data['queryData'],
-            'count' => $countCurrentBatch,
+            'creatives' => $preparedCreatives,
+            'listsFavorites' => $listsFavorites,
+            'count' => 0,
         ]);
 
         return $this->controller->render($this->view, [
             'filters' => $data['filters'],
             'creatives' => $initialCreativesHtml,
             'totalCards' => $data['totalCards'],
-            'pageTitle' => $pageTitle,
-            'ajaxUrl' => $ajaxUrl,
+            'pageTitle' => Yii::t('app', 'Creative Catalog'),
+            'ajaxUrl' => Url::to(['site/catalog']),
+            'ajaxUrlCreateList' => Url::to(['favorite/create-list']),
+            'ajaxUrlToggleItem' => Url::to(['favorite/toggle-item']),
+            'ajaxUrlGetDropdown' => Url::to(['favorite/get-dropdown']),
+            'availableOptions' => $data['availableOptions'] ?? null
         ]);
     }
 
     /**
-     * Lógica central de búsqueda y filtrado
+     * Procesa una creatividad individual añadiendo lógica de vista.
      */
-    protected function getData(array $params): array
+    private function prepareCreativeDisplayData(array $creative, array $listsFavorites): array
     {
-        $query = Creative::find()->alias('c')->where(['c.status' => StatusHelper::STATUS_ACTIVE]);
+        // URL Detalle
+        $creative['viewDetailUrl'] = Url::to(['creative/view', 'hash' => $creative['hash']]);
 
-        $query->joinWith(['brand b', 'agency a', 'format f', 'country co', 'product p', 'device d']);
+        // Textos seguros
+        $creative['viewFormatName'] = !empty($creative['format']) ? $creative['format']['name'] : Yii::t('app', 'Format');
+        $creative['viewAgencyName'] = !empty($creative['agency']) ? $creative['agency']['name'] : Yii::t('app', 'Agency');
+        $creative['viewCountryCode'] = !empty($creative['country']) ? strtolower($creative['country']['iso']) : '';
 
-        // 1. PRODUCTS (Industry)
-        if (!empty($params['products'])) {
-            $query->andWhere([
-                'or',
-                ['c.product_id' => $params['products']],
-                ['p.url_slug' => $params['products']]
-            ]);
+        // Icono Dispositivo
+        $creative['viewDeviceIcon'] = match ((int)$creative['device_id']) {
+            1 => 'bi-display', // Desktop
+            2 => 'bi-phone', // Mobile
+            3 => 'bi-tablet', // Tablet
+            default => 'bi-display',
+        };
+
+        // Lógica de Favoritos
+        $isFavorite = false;
+        if (!empty($listsFavorites)) {
+            foreach ($listsFavorites as $list) {
+                if (isset($list['itemsHashes']) && in_array($creative['hash'], $list['itemsHashes'])) {
+                    $isFavorite = true;
+                    break;
+                }
+            }
         }
 
-        // 2. FORMATS
-        if (!empty($params['formats'])) {
-            $query->andWhere([
-                'or',
-                ['c.format_id' => $params['formats']],
-                ['f.url_slug' => $params['formats']]
-            ]);
-        }
+        $creative['viewIsFavorite'] = $isFavorite;
+        $creative['viewFavIcon'] = $isFavorite ? 'bi-star-fill' : 'bi-star';
 
-        // 3. DEVICES
-        if (!empty($params['devices'])) {
-            $query->andWhere([
-                'or',
-                ['c.device_id' => $params['devices']],
-                ['d.name' => $params['devices']]
-            ]);
-        }
-
-        // 4. COUNTRIES
-        if (!empty($params['countries'])) {
-            $query->andWhere([
-                'or',
-                ['co.iso' => $params['countries']],
-                ['co.url_slug' => $params['countries']]
-            ]);
-        }
-
-        // --- BÚSQUEDA GENERAL (TEXTO) ---
-        if (!empty($params['search'])) {
-            // Unimos todas las tablas necesarias si no se unieron arriba
-            $query->joinWith(['salesType st']);
-
-            $query->andWhere([
-                'or',
-                ['like', 'c.hash', $params['search']],
-                ['like', 'c.title', $params['search']],
-                ['like', 'co.name', $params['search']],
-                ['like', 'f.name', $params['search']],
-                ['like', 'p.name', $params['search']],
-                ['like', 'st.name', $params['search']],
-            ]);
-        }
-
-        // --- LISTADOS PARA SELECTS (CACHÉ 1H) ---
-        $cacheKey = 'catalog_filters_list';
-
-        $filtersList = Yii::$app->cache->getOrSet($cacheKey, function () {
-            return [
-                'industry' => Product::find()->select(['name', 'id'])->orderBy(['name' => SORT_ASC])->indexBy('id')->column(),
-                'formats' => Format::find()->select(['name', 'id'])->orderBy(['name' => SORT_ASC])->indexBy('id')->column(),
-                'countries' => Country::find()->select(['name', 'iso'])->orderBy(['name' => SORT_ASC])->indexBy('iso')->column(),
-                'devices' => Device::find()->select(['name', 'id'])->orderBy(['id' => SORT_ASC])->indexBy('id')->column(),
-            ];
-        }, 3600);
-
-        // --- RESULTADOS ---
-        $totalCards = $query->count();
-
-        $query->orderBy(['c.created_at' => SORT_DESC]);
-        $query->limit(12);
-
-        if (isset($params['limit'])) {
-            $query->offset($params['limit']);
-        }
-
-        //$campaigns = $query->createCommand()->rawSql;
-        //dd($campaigns);
-        $queryData = $query->asArray()->all();
-
-        return [
-            'filters' => $filtersList,
-            'queryData' => $queryData,
-            'totalCards' => $totalCards
-        ];
+        return $creative;
     }
 }

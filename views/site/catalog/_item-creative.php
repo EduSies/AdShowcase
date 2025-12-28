@@ -1,90 +1,109 @@
 <?php
 
 /** @var array $creative */
+/** @var array $listsFavorites */
 
+use app\widgets\Icon;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use app\widgets\Flag; // Asegúrate de tener tu widget de banderas importado
-use app\models\UserCreativeList; // Para la lógica de favoritos
+use app\widgets\Flag;
 
-// 1. Preparar Datos
-$detailUrl = Url::to(['creative/view', 'hash' => $creative['hash']]);
-$brandName = !empty($creative['brand']) ? $creative['brand']['name'] : 'Brand';
-$agencyName = !empty($creative['agency']) ? $creative['agency']['name'] : 'Agency';
-$countryCode = !empty($creative['country']) ? strtolower($creative['country']['iso']) : 'xx';
-
-// Icono dispositivo (El de la imagen parece un monitor con peana)
-$deviceIcon = match ($creative['device_id']) {
-    1 => 'bi-display',       // Desktop
-    2 => 'bi-phone',         // Mobile
-    3 => 'bi-tablet',        // Tablet
-    default => 'bi-display',
-};
-
-// Obtener listas del usuario para el dropdown de favoritos
-$userLists = []; //!Yii::$app->user->isGuest ? UserCreativeList::find()->where(['user_id' => Yii::$app->user->id])->all() : [];
 ?>
 
-<div class="card h-100 border-0 shadow-sm creative-card">
+<div class="card h-100 border-0 shadow-sm creative-card position-relative">
+    <div class="position-absolute top-0 end-0 p-2 dropdown">
+        <?= Html::button(
+            Icon::widget(['icon' => $creative['viewFavIcon'], 'size' => Icon::SIZE_24]),
+            [
+                'class' => 'btn btn-link text-white p-0 shadow-none cursor-pointer position-relative icon-favorite-card',
+                'id' => 'favDropdown-' . $creative['hash'],
+                'data-bs-toggle' => 'dropdown',
+                'data-bs-auto-close' => 'outside',
+                'aria-haspopup' => 'true',
+                'aria-expanded' => 'false',
+                'style' => 'z-index: 1027;',
+                'data-creative-hash' => $creative['hash'],
+            ]
+        ) ?>
 
-    <div class="position-relative">
-
-        <div class="ratio ratio-16x9">
-            <img src="<?= $creative['url_thumbnail'] ?>"
-                 class="card-img-top object-fit-cover"
-                 alt="<?= Html::encode($creative['title']) ?>">
-        </div>
-
-        <div class="position-absolute top-0 start-0 w-100 h-100"
-             style="background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 30%); pointer-events: none;">
-        </div>
-
-        <div class="position-absolute top-0 end-0 p-2 dropdown">
-            <button class="btn btn-link text-white p-0 shadow-none"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    id="favDropdown-<?= $creative['hash'] ?>">
-                <i class="bi bi-star" style="font-size: 1.3rem; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));"></i>
-            </button>
-
-            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0" aria-labelledby="favDropdown-<?= $creative['hash'] ?>" style="min-width: 260px; z-index: 1050;">
-                <div class="p-2 border-top bg-light">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control new-list-input" placeholder="<?= Yii::t('app', 'New list...') ?>">
-                        <button class="btn btn-primary btn-create-list" type="button" data-creative-hash="<?= $creative['hash'] ?>"><i class="bi bi-plus-lg"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="position-absolute start-50 translate-middle-x" style="bottom: 0; transform: translate(-50%, 50%); z-index: 5;">
-            <?= Flag::widget([
-                    'tag' => 'span',
-                    'country' => $countryCode,
-                    'options' => [
-                            'class' => 'shadow-sm border border-2 border-white d-block',
-                            'style' => 'width: 28px; height: 20px;'
-                    ]
-            ]) ?>
+        <div class="dropdown-menu dropdown-menu-center overflow-hidden shadow-lg border-0 p-0 mt-2 layer-add-favorites"
+             aria-labelledby="favDropdown-<?= $creative['hash'] ?>"
+             style="min-width: 358px;z-index: 1028;"
+        >
+            <div class="content-loader color-main-1 p-4" style="display: none;"></div>
+            <div class="dropdown-content-wrapper"></div>
         </div>
     </div>
 
-    <div class="card-body text-center pt-4 d-flex flex-column align-items-center">
+    <div class="position-relative overflow-hidden rounded-top">
+        <div class="ratio ratio-16x9">
+            <a href="<?= $creative['viewDetailUrl'] ?>" class="d-block w-100 h-100">
+                <img src="<?= $creative['url_thumbnail'] ?>"
+                     class="card-img-top object-fit-cover w-100 h-100"
+                     alt="<?= Html::encode($creative['title']) ?>"
+                >
+            </a>
+        </div>
 
-        <h6 class="card-title fw-bold text-uppercase text-dark mb-1" style="font-size: 0.85rem; letter-spacing: 0.3px;">
-            <?= Html::encode($creative['title']) ?>
+        <div class="position-absolute top-0 start-0 w-100"
+             style="height: 40%; background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%); pointer-events: none;"
+        >
+        </div>
+    </div>
+
+    <div class="card-body pt-0 d-flex flex-column align-items-center text-center position-relative overflow-hidden">
+
+        <div class="position-relative" style="top: -1px; z-index: 3;">
+            <?= Flag::widget([
+                'tag' => 'span',
+                'country' => $creative['viewCountryCode'],
+                'options' => [
+                    'class' => 'd-block shadow-sm',
+                    'style' => 'width: 30px;height: 23px; object-fit: cover;'
+                ]
+            ]) ?>
+        </div>
+
+        <div class="text-uppercase text-muted fw-bold tracking-wide mb-1 mt-3" style="font-size: 0.65rem; letter-spacing: 1px;">
+            <?= Html::encode($creative['viewFormatName']) ?>
+        </div>
+
+        <h6 class="card-title fw-bold mb-1 text-truncate w-100" title="<?= Html::encode($creative['title']) ?>">
+            <a href="<?= $creative['viewDetailUrl'] ?>" class="text-decoration-none stretched-link" style="color: var(--main-color-1);">
+                <?= Html::encode($creative['title']) ?>
+            </a>
         </h6>
 
-        <div class="small mb-3" style="font-size: 0.8rem;">
-            <a href="#" class="text-decoration-none text-primary fw-medium"><?= Html::encode($brandName) ?></a>
-            <span class="text-muted mx-1">&gt;</span>
-            <span class="text-primary"><?= Html::encode($agencyName) ?></span>
+        <div class="small text-secondary mb-2 text-truncate w-100">
+            <?= Html::encode($creative['viewAgencyName']) ?>
         </div>
 
-        <div class="mt-auto text-secondary opacity-50">
-            <i class="bi <?= $deviceIcon ?>" style="font-size: 1.5rem;"></i>
+        <div class="mt-auto pt-2 w-100 text-muted opacity-50">
+            <?= Icon::widget([
+                'icon' => $creative['viewDeviceIcon'],
+                'size' => Icon::SIZE_24,
+            ]) ?>
         </div>
 
-        <a href="<?= $detailUrl ?>" class="stretched-link position-absolute w-100 h-100 start-0 top-0" style="z-index: 1;"></a>
+        <div class="card-hover-overlay position-absolute start-0 bottom-0 w-100 h-100 d-flex align-items-center justify-content-center">
+            <div class="ovelay-card w-100 h-100 position-fixed"></div>
+
+            <?= Html::button(
+                Icon::widget(['icon' => 'bi-share-fill', 'size' => Icon::SIZE_24]) .
+                Html::tag('span', Yii::t('app', 'Share')),
+                [
+                    'class' => 'btn btn-outline-light rounded-pill px-4 position-relative d-flex align-items-center gap-2 shadow-lg action-share-btn',
+                    'style' => 'z-index: 2;',
+                    'data' => [
+                        'bs-toggle' => 'modal',
+                        'bs-target' => '#shareModal',
+                        'creative-hash' => $creative['hash'],
+                        'creative-title' => $creative['title'],
+                        'creative-format' => $creative['viewFormatName'],
+                        'creative-agency' => $creative['viewAgencyName'],
+                    ]
+                ]
+            ) ?>
+        </div>
+
     </div>
 </div>

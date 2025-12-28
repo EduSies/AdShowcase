@@ -31,6 +31,11 @@ $rules = [
     'favorites' => 'favorite/index',
     'favorites/<hash:[A-Za-z0-9]{16}>' => 'favorite/view-list',
 
+    // --- Rutas AJAX para manipulación de listas ---
+    'favorite/get-dropdown' => 'favorite/get-dropdown',
+    'favorite/create-list' => 'favorite/create-list',
+    'favorite/toggle-item' => 'favorite/toggle-item',
+
     // --- Cambio de Idioma ---
     'change-language/<lang:[\w\-]+>' => 'language/change',
 ];

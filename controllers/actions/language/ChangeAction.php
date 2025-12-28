@@ -4,7 +4,6 @@ namespace app\controllers\actions\language;
 
 use Yii;
 use yii\base\Action;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
 class ChangeAction extends Action
