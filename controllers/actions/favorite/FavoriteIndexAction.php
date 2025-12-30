@@ -24,7 +24,8 @@ final class FavoriteIndexAction extends BaseFavoriteAction
 
         $hashFavoriteDetail = $request->get('hash');
 
-        $this->routeAjaxSearch = $hashFavoriteDetail ? '/favorites/detail/'.$hashFavoriteDetail : '/favorites';
+        $urlFavoritesList = Url::to(['/favorites']);
+        $this->routeAjaxSearch = $hashFavoriteDetail ? Url::to(['/favorites/detail/'.$hashFavoriteDetail]) : $urlFavoritesList;
 
         // Recoger y normalizar datos
         $normalizeInput = function ($paramName) use ($request) {
@@ -74,11 +75,14 @@ final class FavoriteIndexAction extends BaseFavoriteAction
             ];
         }
 
+        $filteredListHash = '';
         $filteredListName = Yii::t('app', 'Your favorites');
+
         if ($hashFavoriteDetail) {
             foreach ($listsFavorites as $list) {
                 // Comparamos hashes. Nota: El hash de "Your favorites" es null
                 if ($list['hash'] === $hashFavoriteDetail) {
+                    $filteredListHash = $list['hash'];
                     $filteredListName = $list['name'];
                     break;
                 }
@@ -99,6 +103,7 @@ final class FavoriteIndexAction extends BaseFavoriteAction
             'isFavoritesDetail' => $hashFavoriteDetail ? true : false,
             'listsFavorites' => $listsFavorites,
             'filteredListName' => $filteredListName,
+            'filteredListHash' => $filteredListHash,
             'filters' => $data['filters'],
             'creatives' => $initialCreativesHtml,
             'totalCards' => $data['totalCards'],
@@ -107,7 +112,11 @@ final class FavoriteIndexAction extends BaseFavoriteAction
             'ajaxUrlCreateList' => Url::to(['favorite/create-list']),
             'ajaxUrlToggleItem' => Url::to(['favorite/toggle-item']),
             'ajaxUrlGetDropdown' => Url::to(['favorite/get-dropdown']),
-            'availableOptions' => $data['availableOptions'] ?? null
+            'availableOptions' => $data['availableOptions'] ?? null,
+            'ajaxUrlUpdateList' => Url::to(['favorite/update-list']),
+            'ajaxUrlMoveList' => Url::to(['favorite/move-list']),
+            'ajaxUrlDeleteList' => Url::to(['favorite/delete-list']),
+            'urlFavoritesList' => $urlFavoritesList,
         ]);
     }
 

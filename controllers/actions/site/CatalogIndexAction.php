@@ -82,6 +82,7 @@ final class CatalogIndexAction extends BaseSiteAction
             'isFavoritesDetail' => false,
             'listsFavorites' => [],
             'filteredListName' => '',
+            'filteredListHash' => '',
             'filters' => $data['filters'],
             'creatives' => $initialCreativesHtml,
             'totalCards' => $data['totalCards'],
@@ -90,7 +91,11 @@ final class CatalogIndexAction extends BaseSiteAction
             'ajaxUrlCreateList' => Url::to(['favorite/create-list']),
             'ajaxUrlToggleItem' => Url::to(['favorite/toggle-item']),
             'ajaxUrlGetDropdown' => Url::to(['favorite/get-dropdown']),
-            'availableOptions' => $data['availableOptions'] ?? null
+            'availableOptions' => $data['availableOptions'] ?? null,
+            'ajaxUrlUpdateList' => Url::to(['favorite/update-list']),
+            'ajaxUrlMoveList' => Url::to(['favorite/move-list']),
+            'ajaxUrlDeleteList' => Url::to(['favorite/delete-list']),
+            'urlFavoritesList' => '',
         ]);
     }
 

@@ -22,10 +22,10 @@ $image = $list['images'][0] ?? null;
             <?php if (!empty($image)): ?>
                 <?= Html::img($image, ['class' => 'w-100 h-100 object-fit-cover']) ?>
             <?php else: ?>
-                <?= Icon::widget(['icon' => 'bi-list-ul', 'size' => Icon::SIZE_24]) ?>
+                <?= Icon::widget(['icon' => 'bi-images', 'size' => Icon::SIZE_24]) ?>
             <?php endif; ?>
         </div>
-        <h6 class="mb-0 fw-bold text-truncate" style="max-width: 140px;" title="<?= Html::encode($list['name']) ?>">
+        <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 140px;" title="<?= Html::encode($list['name']) ?>">
             <?= Html::encode($list['name']) ?>
         </h6>
     </div>

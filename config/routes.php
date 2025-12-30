@@ -7,7 +7,7 @@ $rules = [
     // --- Home ---
     '' => 'site/index',
 
-    // --- Auth (pretty URLs for login/registration/reset/verify) ---
+    // --- Auth ---
     'login' => 'auth/login',
     'logout' => 'auth/logout',
     //'signup' => 'auth/signup',
@@ -15,16 +15,16 @@ $rules = [
     'reset-password/<token:[A-Za-z0-9_\-\.]+>' => 'auth/reset-password',
     'verify-email/<token:[A-Za-z0-9_\-\.]+>' => 'auth/verify-email',
 
-    // --- Catalog Route ---
+    // --- Catalog ---
     'catalog' => 'site/catalog',
 
-    // --- Backoffice (module/prefix) ---
+    // --- Backoffice ---
     'back-office' => 'back-office/index',
     'back-office/<action:[a-z0-9\-]+>/<hash:[A-Za-z0-9_\-]{16}>' => 'back-office/<action>',
     'back-office/<action:[a-z0-9\-]+>' => 'back-office/<action>',
 
-    // --- Shared links / Favorite lists ---
-    's/<token:[A-Za-z0-9_\-]{43}>' => 'shared-link/open', // 43-char base64url token
+    // --- Shared links ---
+    's/<token:[A-Za-z0-9_\-]{43}>' => 'shared-link/open',
 
     // --- Favorite Route ---
     'favorites' => 'favorite/index',
@@ -34,6 +34,9 @@ $rules = [
     'favorite/get-dropdown' => 'favorite/get-dropdown',
     'favorite/create-list' => 'favorite/create-list',
     'favorite/toggle-item' => 'favorite/toggle-item',
+    'favorite/update-list' => 'favorite/update-list',
+    'favorite/move-list' => 'favorite/move-list',
+    'favorite/delete-list' => 'favorite/delete-list',
 
     // --- Cambio de Idioma ---
     'change-language/<lang:[\w\-]+>' => 'language/change',

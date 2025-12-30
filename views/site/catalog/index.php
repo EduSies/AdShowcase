@@ -17,6 +17,11 @@ use yii\helpers\Html;
 /* @var $isFavorites bool */
 /* @var $isFavoritesDetail bool */
 /* @var $filteredListName string */
+/* @var $filteredListHash string */
+/* @var $ajaxUrlUpdateList string */
+/* @var $ajaxUrlMoveList string */
+/* @var $ajaxUrlDeleteList string */
+/* @var $urlFavoritesList string */
 
 $this->title = $pageTitle;
 
@@ -31,10 +36,16 @@ $this->registerJsVar('ajaxUrlToggleItem', $ajaxUrlToggleItem);
 $this->registerJsVar('ajaxUrlGetDropdown', $ajaxUrlGetDropdown);
 $this->registerJsVar('initialAvailableOptions', $availableOptions);
 $this->registerJsVar('isFavoritesDetail', $isFavoritesDetail);
+$this->registerJsVar('ajaxUrlUpdateList', $ajaxUrlUpdateList);
+$this->registerJsVar('ajaxUrlMoveList', $ajaxUrlMoveList);
+$this->registerJsVar('ajaxUrlDeleteList', $ajaxUrlDeleteList);
+$this->registerJsVar('urlFavoritesList', $urlFavoritesList);
 
 $this->registerJsFile('@web/js/catalog.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 $this->registerJsFile('@web/js/modal-share.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 $this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+
+$this->registerJsVar('swalFireHtmlEmptyList', Yii::t("app", "The list name cannot be empty"));
 
 ?>
 
@@ -145,15 +156,15 @@ $this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsse
                                     ['label' => Yii::t('app', 'Favorites'), 'url' => ['/favorites']],
                                     ['label' => $filteredListName],
                             ],
-                            'activeItemTemplate' => '<li class="breadcrumb-item active d-flex align-items-center" aria-current="page">' .
+                            'activeItemTemplate' => '<span class="breadcrumb-item active d-flex align-items-center" aria-current="page">' .
                                 Icon::widget(['icon' => 'bi-chevron-right', 'size' => Icon::SIZE_16, 'options' => ['class' => 'me-2']]) .
-                            '{link}</li>',
+                            '<span id="breadcrumbs-list-name">{link}</span></li>',
                             'itemTemplate' => '<li class="breadcrumb-item">{link}</li>',
                         ]) ?>
                     <?php endif; ?>
 
                     <?php if ($isFavorites || $isFavoritesDetail): ?>
-                        <h1 id="list-name" class="mb-4 pt-1" data-list-hash="<?php /*/*= $filteredListHash*/ ?>">
+                        <h1 id="list-name" class="mb-4 pt-1" data-list-hash="<?= $filteredListHash ?>">
                             <?= $filteredListName ?>
                         </h1>
                     <?php endif; ?>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers\actions\favorite;
 
 use app\services\favorite\FavoriteListService;
@@ -22,7 +24,7 @@ final class GetDropdownAction extends BaseFavoriteAction
 
         // Renderizamos la vista del contenido del dropdown
         return $this->controller->renderPartial('@adshowcase.layouts/partials/favorites/_dropdown-favorites', [
-            'creative' => ['hash' => $creativeHash], // Estructura mínima necesaria para la vista
+            'creative' => ['hash' => $creativeHash],
             'listsFavorites' => $listsFavorites
         ]);
     }

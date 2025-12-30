@@ -574,4 +574,15 @@ $(document).ready(function() {
             setPositionSearchBarDesktop(false);
         }
     }
+
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+
+    // Mover instantáneamente al inicio
+    window.scrollTo(0, 0);
+    $('html, body').scrollTop(0); // Refuerzo para compatibilidad
+
+    // Disparar el evento scroll para que JS sepa que estamos en el top
+    $(window).trigger('scroll');
 });

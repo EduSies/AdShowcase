@@ -14,7 +14,7 @@ class ChangeAction extends Action
     {
         $lang = (string) Yii::$app->request->get($this->idParam, Yii::$app->request->post($this->idParam));
         if ($lang === null) {
-            throw new NotFoundHttpException(Yii::t('app', 'Missing language hash.'));
+            throw new NotFoundHttpException(Yii::t('app', 'Missing language hash'));
         }
 
         // Lista blanca de idiomas permitidos

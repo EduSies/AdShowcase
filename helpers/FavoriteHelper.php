@@ -20,14 +20,14 @@ class FavoriteHelper
     {
         // Contenido del estado "Añadir"
         $contentAdd = Html::tag('span',
-            Yii::t('app', 'Add') . ' ' . Icon::widget(['icon' => 'bi-plus-lg']),
-            ['class' => 'state-add ' . ($isAdded ? 'd-none' : '')]
+            '<span>' . Yii::t('app', 'Add') . '</span>' . Icon::widget(['icon' => 'bi-plus-lg']),
+            ['class' => 'd-flex align-items-center gap-2 state-add ' . ($isAdded ? 'd-none' : '')]
         );
 
         // Contenido del estado "Añadido"
         $contentAdded = Html::tag('span',
-            Yii::t('app', 'Added') . ' ' . Icon::widget(['icon' => 'bi-check2']),
-            ['class' => 'state-added ' . (!$isAdded ? 'd-none' : '')]
+            '<span>' . Yii::t('app', 'Added') . '</span>' . Icon::widget(['icon' => 'bi-check2']),
+            ['class' => 'd-flex align-items-center gap-2 state-added ' . (!$isAdded ? 'd-none' : '')]
         );
 
         // Determinar clases CSS según estado y tipo de lista
@@ -36,7 +36,7 @@ class FavoriteHelper
             : ($isCustom ? 'btn-light color-main-2 border-color-2' : 'btn-primary');
 
         return Html::button($contentAdd . $contentAdded, [
-            'class' => 'btn ' . $btnClass . ' btn-sm rounded-pill px-3 d-flex align-items-center gap-1 toggle-list-btn',
+            'class' => 'btn ' . $btnClass . ' btn-sm rounded-pill px-3 toggle-list-btn',
             'data-list-hash' => $listHash,
             'data-action' => $isAdded ? 'remove' : 'add',
             'type' => 'button'

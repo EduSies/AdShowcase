@@ -3,6 +3,8 @@
 use app\widgets\Icon;
 use yii\helpers\Url;
 
+/** @var string $routeButtonSearch */
+
 ?>
 
 <div class="col-12 cards p-0">

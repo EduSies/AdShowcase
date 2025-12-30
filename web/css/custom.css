@@ -27,6 +27,10 @@
     cursor: pointer !important;
 }
 
+.cursor-default {
+    cursor: default !important;
+}
+
 .bg-main-1 {
     background-color: var(--main-color-1) !important;
 }

@@ -24,6 +24,15 @@ class FavoriteController extends BaseWebController
             'toggle-item' => [
                 'class' => \app\controllers\actions\favorite\ToggleItemAction::class,
             ],
+            'update-list' => [
+                'class' => \app\controllers\actions\favorite\UpdateListAction::class
+            ],
+            'move-list' => [
+                'class' => \app\controllers\actions\favorite\MoveListAction::class,
+            ],
+            'delete-list' => [
+                'class' => \app\controllers\actions\favorite\DeleteListAction::class,
+            ],
         ];
     }
 }
