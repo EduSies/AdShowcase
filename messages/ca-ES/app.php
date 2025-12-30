@@ -367,4 +367,8 @@ return [
     'Error creating list' => 'Error en crear la llista',
     'List not found' => 'Llista no trobada',
     'Creative not found' => 'Creativitat no trobada',
+
+    'The list name cannot be empty' => 'El nom de la llista no pot estar buit',
+    'You already have a list with this name' => 'Ja tens una llista amb aquest nom',
+    'New list created successfully and new favorite added' => 'Nova llista creada correctament i nou favorit afegit',
 ];

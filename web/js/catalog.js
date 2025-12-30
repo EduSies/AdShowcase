@@ -16,7 +16,7 @@ const CONFIG = {
 // Centraliza todas las referencias al DOM. Si cambia el HTML, solo editas aquí.
 const selectors = {
     // --- Contenedores Generales ---
-    containerCards: '#cards-container', // Donde se inyectan las creatividades
+    containerCards: '#cards-container .list-cards', // Donde se inyectan las creatividades
     loader: '#loader', // Elemento de carga (spinner)
     body: 'body',
 
@@ -27,7 +27,8 @@ const selectors = {
         searchFilter: '#search-filter', // Fila de los dropdowns
         textBanner: '.text-banner-adshowcase', // Texto del banner (para calcular altura)
         bgFilter: '.adshowcase-bg-filter', // Fondo con imagen/color del filtro
-        scrollControl: '#control-scroll-filter' // Contenedor que ajusta su margen al hacer sticky
+        scrollControl: '#control-scroll-filter', // Contenedor que ajusta su margen al hacer sticky
+        backToTop: '.circle-icon' // Botón para volver al top de la página
     },
 
     // --- Barra de Búsqueda (Header) ---
@@ -155,7 +156,7 @@ function setPositionSearchBarDesktop(isAnimating) {
     let $refElement = $(selectors.inputs.formats).first();
     let position = $refElement.offset();
 
-    let rightReservedSpace = $(selectors.search.btnOpen).outerWidth(true) +
+    let rightReservedSpace = ($(selectors.search.btnOpen).outerWidth(true) * 3) +
         $(selectors.search.containerMenuRight).outerWidth(true);
 
     let availableWidth = ($(window).width()) - (position.left + rightReservedSpace);
@@ -168,7 +169,7 @@ function setPositionSearchBarDesktop(isAnimating) {
         'position': 'absolute',
         'left': (position.left + offsetAnimacion) + 'px',
         'width': availableWidth + 'px',
-        'z-index': 1050
+        'z-index': 1040
     });
 }
 
@@ -277,18 +278,30 @@ function renderFilterTags() {
 }
 
 function triggerFilter(reset = true) {
+    const scrollDuration = CONFIG.searchDebounceTime; // Tiempo que tarda en subir (ms)
+
     if (reset) {
         state.currentOffset = 0;
         state.allLoaded = false;
         showSkeletons(CONFIG.itemsPerLoad, false);
+        $('html, body').animate({ scrollTop: 0 }, 500);
     } else {
         if (state.isLoading || state.allLoaded) return;
         showSkeletons(CONFIG.itemsPerLoad, true);
     }
 
     state.isLoading = true;
-    renderFilterTags();
     updateURLWithFilters();
+
+    if (reset) {
+        // Si es un filtro nuevo, esperamos a que termine el scroll para mostrar/animar los tags
+        setTimeout(function() {
+            renderFilterTags();
+        }, scrollDuration);
+    } else {
+        // Si es scroll infinito, renderizamos inmediato (normalmente no cambian tags aquí)
+        renderFilterTags();
+    }
 
     var data = {
         products: $(selectors.inputs.products).val(),
@@ -383,6 +396,23 @@ function updateFilterOptionsVisibility(availableOptions) {
     if(availableOptions.countries) processInput(selectors.inputs.countries, availableOptions.countries);
 }
 
+function handleBackToTopVisibility() {
+    let $btn = $(selectors.layout.backToTop);
+
+    // Si el scroll supera 300px
+    if ($(window).scrollTop() > 300) {
+        // Si ya está visible o animándose hacia visible, no hacemos nada (evitamos reiniciar el efecto).
+        if ($btn.is(':hidden')) {
+            $btn.stop(true, false).fadeIn(300);
+        }
+    } else {
+        // Solo aplicamos fadeOut si el botón está VISIBLE.
+        if ($btn.is(':visible')) {
+            $btn.stop(true, false).fadeOut(300);
+        }
+    }
+}
+
 // ==========================================
 // EVENT LISTENER
 // ==========================================
@@ -467,17 +497,29 @@ $(document).on('click', selectors.tags.btnDeleteAll, function(e) {
     triggerFilter(true);
 });
 
+// --- Back to Top ---
+$(document).on('click', selectors.layout.backToTop, function() {
+    $('html, body').animate({ scrollTop: 0 }, 500);
+});
+
 // --- Scroll Infinito & Sticky ---
 $(window).on('scroll', function() {
     // Manejo visual del filtro sticky
     handleStickyFilterScroll();
+
+    // Manejo del botón Back to Top
+    handleBackToTopVisibility();
 
     // Detección de final de página para carga
     let pos = window.innerHeight + window.scrollY;
 
     // console.log("Scroll Pos:", Math.ceil(pos), "Body Height:", document.body.scrollHeight);
 
-    if (Math.ceil(pos) >= document.body.scrollHeight) {
+    // Verificamos si existe la variable global y si es true.
+    // Si estamos en Favorite details, NO ejecutamos el triggerFilter(false).
+    let isDetailView = (typeof isFavoritesDetail !== 'undefined' && isFavoritesDetail === true);
+
+    if (!isDetailView && Math.ceil(pos) >= document.body.scrollHeight) {
         triggerFilter(false);
     }
 });

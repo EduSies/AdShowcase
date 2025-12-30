@@ -62,7 +62,7 @@ use yii\helpers\Html;
 
                         <div class="d-grid pt-4">
                             <?= Html::button(Yii::t('app', 'Generate Link'), [
-                                'class' => 'btn btn-primary py-2 shadow-sm',
+                                'class' => 'btn btn-primary rounded-pill py-2 shadow-sm',
                                 'id' => 'btnGenerateLink',
                                 'type' => 'button'
                             ]) ?>

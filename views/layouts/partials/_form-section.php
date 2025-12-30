@@ -16,7 +16,7 @@ use yii\bootstrap5\Html;
             ]) .
             Html::tag('span', Yii::t('app', 'Back to list'), ['class' => 'ms-2']),
             $indexRoute ?? null,
-            ['class' => 'btn btn-outline-secondary']
+            ['class' => 'btn btn-outline-secondary rounded-pill']
     ) ?>
 </div>
 

@@ -14,14 +14,15 @@ foreach ($listsFavorites as $list) {
         $customLists[] = $list;
     }
 }
+
 ?>
 
 <div class="d-flex flex-column gap-2">
     <?php if ($defaultList): ?>
         <?= $this->render('_list-item-row', [
-                'list' => $defaultList,
-                'creativeHash' => $creativeHash,
-                'isDefault' => true
+            'list' => $defaultList,
+            'creativeHash' => $creativeHash,
+            'isDefault' => true
         ]) ?>
     <?php endif; ?>
 
@@ -32,9 +33,9 @@ foreach ($listsFavorites as $list) {
 
         <?php foreach ($customLists as $list): ?>
             <?= $this->render('_list-item-row', [
-                    'list' => $list,
-                    'creativeHash' => $creativeHash,
-                    'isDefault' => false
+                'list' => $list,
+                'creativeHash' => $creativeHash,
+                'isDefault' => false
             ]) ?>
         <?php endforeach; ?>
     <?php endif; ?>

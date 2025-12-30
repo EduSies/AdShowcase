@@ -191,7 +191,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
                 ]) .
                 Html::tag('span', $submitLabel, ['class' => 'ms-2']),
                 [
-                    'class' => $isUpdate ? 'btn btn-primary' : 'btn btn-success',
+                    'class'  => ($isUpdate ? 'btn btn-primary' : 'btn btn-success') . ' rounded-pill',
                     'encode' => false
                 ]
             ) ?>
@@ -203,7 +203,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
     <div class="modal-dialog modal-dialog-centered" style="max-width: 60vw; width: 60vw;">
         <div class="modal-content">
             <div class="modal-header border-secondary py-2">
-                <h6 class="modal-title"><?= Yii::t('app', 'Crop Image') ?></h6>
+                <h4 class="modal-title text-muted"><?= Yii::t('app', 'Crop Image') ?></h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -241,7 +241,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
                     ]) .
                     Html::tag('span', Yii::t('app', 'Cancel'), ['class' => 'ms-2']),
                     [
-                        'class' => 'btn btn-secondary d-flex align-items-center',
+                        'class' => 'btn btn-secondary rounded-pill d-flex align-items-center',
                         'data-bs-dismiss' => 'modal',
                         'encode' => false
                     ]
@@ -255,7 +255,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
                     Html::tag('span', Yii::t('app', 'Crop & Save'), ['class' => 'ms-2']),
                     [
                         'id' => 'btn-crop-save',
-                        'class' => 'btn btn-primary d-flex align-items-center',
+                        'class' => 'btn btn-primary rounded-pill d-flex align-items-center',
                         'encode' => false
                     ]
                 ) ?>

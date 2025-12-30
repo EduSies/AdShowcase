@@ -12,14 +12,14 @@ final class FavoriteListService
 {
     /**
      * Obtiene la estructura de listas de favoritos del usuario y los hashes que contienen.
+     * * @param int|null $limitImages Número máximo de imágenes a devolver por lista. Si es null, devuelve todas.
      */
-    public function getUserFavorites(): array
+    public function getUserFavorites(?int $limitImages = null): array
     {
         $userId = Yii::$app->user->id;
         $result = [];
 
-        // LISTA POR DEFECTO ("Your favorites")
-        // Obtenemos los hashes de las creatividades en la tabla simple
+        // Obtenemos TODOS los hashes (sin límite) para saber si es favorito
         $defaultHashes = Favorite::find()
             ->alias('fav')
             ->select(['c.hash'])
@@ -27,15 +27,19 @@ final class FavoriteListService
             ->where(['fav.user_id' => $userId])
             ->column();
 
-        // Obtenemos la IMAGEN de la última añadida
-        // Hacemos una query ligera limitando a 1 resultado ordenado por fecha
-        $latestDefaults = Favorite::find()
+        // Obtenemos las IMÁGENES
+        $queryDefaults = Favorite::find()
             ->alias('fav')
             ->joinWith('creative c')
             ->where(['fav.user_id' => $userId])
-            ->orderBy(['fav.created_at' => SORT_ASC]) // Asumiendo que Favorite tiene created_at
-            ->limit(2)
-            ->all();
+            ->orderBy(['fav.created_at' => SORT_ASC]); // Orden cronológico (antiguos primero)
+
+        // Aplicar límite solo si no es null
+        if ($limitImages !== null) {
+            $queryDefaults->limit($limitImages);
+        }
+
+        $latestDefaults = $queryDefaults->all();
 
         $defaultImages = [];
         foreach ($latestDefaults as $fav) {
@@ -48,7 +52,7 @@ final class FavoriteListService
             'hash' => null, // Hash vacío identifica la lista default en el frontend
             'name' => Yii::t('app', 'Your favorites'),
             'images' => $defaultImages,
-            'itemsHashes' => $defaultHashes // Array de strings ['hash1', 'hash2']
+            'itemsHashes' => $defaultHashes
         ];
 
         // LISTAS PERSONALIZADAS
@@ -64,15 +68,17 @@ final class FavoriteListService
 
         foreach ($customLists as $list) {
             $hashes = [];
-            $listImages = []; // Array para guardar las 2 imágenes
+            $listImages = [];
 
             foreach ($list->items as $item) {
                 if ($item->creative) {
-                    // Recopilar hash
+                    // Siempre recopilamos todos los hashes para la lógica de "Is Favorite"
                     $hashes[] = $item->creative->hash;
 
-                    // Lógica para obtener las 2 primeras imágenes
-                    if (count($listImages) < 2 && !empty($item->creative->url_thumbnail)) {
+                    // Lógica para obtener imágenes según el límite
+                    $shouldAddImage = ($limitImages === null || count($listImages) < $limitImages);
+
+                    if ($shouldAddImage && !empty($item->creative->url_thumbnail)) {
                         $listImages[] = $item->creative->url_thumbnail;
                     }
                 }

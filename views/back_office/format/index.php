@@ -44,7 +44,7 @@ $this->registerJsVar('deleteConfirmJs', Json::htmlEncode(Yii::t('app', 'Are you 
                     Html::tag('span', Yii::t('app', 'New Format'), ['class' => 'align-middle']),
                     ['back-office/format-create'],
                     [
-                        'class' => 'btn btn-outline-primary d-inline-flex align-items-center',
+                        'class' => 'btn btn-outline-primary d-inline-flex align-items-center rounded-pill',
                         'encode' => false,
                     ]
                 ) ?>

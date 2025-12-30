@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use app\widgets\Icon;
+use app\helpers\FavoriteHelper;
 
 /** @var array $list Datos de la lista (hash, name, image, itemsHashes) */
 /** @var string $creativeHash Hash de la creatividad actual */
@@ -9,29 +10,6 @@ use app\widgets\Icon;
 
 // Calculamos si está añadido
 $isAdded = in_array($creativeHash, $list['itemsHashes'] ?? []);
-
-// Helper para renderizar el botón (Reutilizado o copiado aquí si prefieres encapsularlo)
-$renderBtn = function($listHash, $isAdded, $isCustom) {
-    $contentAdd = Html::tag('span',
-        Yii::t('app', 'Add') . ' ' . Icon::widget(['icon' => 'bi-plus-lg']),
-        ['class' => 'state-add ' . ($isAdded ? 'd-none' : '')]
-    );
-
-    $contentAdded = Html::tag('span',
-        Yii::t('app', 'Added') . ' ' . Icon::widget(['icon' => 'bi-check2']),
-        ['class' => 'state-added ' . (!$isAdded ? 'd-none' : '')]
-    );
-
-    $btnClass = $isAdded ? 'btn-success' : ($isCustom ? 'btn-light color-main-2 border-color-2' : 'btn-primary');
-
-    return Html::button($contentAdd . $contentAdded, [
-        'class' => 'btn ' . $btnClass . ' btn-sm rounded-pill px-3 d-flex align-items-center gap-1 toggle-list-btn',
-        'data-list-hash' => $listHash,
-        'data-action' => $isAdded ? 'remove' : 'add',
-        'type' => 'button'
-    ]);
-};
-
 $image = $list['images'][0] ?? null;
 
 ?>
@@ -52,5 +30,5 @@ $image = $list['images'][0] ?? null;
         </h6>
     </div>
 
-    <?= $renderBtn($list['hash'], $isAdded, !$isDefault) ?>
+    <?= FavoriteHelper::renderToggleButton($list['hash'], $isAdded, !$isDefault) ?>
 </div>

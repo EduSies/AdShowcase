@@ -1,25 +1,17 @@
 <?php
 
 /* @var $this \yii\web\View */
-
 /* @var $content string */
 
 use app\assets\AppAsset;
 use app\helpers\LangHelper;
 use app\widgets\Icon;
-use powerkernel\flagiconcss\FlagiconcssAsset;
 use yii\bootstrap5\Nav;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 AppAsset::register($this);
-
-/*$this->registerJsFile('@web/js/login.js', [
-    'depends' => JqueryAsset::class,
-]);
-
-$this->registerJsVar('routeRoot', Url::base());*/
 
 $this->title = ArrayHelper::getValue($_ENV, 'APP_NAME');
 
@@ -57,7 +49,8 @@ if (Yii::$app->session->hasFlash('error')) {
     </head>
     <body class="login-layout d-flex flex-column min-vh-100">
     <?php $this->beginBody() ?>
-    <div class="position-absolute top-0 end-0 my-3 mx-4">
+    <div class="position-fixed min-vh-100 min-vw-100" style="background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);"></div>
+    <div class="position-absolute top-0 end-0 my-3 mx-4" style="z-index: 1050;">
         <?= Nav::widget([
             'options' => ['class' => 'nav-pills navbar-nav gap-2 text-secondary'],
             'items' => [
@@ -65,20 +58,21 @@ if (Yii::$app->session->hasFlash('error')) {
                     'label' => Icon::widget([
                         'icon' => 'bi-globe',
                         'size' => Icon::SIZE_24,
-                        'options' => ['class' => 'flex-shrink-0 me-1'],
+                        'options' => ['class' => 'flex-shrink-0'],
                     ]),
                     'encode' => false,
                     'dropdownOptions' => ['class' => 'mt-2 shadow-lg dropdown-menu-end'],
                     'items' => LangHelper::getLanguageItems(),
                     'linkOptions' => [
+                        'id' => 'langDropdown',
+                        'class' => 'nav-link',
                         'title' => Yii::t('app', 'Select language'),
-                        'class' => 'nav-link'
                     ],
                 ],
             ],
         ]) ?>
     </div>
-    <main id="main" class="flex-shrink-0" role="main">
+    <main id="main" class="flex-shrink-0 position-relative" role="main">
         <div class="container d-flex flex-column align-items-center">
             <h1 class="logo-adshowcase mb-5"><?= ArrayHelper::getValue($_ENV, 'APP_NAME') ?></h1>
             <?= $content ?>

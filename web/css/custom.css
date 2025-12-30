@@ -11,6 +11,7 @@
     --swal2-warning-color: #f8bb86;
     --filter-bg-color: #1B043F;
     --bulma-input-focus-shadow-alpha: .35;
+    --bg-back: #E4EBF6;
 }
 
 #shareModal .btn-close:hover {
@@ -44,6 +45,10 @@
 
 .border-color-2 {
     border-color: var(--main-color-2) !important;
+}
+
+.bg-back {
+    background-color: var(--bg-back) !important;
 }
 
 /* Login layout */
@@ -121,6 +126,28 @@ body:not(.login-layout) > main > .container {
 }
 /* END SweetAlert2 */
 
+/* INIT Button circle */
+.circle-icon {
+    background-color: var(--main-color-2);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bs-white);
+}
+.circle-icon-pos {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    margin: 25px;
+}
+.circle-icon.circle-50 {
+    width: 50px !important;
+    height: 50px !important;
+}
+/* END Button circle */
+
 /* Icons */
 i.bi {
     display: inline-block;
@@ -162,9 +189,16 @@ i.bi.icon-80px { font-size: 80px; }
 .breadcrumb a:hover {
     color: var(--main-color-1);
 }
+.breadcrumb-item + .breadcrumb-item::before {
+    padding: 0 !important;
+    content: "" !important;
+}
 /* END Breadcrumb */
 
 /* DataTable */
+.dt-container .pagination-link, .dt-container .pagination-next, .dt-container .pagination-previous {
+    text-decoration: none !important;
+}
 .dt-container .main-column {
     width: 15%;
 }
@@ -248,14 +282,6 @@ section.form .form-title {
 }
 /* END Off Canvas */
 
-/* Btn Styles */
-.btn {
-    --bs-btn-border-radius: 2rem;
-    --bs-btn-border-radius-sm: 2rem;
-    --bs-btn-border-radius-lg: 2rem;
-}
-/* END Btn Styles */
-
 /* Dashboard */
 .font-adshowcase {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -332,6 +358,7 @@ section.form .form-title {
     width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+    z-index: 1040;
 }
 .adshowcase-header-search i[class*="icon-"],
 .adshowcase-header-search #btnSearchCancel {
@@ -476,3 +503,18 @@ section.form .form-title {
     min-height: 300px;
 }
 /* END Toggle Favorites */
+
+/* INIT Card Structure */
+.cards {
+    float: left;
+    min-height: 1px;
+    padding-right: 12px;
+    padding-left: 12px;
+    padding-bottom: 24px;
+}
+.favorites-cards .list-cards,
+.favorites-detail-cards .list-cards {
+    margin-right: calc(-0.5 * var(--bs-gutter-x));
+    margin-left: calc(-0.5 * var(--bs-gutter-x));
+}
+/* END Card Structure */

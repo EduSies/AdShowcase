@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace app\controllers\actions\site;
+namespace app\controllers\actions\favorite;
 
 use app\services\catalog\CatalogListService;
 use app\services\favorite\FavoriteListService;
@@ -10,17 +10,21 @@ use Yii;
 use yii\helpers\Url;
 use yii\web\Response;
 
-final class CatalogIndexAction extends BaseSiteAction
+final class FavoriteIndexAction extends BaseFavoriteAction
 {
     public ?string $layout = 'main-catalog';
     public ?string $view = '@app/views/site/catalog/index';
     protected $serviceClass = CatalogListService::class;
-    public ?string $routeAjaxSearch = '/catalog';
+    public ?string $routeAjaxSearch = null;
 
     public function run()
     {
         $this->serviceClass = new $this->serviceClass();
         $request = Yii::$app->request;
+
+        $hashFavoriteDetail = $request->get('hash');
+
+        $this->routeAjaxSearch = $hashFavoriteDetail ? '/favorites/detail/'.$hashFavoriteDetail : '/favorites';
 
         // Recoger y normalizar datos
         $normalizeInput = function ($paramName) use ($request) {
@@ -37,13 +41,15 @@ final class CatalogIndexAction extends BaseSiteAction
             'search' => $request->post('search', $request->get('search')),
             'offset' => (int)$request->post('offset', 0),
             'limit' => (int)$request->post('limit', 12),
+            'listHash' => $hashFavoriteDetail,
+            'onlyFavorites' => empty($hashFavoriteDetail),
         ];
 
         // Obtener datos del catálogo
         $data = $this->serviceClass->getCatalogData($filters);
 
         // Obtener favoritos del usuario
-        $listsFavorites = (new FavoriteListService())->getUserFavorites(1);
+        $listsFavorites = (new FavoriteListService())->getUserFavorites();
 
         // Iteramos sobre cada creatividad y le añadimos los campos calculados (iconos, urls, flags, favoritos)
         $preparedCreatives = array_map(function ($creative) use ($listsFavorites) {
@@ -55,12 +61,12 @@ final class CatalogIndexAction extends BaseSiteAction
             Yii::$app->response->format = Response::FORMAT_JSON;
 
             return [
-                'creatives' => $this->controller->renderPartial('catalog/_card-list', [
+                'creatives' => $this->controller->renderPartial('@app/views/site/catalog/_card-list', [
                     'creatives' => $preparedCreatives,
                     'listsFavorites' => $listsFavorites,
                     'routeButtonSearch' => $this->routeAjaxSearch,
                     'isFavorites' => true,
-                    'isFavoritesDetail' => false,
+                    'isFavoritesDetail' => $hashFavoriteDetail ? true : false,
                 ]),
                 'totalCards' => $data['totalCards'],
                 'count' => count($data['queryData']),
@@ -68,24 +74,35 @@ final class CatalogIndexAction extends BaseSiteAction
             ];
         }
 
+        $filteredListName = Yii::t('app', 'Your favorites');
+        if ($hashFavoriteDetail) {
+            foreach ($listsFavorites as $list) {
+                // Comparamos hashes. Nota: El hash de "Your favorites" es null
+                if ($list['hash'] === $hashFavoriteDetail) {
+                    $filteredListName = $list['name'];
+                    break;
+                }
+            }
+        }
+
         // Renderizado visita completa
-        $initialCreativesHtml = $this->controller->renderPartial('catalog/_card-list', [
+        $initialCreativesHtml = $this->controller->renderPartial('@app/views/site/catalog/_card-list', [
             'creatives' => $preparedCreatives,
             'listsFavorites' => $listsFavorites,
             'routeButtonSearch' => $this->routeAjaxSearch,
-            'isFavorites' => false,
-            'isFavoritesDetail' => false,
+            'isFavorites' => true,
+            'isFavoritesDetail' => $hashFavoriteDetail ? true : false,
         ]);
 
         return $this->controller->render($this->view, [
-            'isFavorites' => false,
-            'isFavoritesDetail' => false,
-            'listsFavorites' => [],
-            'filteredListName' => '',
+            'isFavorites' => true,
+            'isFavoritesDetail' => $hashFavoriteDetail ? true : false,
+            'listsFavorites' => $listsFavorites,
+            'filteredListName' => $filteredListName,
             'filters' => $data['filters'],
             'creatives' => $initialCreativesHtml,
             'totalCards' => $data['totalCards'],
-            'pageTitle' => Yii::t('app', 'Creative Catalog'),
+            'pageTitle' => $hashFavoriteDetail ? Yii::t('app', 'Favorite details') : Yii::t('app', 'Favorites'),
             'ajaxUrl' => Url::to([$this->routeAjaxSearch]),
             'ajaxUrlCreateList' => Url::to(['favorite/create-list']),
             'ajaxUrlToggleItem' => Url::to(['favorite/toggle-item']),

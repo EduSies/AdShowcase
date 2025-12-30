@@ -71,6 +71,17 @@ if (Yii::$app->session->hasFlash('error')) {
                 'url' => '#',
                 'encode' => false,
             ],
+            Html::tag('div','', ['class' => 'vr']),
+            [
+                'label' => Icon::widget([
+                    'icon' => 'bi-star',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]),
+                'url' => ['/favorites'],
+                'encode' => false,
+            ],
+            Html::tag('div','', ['class' => 'vr']),
         ];
 
         if (!Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access')) {
@@ -88,6 +99,7 @@ if (Yii::$app->session->hasFlash('error')) {
                     'aria-controls' => 'offcanvasBackOffice',
                 ],
             ];
+            $leftItems[] = Html::tag('div','', ['class' => 'vr']);
         }
 
         // Preparamos los datos del usuario actual
@@ -101,26 +113,23 @@ if (Yii::$app->session->hasFlash('error')) {
         $username = Html::encode($identity->username);
         $roleName = Html::encode($identity->type ?? 'User'); // O usa RBAC si es necesario
 
+        echo $this->render('partials/_input-search', [
+                'filterSearch' => $filterSearch ?? ''
+        ]);
+
         // Right side navigation (Logout)
         echo Nav::widget([
-            'options' => ['id' => 'menu-right', 'class' => 'navbar-nav gap-2 align-items-center justify-content-end'],
+            'options' => ['id' => 'menu-right', 'class' => 'navbar-nav bg-white gap-2 align-items-center justify-content-end', 'style' => 'z-index: 1050;'],
             'items' => array_merge(
-                [
-                    '<li class="nav-item d-flex align-items-center px-2">' .
-                        $this->render('partials/_input-search', [
-                            'filterSearch' => $filterSearch ?? ''
-                        ]) .
-                    '</li>'
-                ],
                 $leftItems, [
                 [
                     'label' => Icon::widget([
                         'icon' => 'bi-globe',
                         'size' => Icon::SIZE_24,
-                        'options' => ['class' => 'flex-shrink-0 me-1'],
+                        'options' => ['class' => 'flex-shrink-0'],
                     ]),
                     'encode' => false,
-                    'dropdownOptions' => ['class' => 'dropdown-menu-end mt-2 shadow-lg'],
+                    'dropdownOptions' => ['class' => 'dropdown-menu-end mt-2 shadow-lg border-0'],
                     'items' => LangHelper::getLanguageItems(),
                     'linkOptions' => [
                         'id' => 'langDropdown',
@@ -128,6 +137,7 @@ if (Yii::$app->session->hasFlash('error')) {
                         'title' => Yii::t('app', 'Select language'),
                     ],
                 ],
+                Html::tag('div','', ['class' => 'vr']),
                 [
                     // Imagen del Avatar
                     'label' => Html::img($avatarUrl, [
@@ -139,7 +149,7 @@ if (Yii::$app->session->hasFlash('error')) {
 
                     // Opciones del menú desplegable
                     'dropdownOptions' => [
-                        'class' => 'dropdown-menu-end mt-2 shadow-lg',
+                        'class' => 'dropdown-menu-end mt-2 shadow-lg border-0',
                         'style' => 'min-width: 220px;',
                     ],
                     'linkOptions' => [
@@ -192,7 +202,7 @@ if (Yii::$app->session->hasFlash('error')) {
 
     <div class="position-fixed min-vh-100 min-vw-100" style="background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);"></div>
 
-    <main id="main" class="flex-shrink-0" role="main">
+    <main id="main" class="flex-shrink-0 position-relative" role="main">
         <div class="container-fluid p-0">
             <?= $content ?>
         </div>

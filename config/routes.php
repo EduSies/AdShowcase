@@ -23,13 +23,12 @@ $rules = [
     'back-office/<action:[a-z0-9\-]+>/<hash:[A-Za-z0-9_\-]{16}>' => 'back-office/<action>',
     'back-office/<action:[a-z0-9\-]+>' => 'back-office/<action>',
 
-    // --- Catalog shortcuts (slugs and IDs) ---
-    'c/<hash:[A-Za-z0-9]{10}>' => 'creative/view-by-hash', // short link by hash
-
     // --- Shared links / Favorite lists ---
     's/<token:[A-Za-z0-9_\-]{43}>' => 'shared-link/open', // 43-char base64url token
+
+    // --- Favorite Route ---
     'favorites' => 'favorite/index',
-    'favorites/<hash:[A-Za-z0-9]{16}>' => 'favorite/view-list',
+    'favorites/detail/<hash:[A-Za-z0-9_\-]{16}>' => 'favorite/detail',
 
     // --- Rutas AJAX para manipulación de listas ---
     'favorite/get-dropdown' => 'favorite/get-dropdown',

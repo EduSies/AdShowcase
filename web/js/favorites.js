@@ -28,6 +28,11 @@ const favSelectors = {
     activeClass: 'is-active' // Clase CSS que se añade a la card para mantener el overlay visible al abrir el menú
 };
 
+var favConfig = window.favConfig || {
+    closeOnCreate: false, // ¿Cerrar dropdown al crear una lista nueva?
+    closeOnToggle: false // ¿Cerrar dropdown al añadir/quitar una crea?
+};
+
 // --- Eventos de Navegación ---
 $(document).on('click', favSelectors.buttons.goToCreate, function(e) {
     e.preventDefault();
@@ -124,7 +129,6 @@ $(document).on('click', favSelectors.buttons.saveList, function(e) {
 
     let $btn = $(this);
     let $screen = $btn.closest(favSelectors.screens.create);
-    let $dropdownMenu = $btn.closest(favSelectors.dropdown.menu);
     let $input = $screen.find(favSelectors.inputs.listName);
 
     let name = $input.val();
@@ -169,11 +173,16 @@ $(document).on('click', favSelectors.buttons.saveList, function(e) {
                             let $card = $btn.closest(favSelectors.card);
                             updateCardStar($card, resToggle.isFavorite);
 
-                            // Volver atrás
-                            $dropdownMenu.find(favSelectors.buttons.backToList).trigger('click');
+                            if (favConfig.closeOnCreate) {
+                                closeFavDropdown($dropdownMenu);
+                            } else {
+                                // Volver atrás
+                                $dropdownMenu.find(favSelectors.buttons.backToList).trigger('click');
+                            }
 
                             if(window.swalSuccess) swalSuccess(response.message);
                         }
+                        // Restaurar botón
                         $btn.prop('disabled', false).html(originalContent);
                     },
                     error: function() {
@@ -197,12 +206,12 @@ $(document).on('click', favSelectors.buttons.toggleItem, function(e) {
     e.stopPropagation();
 
     let $btn = $(this);
-    let $dropdown = $btn.closest(favSelectors.dropdown.menu);
+    let $dropdownMenu = $btn.closest(favSelectors.dropdown.menu);
     let $card = $btn.closest(favSelectors.card);
 
     let listHash = $btn.data('list-hash');
     let action = $btn.data('action');
-    let creativeHash = $dropdown.find(favSelectors.buttons.saveList).data('creative-hash');
+    let creativeHash = $dropdownMenu.find(favSelectors.buttons.saveList).data('creative-hash');
 
     // Loading
     let originalContent = $btn.html();
@@ -227,10 +236,14 @@ $(document).on('click', favSelectors.buttons.toggleItem, function(e) {
         success: function(response) {
             if (response.success) {
                 // Esto actualiza imágenes, textos, estados de botones y añade/quita filas automáticamente
-                $dropdown.find(favSelectors.screens.scrollContainer).html(response.html);
+                $dropdownMenu.find(favSelectors.screens.scrollContainer).html(response.html);
 
                 // Actualizar el icono de la estrella en la card
                 updateCardStar($card, response.isFavorite);
+
+                if (favConfig.closeOnToggle) {
+                    closeFavDropdown($dropdownMenu);
+                }
 
                 if(window.swalSuccess) swalSuccess(response.message);
 
@@ -263,4 +276,20 @@ function updateCardStar($card, isFavorite) {
     } else {
         $icon.removeClass('bi-star-fill').addClass('bi-star');
     }
+}
+
+/**
+ * Cierra el dropdown buscando la card padre para encontrar el trigger correcto.
+ */
+function closeFavDropdown($dropdownMenu) {
+    $dropdownMenu.css('pointer-events', 'none');
+
+    $dropdownMenu.stop().animate({ opacity: 0 }, 800, function() {
+        $dropdownMenu.closest(favSelectors.dropdown.container).find(favSelectors.dropdown.trigger).trigger('click');
+
+        $(this).css({
+            'opacity': '',
+            'pointer-events': ''
+        });
+    });
 }

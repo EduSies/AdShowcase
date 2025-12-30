@@ -28,7 +28,7 @@ $deleteUrl = Url::to(["back-office/{$nameClassUrl}-delete"]) . '/' . $hash;
         Html::tag('span', Yii::t('app', 'Edit'), ['class' => 'align-middle']),
         $editUrl,
         [
-            'class'  => 'btn btn-sm btn-secondary d-inline-flex align-items-center',
+            'class'  => 'btn btn-sm btn-secondary d-inline-flex align-items-center rounded-pill',
             'encode' => false,
         ]
     ) ?>
@@ -42,7 +42,7 @@ $deleteUrl = Url::to(["back-office/{$nameClassUrl}-delete"]) . '/' . $hash;
         Html::tag('span', Yii::t('app', 'Delete'), ['class' => 'align-middle']),
         'javascript:void(0);',
         [
-            'class' => 'btn btn-sm btn-outline-danger js-delete d-inline-flex align-items-center',
+            'class' => 'btn btn-sm btn-outline-danger js-delete d-inline-flex align-items-center rounded-pill',
             'data-href' => $deleteUrl,
             'encode' => false,
         ]

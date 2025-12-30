@@ -31,7 +31,7 @@ use app\widgets\Icon;
 <div class="create-list-favorite-screen" style="display: none;">
     <?= Html::button(
         Icon::widget(['icon' => 'bi-chevron-left']) .
-        Html::tag('span', Yii::t('app', 'Create list'), ['class' => 'h5 mb-0 text-dark']),
+        Html::tag('span', Yii::t('app', 'Create list'), ['class' => 'h5 mb-0 text-muted']),
         [
             'class' => 'btn btn-link text-decoration-none w-100 text-start p-3 d-flex align-items-center gap-2 color-main-2 back-to-list-btn',
             'type' => 'button'
@@ -39,7 +39,7 @@ use app\widgets\Icon;
     ) ?>
 
     <div class="p-3 pt-0">
-        <label class="form-label small text-muted"><?= Yii::t('app', 'Name') ?></label>
+        <label class="form-label small text-muted ms-3 mb-1"><?= Yii::t('app', 'Name') ?></label>
         <?= Html::textInput('new_list_name', '', [
             'class' => 'form-control new-list-input',
             'placeholder' => Yii::t('app', 'Enter list name'),

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace app\controllers\actions\site;
+namespace app\controllers\actions\favorite;
 
 use Yii;
 use yii\base\Action;
 use yii\web\ForbiddenHttpException;
 
-abstract class BaseSiteAction extends Action
+abstract class BaseFavoriteAction extends Action
 {
     /** Permiso RBAC requerido para esta acción (si procede). */
     public ?string $can = null;

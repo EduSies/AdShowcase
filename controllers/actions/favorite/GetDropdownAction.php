@@ -4,10 +4,11 @@ namespace app\controllers\actions\favorite;
 
 use app\services\favorite\FavoriteListService;
 use Yii;
-use yii\base\Action;
 
-class GetDropdownAction extends Action
+final class GetDropdownAction extends BaseFavoriteAction
 {
+    public ?string $layout = 'main-catalog';
+
     public function run()
     {
         $creativeHash = Yii::$app->request->post('creativeHash');

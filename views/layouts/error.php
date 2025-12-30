@@ -47,7 +47,7 @@ $this->title = $name;
                             ]) . Html::tag('span', Yii::t('app', 'Go back'), ['class' => 'ms-2']),
                             [
                                 'type' => 'button',
-                                'class' => 'btn btn-primary d-inline-flex align-items-center justify-content-center',
+                                'class' => 'btn btn-primary rounded-pill d-inline-flex align-items-center justify-content-center',
                                 'onclick' => "if (window.history.length > 1) { window.history.back(); } else { window.location.href = '" . Url::to(Yii::$app->homeUrl) . "'; }",
                             ]
                         ) ?>
@@ -60,7 +60,7 @@ $this->title = $name;
                             ]) . Html::tag('span', Yii::t('app', 'Go to homepage'), ['class' => 'ms-2']),
                             Url::to(Yii::$app->homeUrl),
                             [
-                                'class' => 'btn btn-outline-secondary d-inline-flex align-items-center justify-content-center',
+                                'class' => 'btn btn-outline-secondary rounded-pill d-inline-flex align-items-center justify-content-center',
                             ]
                         ) ?>
                     </div>

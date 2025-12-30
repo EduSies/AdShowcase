@@ -4,11 +4,12 @@ namespace app\controllers\actions\favorite;
 
 use app\services\favorite\FavoriteCreateService;
 use Yii;
-use yii\base\Action;
 use yii\web\Response;
 
-class CreateListAction extends Action
+final class CreateListAction extends BaseFavoriteAction
 {
+    public ?string $layout = 'main-catalog';
+
     public function run()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -21,7 +22,7 @@ class CreateListAction extends Action
 
             return [
                 'success' => true,
-                'message' => Yii::t('app', 'List created successfully'),
+                'message' => Yii::t('app', 'New list created successfully and new favorite added'),
                 'listHash' => $list->hash,
                 'name' => $list->name
             ];

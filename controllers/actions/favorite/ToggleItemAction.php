@@ -5,11 +5,12 @@ namespace app\controllers\actions\favorite;
 use app\services\favorite\FavoriteListService;
 use app\services\favorite\FavoriteUpdateService;
 use Yii;
-use yii\base\Action;
 use yii\web\Response;
 
-class ToggleItemAction extends Action
+final class ToggleItemAction extends BaseFavoriteAction
 {
+    public ?string $layout = 'main-catalog';
+
     public function run()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

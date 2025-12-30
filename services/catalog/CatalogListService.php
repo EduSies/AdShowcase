@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace app\services\catalog;
 
+use app\models\FavList;
+use app\models\FavListItem;
+use app\models\Favorite;
 use Yii;
 use app\models\Creative;
 use app\models\Product;
@@ -29,11 +32,13 @@ final class CatalogListService
 
         $query->orderBy(['c.created_at' => SORT_DESC]);
 
-        $limit = (isset($params['limit']) && $params['limit'] > 0) ? $params['limit'] : 12;
-        $query->limit($limit);
+        if (empty($params['listHash'])) {
+            $limit = (isset($params['limit']) && $params['limit'] > 0) ? $params['limit'] : 12;
+            $query->limit($limit);
 
-        if (isset($params['offset']) && $params['offset'] > 0) {
-            $query->offset($params['offset']);
+            if (isset($params['offset']) && $params['offset'] > 0) {
+                $query->offset($params['offset']);
+            }
         }
 
         $queryData = $query->asArray()->all();
@@ -94,6 +99,24 @@ final class CatalogListService
 
         // Joins necesarios
         $query->joinWith(['brand b', 'agency a', 'format f', 'country co', 'product p', 'device d']);
+
+        if (!empty($params['listHash'])) {
+            // Hacemos JOIN con la tabla de items y la tabla de listas
+            // fli = FavListItem (tabla intermedia), fl = FavList (cabecera lista)
+            $query->innerJoin(FavListItem::tableName() . ' fli', 'fli.creative_id = c.id');
+            $query->innerJoin(FavList::tableName() . ' fl', 'fl.id = fli.list_id');
+
+            // Filtramos por el hash de la lista y el usuario propietario
+            $query->andWhere(['fl.hash' => $params['listHash']]);
+            $query->andWhere(['fl.user_id' => Yii::$app->user->id]);
+        } else if (!empty($params['onlyFavorites'])) {
+            // Si filtramos por Favoritos por Defecto ("Your Favorites")
+            // Hacemos INNER JOIN con la tabla ADSHOWCASE_favorite.
+            $query->innerJoin(Favorite::tableName() . ' fav', 'fav.creative_id = c.id');
+
+            // Filtramos por el usuario actual
+            $query->andWhere(['fav.user_id' => Yii::$app->user->id]);
+        }
 
         // Products
         if (!empty($params['products'])) {

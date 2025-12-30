@@ -40,7 +40,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
                     ]) .
                     Html::tag('span', $submitLabel, ['class' => 'ms-2']),
                     [
-                        'class'  => $isUpdate ? 'btn btn-primary' : 'btn btn-success',
+                        'class'  => ($isUpdate ? 'btn btn-primary' : 'btn btn-success') . ' rounded-pill',
                         'encode' => false,
                     ]
             ) ?>

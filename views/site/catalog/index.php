@@ -1,6 +1,7 @@
 <?php
 
 use app\widgets\Icon;
+use yii\bootstrap5\Breadcrumbs;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -12,6 +13,10 @@ use yii\helpers\Html;
 /* @var $ajaxUrlToggleItem string */
 /* @var $ajaxUrlGetDropdown string */
 /* @var $availableOptions array */
+/* @var $listsFavorites array */
+/* @var $isFavorites bool */
+/* @var $isFavoritesDetail bool */
+/* @var $filteredListName string */
 
 $this->title = $pageTitle;
 
@@ -25,6 +30,7 @@ $this->registerJsVar('ajaxUrlCreateList', $ajaxUrlCreateList);
 $this->registerJsVar('ajaxUrlToggleItem', $ajaxUrlToggleItem);
 $this->registerJsVar('ajaxUrlGetDropdown', $ajaxUrlGetDropdown);
 $this->registerJsVar('initialAvailableOptions', $availableOptions);
+$this->registerJsVar('isFavoritesDetail', $isFavoritesDetail);
 
 $this->registerJsFile('@web/js/catalog.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 $this->registerJsFile('@web/js/modal-share.js', ['depends' => [\yii\web\JqueryAsset::class]]);
@@ -108,7 +114,7 @@ $this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsse
     </div>
 </div>
 
-<div id="search-filter-tags" class="container-fluid bg-primary position-relative" style="display: none;">
+<div id="search-filter-tags" class="container-fluid bg-primary" style="display: none;">
     <div class="container">
         <div class="row col-lg-12 col-md-12 col-sm-12 col-xs-12 m-0">
             <div id="search-filter-preview" class="p-0"></div>
@@ -119,13 +125,52 @@ $this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsse
 <div id="control-scroll-filter" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="container">
         <div id="cards-container" class="row">
-            <?= $creatives ?>
+
+            <?php if ($isFavorites): ?>
+                <div class="<?= (!$isFavoritesDetail) ? '' : 'col-lg-3 col-md-12 col-sm-12 col-xs-12' ?>">
+                    <?= $this->render('@app/views/favorite/index', [
+                        'listsFavorites' => $listsFavorites,
+                        'isFavoritesDetail' => $isFavoritesDetail,
+                    ]); ?>
+                </div>
+            <?php endif; ?>
+
+            <?= (!$isFavorites || !$isFavoritesDetail) ? '<div class="favorites-cards">' : '<div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 favorites-detail-cards">' ?>
+                <div class="container-favorites-list-cards <?= (!$isFavorites && !$isFavoritesDetail) ? 'p-0' : '' ?>">
+                    <?php if ($isFavoritesDetail): ?>
+                        <?= Breadcrumbs::widget([
+                            'homeLink' => false,
+                            'options' => ['class' => 'breadcrumb mb-2'],
+                            'links' => [
+                                    ['label' => Yii::t('app', 'Favorites'), 'url' => ['/favorites']],
+                                    ['label' => $filteredListName],
+                            ],
+                            'activeItemTemplate' => '<li class="breadcrumb-item active d-flex align-items-center" aria-current="page">' .
+                                Icon::widget(['icon' => 'bi-chevron-right', 'size' => Icon::SIZE_16, 'options' => ['class' => 'me-2']]) .
+                            '{link}</li>',
+                            'itemTemplate' => '<li class="breadcrumb-item">{link}</li>',
+                        ]) ?>
+                    <?php endif; ?>
+
+                    <?php if ($isFavorites || $isFavoritesDetail): ?>
+                        <h1 id="list-name" class="mb-4 pt-1" data-list-hash="<?php /*/*= $filteredListHash*/ ?>">
+                            <?= $filteredListName ?>
+                        </h1>
+                    <?php endif; ?>
+
+                    <div class="list-cards p-0">
+                        <?= $creatives ?>
+                    </div>
+                </div>
+            <?= (!$isFavorites || !$isFavoritesDetail) ? '</div>' : '</div>' ?>
+
         </div>
     </div>
 </div>
 
 <template id="skeleton-template">
-    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4 fade-in-card skeleton-wrapper">
+    <?php $classColumn = ($isFavoritesDetail ? 'col-lg-4 col-md-6 col-sm-12 col-12 cards' : 'col-xl-3 col-lg-4 col-md-6 col-sm-12 col-12 cards') ?>
+    <div class="<?= $classColumn ?> skeleton-wrapper">
         <?= $this->render('_item-creative-skeleton') ?>
     </div>
 </template>
@@ -148,7 +193,7 @@ $this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsse
             <?= Html::a(
                 Html::tag('span', Yii::t('app', 'Clear all filters'), ['class' => 'delete-text']) .
                 Icon::widget(['icon' => 'bi-trash', 'size' => Icon::SIZE_16, 'options' => ['class' => 'ms-2']]),
-                '#', // URL (hash porque el JS previene el default)
+                '#',
                 [
                     'class' => 'btn-delete-all-filters text-white text-decoration-none d-flex align-items-center',
                     'title' => Yii::t('app', 'Clear all filters')
@@ -157,5 +202,12 @@ $this->registerJsFile('@web/js/favorites.js', ['depends' => [\yii\web\JqueryAsse
         </div>
     </div>
 </template>
+
+<div class="circle-icon circle-icon-pos rounded-pill cursor-pointer" style="display: none;">
+    <?= Icon::widget([
+        'icon' => 'bi-arrow-up',
+        'size' => Icon::SIZE_24,
+    ]) ?>
+</div>
 
 <?= $this->render('@adshowcase.layouts/partials/_modal-share') ?>

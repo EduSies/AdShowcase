@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::submitButton(
                 '<span>' . Yii::t('app', 'Login') . '</span>' .
                 Icon::widget(['icon' => 'bi-arrow-right', 'size' => Icon::SIZE_24, 'options' => ['class' => 'ms-2']]),
-                ['class' => 'btn btn-primary btn-lg d-flex justify-content-center align-items-center', 'name' => 'login-button']
+                ['class' => 'btn btn-primary rounded-pill btn-lg d-flex justify-content-center align-items-center', 'name' => 'login-button']
             ) ?>
         </div>
 
