@@ -6,7 +6,6 @@
 use app\assets\AppAsset;
 use app\helpers\LangHelper;
 use app\widgets\Icon;
-use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
@@ -29,6 +28,7 @@ $this->registerMetaTag(['property' => 'og:image:height', 'content' => '630']);
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.svg')]);
 $this->registerLinkTag(['rel' => 'stylesheet', 'href' => 'https://fonts.googleapis.com/css2?family=Allerta+Stencil']);
 
+// Manejo de alertas (Flash Messages)
 if (Yii::$app->session->hasFlash('success')) {
     $this->registerJs("swalSuccess('" . Yii::$app->session->getFlash('success') . "');");
 }
@@ -46,141 +46,196 @@ if (Yii::$app->session->hasFlash('error')) {
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body class="d-flex flex-column min-vh-100" style="padding-top: 72px;padding-bottom: 57px;">
+    <body class="d-flex flex-column min-vh-100 bg-light">
     <?php $this->beginBody() ?>
 
     <header id="header">
         <?php
-            NavBar::begin([
-                'brandLabel' => Yii::$app->name,
-                'brandUrl' => Yii::$app->homeUrl,
-                'options' => ['id' => 'nav', 'class' => 'navbar-expand-lg bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
-                'innerContainerOptions' => ['class' => 'container-fluid mx-4 mx-sm-5'],
-                'brandOptions' => ['style' => 'font-size: 30px;z-index: 1040;'],
-            ]);
+        NavBar::begin([
+            'brandLabel' => Yii::$app->name,
+            'brandUrl' => Yii::$app->homeUrl,
+            'options' => ['id' => 'nav', 'class' => 'navbar-expand-lg bg-white fixed-top shadow-sm', 'style' => 'min-height: 72px;'],
+            'innerContainerOptions' => ['class' => 'container-fluid mx-4 mx-sm-5'],
+            'brandOptions' => ['style' => 'font-size: 30px;z-index: 1040;'],
+            'collapseOptions' => ['class' => 'w-100 align-items-center justify-content-end'],
+        ]);
 
-            // Left side navigation (Creative Catalog, Back Office)
-            $leftItems = [
-                [
-                    'label' => '<div class="circle-icon circle-50 rounded-pill">' . Icon::widget([
-                        'icon' => 'bi-grid-3x3-gap',
-                        'size' => Icon::SIZE_32,
-                        'options' => ['class' => 'flex-shrink-0'],
-                    ]) . '</div>',
-                    'url' => ['/catalog'],
-                    'linkOptions' => [
-                        'class' => 'p-0',
+        $userCanFavorite = !Yii::$app->user->isGuest && Yii::$app->user->can('favorite.manage');
+        $userCanBackOffice = !Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access');
+        $userCanShare = !Yii::$app->user->isGuest && Yii::$app->user->can('share.manage');
+
+        // CONFIGURACIÓN POR DEFECTO
+        $showSearch = true;
+        $showFavorites = true;
+        $showBackOffice = $userCanBackOffice;
+        $showLanguage = true;
+        $showUser = true;
+
+        if (isset($this->params['navbar'])) {
+            $navParams = $this->params['navbar'];
+            $showSearch = $navParams['search'] ?? $showSearch;
+            $showFavorites = $navParams['favorites'] ?? $showFavorites;
+            $showBackOffice = ($navParams['backoffice'] ?? true) && $userCanBackOffice;
+            $showLanguage = $navParams['language'] ?? $showLanguage;
+            $showUser = $navParams['user'] ?? $showUser;
+        }
+
+        $showFavorites = $showFavorites && $userCanFavorite;
+
+        $centerItems = [];
+        if (isset($this->params['navbar_center_items'])) {
+            $centerItems = array_merge($centerItems, $this->params['navbar_center_items']);
+        }
+
+        // Center side navigation
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav w-100 position-absolute align-items-center justify-content-center start-0 gap-3'],
+            'encodeLabels' => false,
+            'items' => $centerItems,
+        ]);
+
+        $rightItems = [];
+
+        if (isset($this->params['navbar_right_items'])) {
+            foreach ($this->params['navbar_right_items'] as $item) {
+                // Añadimos el item
+                $rightItems[] = $item;
+                // Añadimos separador
+                $rightItems[] = Html::tag('div','', ['class' => 'vr']);
+            }
+        }
+
+        if ($showSearch) {
+            $rightItems[] = [
+                'label' => Icon::widget([
+                    'icon' => 'bi-search',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['id' => 'btnSearch', 'class' => 'flex-shrink-0 cursor-pointer'],
+                ]),
+                'url' => null,
+                'encode' => false,
+            ];
+            $rightItems[] = Html::tag('div','', ['class' => 'vr']);
+
+            // Renderizamos el input search solo si está activo
+            echo $this->render('partials/_input-search', [
+                    'filterSearch' => $filterSearch ?? ''
+            ]);
+        }
+
+        if ($showFavorites) {
+            $rightItems[] = [
+                'label' => Icon::widget([
+                    'icon' => 'bi-star',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]),
+                'url' => ['/favorites'],
+                'encode' => false,
+            ];
+            $rightItems[] = Html::tag('div','', ['class' => 'vr']);
+        }
+
+        if ($showBackOffice) {
+            $rightItems[] = [
+                'label' => Icon::widget([
+                    'icon' => 'bi-gear',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]),
+                'url' => null,
+                'encode' => false,
+                'linkOptions' => [
+                    'class' => 'cursor-pointer',
+                    'data-bs-toggle' => 'offcanvas',
+                    'data-bs-target' => '#offcanvasBackOffice',
+                    'aria-controls' => 'offcanvasBackOffice',
+                ],
+            ];
+            $rightItems[] = Html::tag('div','', ['class' => 'vr']);
+        }
+
+        if ($showLanguage) {
+            $rightItems[] = [
+                'label' => Icon::widget([
+                    'icon' => 'bi-globe',
+                    'size' => Icon::SIZE_24,
+                    'options' => ['class' => 'flex-shrink-0'],
+                ]),
+                'encode' => false,
+                'dropdownOptions' => ['class' => 'dropdown-menu-end mt-2 shadow-lg border-0'],
+                'items' => LangHelper::getLanguageItems(),
+                'linkOptions' => [
+                    'id' => 'langDropdown',
+                    'class' => 'nav-link',
+                    'title' => Yii::t('app', 'Select language'),
+                ],
+            ];
+            $rightItems[] = Html::tag('div','', ['class' => 'vr']);
+        }
+
+        if ($showUser) {
+            $identity = Yii::$app->user->identity;
+            $avatarUrl = $identity->avatar_url ?? Yii::getAlias('@web/images/default-avatar.png');
+            $fullName = Html::encode($identity->name . ' ' . $identity->surname);
+            $username = Html::encode($identity->username);
+            $roleName = Html::encode($identity->type ?? 'User');
+
+            $rightItems[] = [
+                'label' => Html::img($avatarUrl, [
+                    'class' => 'rounded-circle object-fit-cover border shadow-sm',
+                    'style' => 'width: 40px; height: 40px;',
+                    'alt' => $username,
+                ]),
+                'encode' => false,
+                'dropdownOptions' => [
+                    'class' => 'dropdown-menu-end mt-2 shadow-lg border-0',
+                    'style' => 'min-width: 220px;',
+                ],
+                'linkOptions' => [
+                    'class' => 'nav-link p-0 ms-2',
+                    'id' => 'userDropdown',
+                    'role' => 'button',
+                    'data-bs-toggle' => 'dropdown',
+                    'aria-expanded' => 'false',
+                    'title' => Yii::t('app', 'Click to open user dropdown'),
+                ],
+                'items' => [
+                    Html::tag('div',
+                        Html::tag('div', $fullName, ['class' => 'fw-bold text-dark']) .
+                        Html::tag('div', '@' . $username, ['class' => 'text-muted small']) .
+                        Html::tag('div', $roleName, ['class' => 'badge rounded-pill text-bg-secondary mt-3']),
+                        ['class' => 'px-4 py-3']
+                    ),
+                    Html::tag('hr','', ['class' => 'm-0 mx-4']),
+                    [
+                        'label' => Icon::widget([
+                            'icon' => 'bi-box-arrow-right',
+                            'size' => Icon::SIZE_16,
+                            'options' => ['class' => 'flex-shrink-0'],
+                        ]) . Html::tag('span', Yii::t('app', 'Logout'), ['class' => 'ms-2']),
+                        'url' => ['/auth/logout'],
+                        'linkOptions' => [
+                            'data-method' => 'post',
+                            'class' => 'dropdown-item text-danger py-2 px-4 d-flex align-items-center',
+                            'id' => 'logout',
+                        ],
+                        'encode' => false, // Permite que se vea el icono
                     ],
                 ],
             ];
+        }
 
-            if (!Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access')) {
-                $leftItems[] = [
-                    'label' => '<div class="circle-icon circle-50 rounded-pill">' . Icon::widget([
-                        'icon' => 'bi-gear',
-                        'size' => Icon::SIZE_32,
-                        'options' => ['class' => 'flex-shrink-0'],
-                    ]) . '</div>',
-                    'url' => '#',
-                    'linkOptions' => [
-                        'class' => 'p-0',
-                        'data-bs-toggle' => 'offcanvas',
-                        'data-bs-target' => '#offcanvasBackOffice',
-                        'aria-controls' => 'offcanvasBackOffice',
-                    ],
-                ];
-            }
+        // Renderizamos el Nav final
+        echo Nav::widget([
+            'options' => ['id' => 'menu-right', 'class' => 'navbar-nav bg-white gap-2 align-items-center justify-content-end', 'style' => 'z-index: 1050;'],
+            'items' => $rightItems,
+        ]);
 
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav w-100 position-absolute align-items-center justify-content-center start-0 gap-3'],
-                'encodeLabels' => false,
-                'items' => $leftItems,
-            ]);
+        NavBar::end();
 
-            // Preparamos los datos del usuario actual
-            $identity = Yii::$app->user->identity;
-
-            // Asumimos que tienes una propiedad avatar_url. Si es null, usamos una imagen por defecto.
-            $avatarUrl = $identity->avatar_url ?? Yii::getAlias('@web/images/default-avatar.png');
-
-            // Nombre completo y Rol (Ajusta 'type' si tu campo de rol se llama diferente)
-            $fullName = Html::encode($identity->name . ' ' . $identity->surname);
-            $username = Html::encode($identity->username);
-            $roleName = Html::encode($identity->type ?? 'User'); // O usa RBAC si es necesario
-
-            // Right side navigation (Logout)
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav gap-2 align-items-center justify-content-end w-100'],
-                'items' => [
-                    [
-                        'label' => Icon::widget([
-                            'icon' => 'bi-globe',
-                            'size' => Icon::SIZE_24,
-                            'options' => ['class' => 'flex-shrink-0'],
-                        ]),
-                        'encode' => false,
-                        'dropdownOptions' => ['class' => 'dropdown-menu-end mt-2 shadow-lg border-0'],
-                        'items' => LangHelper::getLanguageItems(),
-                        'linkOptions' => [
-                            'id' => 'langDropdown',
-                            'class' => 'nav-link',
-                            'title' => Yii::t('app', 'Select language'),
-                        ],
-                    ],
-                    Html::tag('div','', ['class' => 'vr']),
-                    [
-                        // Imagen del Avatar
-                        'label' => Html::img($avatarUrl, [
-                            'class' => 'rounded-circle object-fit-cover border shadow-sm',
-                            'style' => 'width: 40px; height: 40px;', // Tamaño fijo para el círculo
-                            'alt' => $username,
-                        ]),
-                        'encode' => false, // Permite que se vea el icono
-
-                        // Opciones del menú desplegable
-                        'dropdownOptions' => [
-                            'class' => 'dropdown-menu-end mt-2 shadow-lg border-0',
-                            'style' => 'min-width: 220px;',
-                        ],
-                        'linkOptions' => [
-                            'class' => 'nav-link p-0 ms-2',
-                            'id' => 'userDropdown',
-                            'role' => 'button',
-                            'data-bs-toggle' => 'dropdown',
-                            'aria-expanded' => 'false',
-                            'title' => Yii::t('app', 'Click to open user dropdown'),
-                        ],
-
-                        // El Contenido del Dropdown
-                        'items' => [
-                            Html::tag('div',
-                                Html::tag('div', $fullName, ['class' => 'fw-bold text-dark']) .
-                                Html::tag('div', '@' . $username, ['class' => 'text-muted small']) .
-                                Html::tag('div', $roleName, ['class' => 'badge rounded-pill text-bg-secondary mt-3']),
-                                ['class' => 'px-4 py-3']
-                            ),
-                            Html::tag('hr','', ['class' => 'm-0 mx-4']),
-                            [
-                                'label' => Icon::widget([
-                                    'icon' => 'bi-box-arrow-right',
-                                    'size' => Icon::SIZE_16,
-                                    'options' => ['class' => 'flex-shrink-0'],
-                                ]) . Html::tag('span', Yii::t('app', 'Logout'), ['class' => 'ms-2']),
-                                'url' => ['/auth/logout'],
-                                'linkOptions' => [
-                                    'data-method' => 'post',
-                                    'class' => 'dropdown-item text-danger py-2 px-4 d-flex align-items-center',
-                                    'id' => 'logout',
-                                ],
-                                'encode' => false, // Permite que se vea el icono
-                            ],
-                        ],
-                    ],
-                ],
-            ]);
-
-            NavBar::end();
         ?>
+
         <?php if (!Yii::$app->user->isGuest && Yii::$app->user->can('backoffice.access')): ?>
             <?= $this->render('partials/_off-canvas-sections', [
                 'sections' => $this->context->getSectionsMenu()
@@ -188,30 +243,29 @@ if (Yii::$app->session->hasFlash('error')) {
         <?php endif; ?>
     </header>
 
-    <div class="position-fixed min-vh-100 min-vw-100" style="background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);"></div>
+    <div class="position-fixed min-vh-100 min-vw-100 bg-back-main"></div>
 
     <main id="main" class="flex-shrink-0 position-relative" role="main">
-        <div class="container">
-            <?php if (!empty($this->params['breadcrumbs'])): ?>
-                <?= Breadcrumbs::widget([
-                    'links' => $this->params['breadcrumbs'],
-                    'activeItemTemplate' => '<li class="breadcrumb-item active d-flex align-items-center" aria-current="page">' .
-                        Icon::widget(['icon' => 'bi-chevron-right', 'size' => Icon::SIZE_16, 'options' => ['class' => 'me-2']]) .
-                    '{link}</li>',
-                    'itemTemplate' => '<li class="breadcrumb-item">{link}</li>',
-                ]) ?>
-            <?php endif ?>
+        <div class="container-fluid p-0">
             <?= $content ?>
         </div>
     </main>
 
-    <footer id="footer" class="fixed-bottom py-3 bg-white border-top shadow-sm">
-        <div class="container">
-            <div class="row text-muted">
-                <div class="col-md-6 text-center text-md-start">&copy; AdShowcase <?= date('Y') ?></div>
+    <template id="spinner-template">
+        <div class="d-flex justify-content-center align-items-center w-100">
+            <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+                <span class="visually-hidden"><?= Yii::t('app', 'Loading') ?>...</span>
             </div>
         </div>
-    </footer>
+    </template>
+
+    <?php $this->registerJs(<<<JS
+        // Inicializar todos los tooltips de la página
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    JS); ?>
 
     <?php $this->endBody() ?>
     </body>

@@ -30,7 +30,7 @@ final class CatalogListService
         // Totales y Paginación
         $totalCards = $query->count();
 
-        $query->orderBy(['c.created_at' => SORT_DESC]);
+        $query->orderBy(['c.updated_at' => SORT_DESC]);
 
         if (empty($params['listHash'])) {
             $limit = (isset($params['limit']) && $params['limit'] > 0) ? $params['limit'] : 12;

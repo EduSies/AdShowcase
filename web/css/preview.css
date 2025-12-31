@@ -1,0 +1,109 @@
+:root {
+    --frame-mobile-portrait: url(../images/frame_mobile_portrait.svg);
+    --frame-tablet-portrait: url(../images/frame_tablet_portrait.svg);
+}
+
+#creative-name {
+    height: 60px;
+    margin-top: 72px;
+}
+
+.title-preview {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+    height: 30px;
+}
+
+.ellipsis-title-preview {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.container-favorite {
+    height: 30px;
+}
+
+#content-preview {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.device-desktop {
+    width: 100%;
+    margin-top: calc(72px + 60px);
+}
+
+.device-desktop #iframe_web {
+    width: 100%;
+    height: calc(100vh - (72px + 60px));
+}
+
+#iframe-loader {
+    z-index: 1029;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: var(--bg-back-main);
+}
+
+.min-w-fit-content {
+    min-width: fit-content !important;
+}
+
+.device-tablet, .device-mobile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+    align-items: center;
+}
+
+/* INIT Preview Mobile */
+.device-mobile #iframe_web {
+    width: 422px;
+    height: 855px;
+
+    /* Background del Frame */
+    border: none;
+    background-image: var(--frame-mobile-portrait);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+    padding: 70px 16px 60px 19px;
+    box-sizing: border-box;
+
+    transform: scale(var(--scale-factor, 1));
+    transition: transform 0.1s linear;
+}
+/* END Preview Mobile */
+
+/* INIT Preview Tablet */
+.device-tablet #iframe_web {
+    width: 634px;
+    height: 879px;
+
+    /* Background del Frame */
+    border: none;
+    background-image: var(--frame-tablet-portrait);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+    padding: 72px 31px 67px 27px;
+    box-sizing: border-box;
+
+    transform: scale(var(--scale-factor, 1));
+    transition: transform 0.1s linear;
+}
+/* END Preview Tablet */

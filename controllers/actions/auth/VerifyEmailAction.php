@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers\actions\auth;
 
-use yii\base\Action;
 use Yii;
 use yii\web\BadRequestHttpException;
 use app\models\auth\VerifyEmailForm;
 
-class VerifyEmailAction extends Action
+final class VerifyEmailAction extends BaseLoginAction
 {
+    public ?string $layout = 'login-layout';
+
     public function run(string $token)
     {
         try {

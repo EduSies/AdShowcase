@@ -16,13 +16,6 @@ abstract class BaseFavoriteAction extends Action
     /** Ruta de vista para renderizar (index/create/update…). */
     public ?string $view = null;
 
-    /** Clase del modelo AR que gestiona esta acción. */
-    public ?string $modelClass = null;
-
-    public array $sections = [];
-
-    public ?object $seviceClass = null;
-
     protected function ensureCan(?string $perm): void
     {
         if ($perm && !Yii::$app->user->can($perm)) {

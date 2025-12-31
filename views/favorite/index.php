@@ -34,6 +34,7 @@ if (!$isFavoritesDetail):
                 'data-bs-toggle' => 'dropdown',
                 'aria-expanded' => 'false',
                 'data-bs-auto-close' => 'outside',
+                'title' => Yii::t('app', 'Create list')
             ]
         ) ?>
 

@@ -29,4 +29,18 @@ final class BackOfficeCreativeListService
             ->asArray()
             ->all();
     }
+
+    /**
+     * Obtiene una creatividad con todas sus relaciones por Hash
+     */
+    public function getOne(string $hash): ?array
+    {
+        return Creative::find()
+            ->alias('c')
+            ->select(['c.*'])
+            ->joinWith(['brand b', 'agency a', 'country co', 'format f', 'salesType st', 'device d', 'assetFile af'], true)
+            ->where(['c.hash' => $hash])
+            ->asArray()
+            ->one();
+    }
 }

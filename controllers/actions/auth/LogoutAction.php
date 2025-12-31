@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers\actions\auth;
 
-use yii\base\Action;
 use Yii;
 
-class LogoutAction extends Action
+final class LogoutAction extends BaseLoginAction
 {
+    public ?string $layout = 'login-layout';
+
     public function run()
     {
-        // 1. Borramos la preferencia de idioma de la sesión actual
+        // Borramos la preferencia de idioma de la sesión actual
         Yii::$app->session->remove('_lang');
 
-        // 2. Cerramos la sesión del usuario
+        // Cerramos la sesión del usuario
         Yii::$app->user->logout();
 
-        // 3. Redirigimos al home (donde se ejecutará de nuevo la detección automática)
+        // Redirigimos al home (donde se ejecutará de nuevo la detección automática)
         return $this->controller->goHome();
     }
 }

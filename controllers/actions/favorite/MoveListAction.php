@@ -13,10 +13,13 @@ use yii\web\Response;
 
 final class MoveListAction extends BaseFavoriteAction
 {
-    public ?string $layout = 'main-catalog';
+    public ?string $can = 'favorite.manage';
+    public ?string $layout = 'main';
 
     public function run()
     {
+        $this->ensureCan($this->can);
+
         Yii::$app->response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
         $userId = Yii::$app->user->id;

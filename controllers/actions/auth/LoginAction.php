@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers\actions\auth;
 
 use app\models\forms\auth\LoginForm;
 use app\services\auth\AuthLoginService;
 use Yii;
-use yii\base\Action;
 use yii\bootstrap5\ActiveForm;
 
-class LoginAction extends Action
+final class LoginAction extends BaseLoginAction
 {
+    public ?string $layout = 'login-layout';
     public ?string $successUrl = null;
 
     public function run()

@@ -9,10 +9,13 @@ use Yii;
 
 final class GetDropdownAction extends BaseFavoriteAction
 {
-    public ?string $layout = 'main-catalog';
+    public ?string $can = 'favorite.manage';
+    public ?string $layout = 'main';
 
     public function run()
     {
+        $this->ensureCan($this->can);
+
         $creativeHash = Yii::$app->request->post('creativeHash');
 
         if (!$creativeHash) {

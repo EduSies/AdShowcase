@@ -10,29 +10,32 @@ use app\widgets\Flag;
 ?>
 
 <div class="card h-100 border-0 shadow-sm creative-card position-relative">
-    <div class="position-absolute top-0 end-0 p-2 dropdown">
-        <?= Html::button(
-            Icon::widget(['icon' => $creative['viewFavIcon'], 'size' => Icon::SIZE_24]),
-            [
-                'class' => 'btn btn-link text-white p-0 shadow-none cursor-pointer position-relative icon-favorite-card',
-                'id' => 'favDropdown-' . $creative['hash'],
-                'data-bs-toggle' => 'dropdown',
-                'data-bs-auto-close' => 'outside',
-                'aria-haspopup' => 'true',
-                'aria-expanded' => 'false',
-                'style' => 'z-index: 1027;',
-                'data-creative-hash' => $creative['hash'],
-            ]
-        ) ?>
+    <?php if ($creative['canFavorite']): ?>
+        <div class="position-absolute top-0 end-0 p-2 dropdown">
+            <?= Html::button(
+                Icon::widget(['icon' => $creative['viewFavIcon'], 'size' => Icon::SIZE_24]),
+                [
+                    'class' => 'btn btn-link text-white p-0 shadow-none cursor-pointer position-relative icon-favorite-card',
+                    'id' => 'favDropdown-' . $creative['hash'],
+                    'data-bs-toggle' => 'dropdown',
+                    'data-bs-auto-close' => 'outside',
+                    'aria-haspopup' => 'true',
+                    'aria-expanded' => 'false',
+                    'style' => 'z-index: 1027;',
+                    'data-creative-hash' => $creative['hash'],
+                    'title' => Yii::t('app', 'Add to favorites')
+                ]
+            ) ?>
 
-        <div class="dropdown-menu dropdown-menu-center overflow-hidden shadow-lg border-0 p-0 mt-2 layer-add-favorites"
-             aria-labelledby="favDropdown-<?= $creative['hash'] ?>"
-             style="min-width: 358px;z-index: 1028;"
-        >
-            <div class="content-loader color-main-1 p-4" style="display: none;"></div>
-            <div class="dropdown-content-wrapper"></div>
+            <div class="dropdown-menu dropdown-menu-center overflow-hidden shadow-lg border-0 p-0 mt-2 layer-add-favorites"
+                 aria-labelledby="favDropdown-<?= $creative['hash'] ?>"
+                 style="min-width: 358px;z-index: 1028;"
+            >
+                <div class="content-loader color-main-1 p-4" style="display: none;"></div>
+                <div class="dropdown-content-wrapper"></div>
+            </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <div class="position-relative overflow-hidden rounded-top">
         <div class="ratio ratio-16x9">
@@ -84,26 +87,28 @@ use app\widgets\Flag;
             ]) ?>
         </div>
 
-        <div class="card-hover-overlay position-absolute start-0 bottom-0 w-100 h-100 d-flex align-items-center justify-content-center">
-            <div class="ovelay-card w-100 h-100 position-fixed"></div>
+        <?php if ($creative['canShare']): ?>
+            <div class="card-hover-overlay position-absolute start-0 bottom-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                <div class="ovelay-card w-100 h-100 position-fixed"></div>
 
-            <?= Html::button(
-                Icon::widget(['icon' => 'bi-share-fill', 'size' => Icon::SIZE_24]) .
-                Html::tag('span', Yii::t('app', 'Share')),
-                [
-                    'class' => 'btn btn-outline-light rounded-pill px-4 position-relative d-flex align-items-center gap-2 shadow-lg action-share-btn',
-                    'style' => 'z-index: 2;',
-                    'data' => [
-                        'bs-toggle' => 'modal',
-                        'bs-target' => '#shareModal',
-                        'creative-hash' => $creative['hash'],
-                        'creative-title' => $creative['title'],
-                        'creative-format' => $creative['viewFormatName'],
-                        'creative-agency' => $creative['viewAgencyName'],
+                <?= Html::button(
+                    Icon::widget(['icon' => 'bi-share-fill', 'size' => Icon::SIZE_24]) .
+                    Html::tag('span', Yii::t('app', 'Share')),
+                    [
+                        'class' => 'btn btn-outline-light rounded-pill px-4 position-relative d-flex align-items-center gap-2 shadow-lg action-share-btn',
+                        'style' => 'z-index: 2;',
+                        'data' => [
+                            'bs-toggle' => 'modal',
+                            'bs-target' => '#shareModal',
+                            'creative-hash' => $creative['hash'],
+                            'creative-title' => $creative['title'],
+                            'creative-format' => $creative['viewFormatName'],
+                            'creative-agency' => $creative['viewAgencyName'],
+                        ]
                     ]
-                ]
-            ) ?>
-        </div>
+                ) ?>
+            </div>
+        <?php endif; ?>
 
     </div>
 </div>

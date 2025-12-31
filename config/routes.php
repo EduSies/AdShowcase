@@ -5,7 +5,7 @@ use yii\web\UrlManager;
 // Custom routes adshowcase
 $rules = [
     // --- Home ---
-    '' => 'site/index',
+    '' => 'site/catalog',
 
     // --- Auth ---
     'login' => 'auth/login',
@@ -25,6 +25,9 @@ $rules = [
 
     // --- Shared links ---
     's/<token:[A-Za-z0-9_\-]{43}>' => 'shared-link/open',
+
+    // --- Preview creative ---
+    'preview/<hash:[A-Za-z0-9_\-]{16}>' => 'preview/index',
 
     // --- Favorite Route ---
     'favorites' => 'favorite/index',

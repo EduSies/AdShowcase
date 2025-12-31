@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers\actions\auth;
 
-use yii\base\Action;
 use Yii;
 use app\models\auth\SignupForm;
 
-class SignupAction extends Action
+final class SignupAction extends BaseLoginAction
 {
+    public ?string $layout = 'login-layout';
+
     public function run()
     {
         $model = new SignupForm();

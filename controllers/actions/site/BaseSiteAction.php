@@ -20,9 +20,7 @@ abstract class BaseSiteAction extends Action
     public ?string $modelClass = null;
 
     public array $sections = [];
-
-    public ?object $seviceClass = null;
-
+    
     protected function ensureCan(?string $perm): void
     {
         if ($perm && !Yii::$app->user->can($perm)) {

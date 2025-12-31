@@ -56,7 +56,7 @@ $this->registerJsVar('swalFireHtmlEmptyList', Yii::t("app", "The list name canno
         <div class="row">
             <div class="col-lg-7 col-md-12 col-12">
                 <div class="text-banner-adshowcase">
-                    <div class="title-adshowcase mt-4 mt-sm-5"><?= Yii::t('app','AdShowcase') ?></div>
+                    <div class="title-adshowcase mt-4 mt-sm-5"><?= Yii::t('app','Media Showcase') ?></div>
                     <div class="subtitle-adshowcase mt-4 mb-md-2 mb-xl-2"><?= Yii::t("app", "Browse innovative creatives from top advertisers and agencies to inspire your next campaign") ?></div>
                 </div>
             </div>

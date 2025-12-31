@@ -11,6 +11,12 @@ use yii\filters\AccessControl;
 
 class BaseWebController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+        $this->layout = '@adshowcase/views/layouts/main-backoffice';
+    }
+
     public function behaviors()
     {
         return [
@@ -31,8 +37,6 @@ class BaseWebController extends Controller
 
     public function actions()
     {
-        $this->layout = '@adshowcase/views/layouts/main';
-
         return array_merge(parent::actions(), [
             'error' => [
                 'class' => \yii\web\ErrorAction::class,

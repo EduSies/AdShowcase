@@ -49,7 +49,7 @@ if (Yii::$app->session->hasFlash('error')) {
     </head>
     <body class="login-layout d-flex flex-column min-vh-100">
     <?php $this->beginBody() ?>
-    <div class="position-fixed min-vh-100 min-vw-100" style="background: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);"></div>
+    <div class="position-fixed min-vh-100 min-vw-100 bg-back-main"></div>
     <div class="position-absolute top-0 end-0 my-3 mx-4" style="z-index: 1050;">
         <?= Nav::widget([
             'options' => ['class' => 'nav-pills navbar-nav gap-2 text-secondary'],

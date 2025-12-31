@@ -2,7 +2,9 @@
 :root {
     --main-color-1: #FF4F00;
     --main-color-2: #0066FF;
-    --bg-back: #EAEFF8;
+    --bg-back: #E4EBF6;
+    --bg-back-2: #F3F5FB;
+    --bg-back-main: linear-gradient(141deg, #F3F5FB 14.05%, #FFDCCC 139.54%);;
     --main-color-rgb: 255,79,0;
     --focus-shadow-size: 0 0 0 0.125em;
     --effects-shadow-card: 0px 2px 10px 0px rgba(0, 43, 72, 0.16), 0px 2px 40px 0px rgba(0, 41, 72, 0.08);
@@ -11,7 +13,10 @@
     --swal2-warning-color: #f8bb86;
     --filter-bg-color: #1B043F;
     --bulma-input-focus-shadow-alpha: .35;
-    --bg-back: #E4EBF6;
+}
+
+.bg-back-main {
+    background: var(--bg-back-main);
 }
 
 #shareModal .btn-close:hover {
@@ -80,7 +85,13 @@ body:not(.login-layout) > main > .container {
 }
 /* END Login Layout */
 
-/* SweetAlert2 */
+/* Tooltip */
+.custom-tooltip {
+    --bs-tooltip-bg: var(--main-color-2);
+}
+/* END Tooltip */
+
+/* INIT SweetAlert2 */
 .swal2-fixed-width {
     width: 460px !important;
 }
