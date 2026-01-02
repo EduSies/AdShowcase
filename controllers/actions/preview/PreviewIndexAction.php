@@ -14,10 +14,13 @@ use yii\helpers\Url;
 
 final class PreviewIndexAction extends BasePreviewAction
 {
+    public ?string $can = 'creative.view';
     public ?string $layout = 'main';
 
     public function run($hash)
     {
+        $this->ensureCan($this->can);
+
         // Datos del servicio
         $service = new BackOfficeCreativeListService();
         $creative = $service->getOne($hash);

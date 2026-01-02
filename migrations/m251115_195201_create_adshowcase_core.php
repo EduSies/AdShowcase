@@ -165,7 +165,7 @@ class m251115_195201_create_adshowcase_core extends Migration
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ], $this->tableOptions);
 
-        // device (Desktop/Mobile/Tablet/CTV…)
+        // device (Desktop/Mobile/Tablet)
         $this->createTable('{{%device}}', [
             'id' => $this->primaryKey(),
             'hash' => $this->char(16)->notNull()->unique(),
@@ -316,6 +316,7 @@ class m251115_195201_create_adshowcase_core extends Migration
          */
         $this->createTable('{{%shared_link}}', [
             'id' => $this->bigPrimaryKey(),
+            'hash' => $this->char(16)->notNull()->unique(),
             'token' => $this->char(43)->notNull()->unique(),
             'creative_id' => $this->bigInteger()->notNull(),
             'user_id' => $this->integer()->notNull(),

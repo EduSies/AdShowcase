@@ -55,7 +55,7 @@ const listActionSelectors = {
     triggers: {
         edit: '.edit-name-list', // Botón "Edit name"
         move: '.move-favorites-list', // Botón "Move to another list"
-        back: '.back-to-list-btn', // Botón "Atrás"
+        back: '.back-to-list-actions', // Botón "Atrás actions"
         saveEdit: '.edit-name-list-favorite', // Botón Guardar Nombre
         saveMove: '.move-to-list-favorite', // Botón Mover Lista
         saveDelete: '.delete-favorites-list', // Botón Eliminar Lista
@@ -163,22 +163,38 @@ $(document).on('shown.bs.dropdown', function (e) {
 $(document).on('hidden.bs.dropdown', function (e) {
     let $toggle = $(e.target);
 
-    // Verificamos si el dropdown que se cierra es el de acciones de lista
+    // Dropdown de Acciones de Lista (Crear lista, etc.)
     if ($toggle.hasClass('icon-favorite-actions') || $toggle.attr('id') === 'create-list-page-dropdown') {
-        $('body').removeClass('overflow-hidden'); // Desbloqueamos el scroll
 
+        $('body').removeClass('overflow-hidden'); // Desbloqueamos scroll
+
+        // Resetear inputs
         let $menu = $toggle.next(listActionSelectors.dropdownMenu);
         $menu.find(listActionSelectors.inputs.newListName).val('');
 
+        // Quitar errores de validación
         let $container = $toggle.closest(favSelectors.dropdown.container);
         let $input = $container.find(listActionSelectors.inputs.newListName);
         $input.removeClass('is-invalid');
 
-        // Si el menú tiene nuestras pantallas internas, lo reseteamos
+        // Resetear pantallas internas (volver a la principal)
         if ($menu.find(listActionSelectors.screens.main).length > 0) {
             $menu.find('> div').hide();
             $menu.find(listActionSelectors.screens.main).show().css({ opacity: 1, marginLeft: 0 });
         }
+
+    } else if ($toggle.hasClass('icon-favorite-card')) {
+        // Dropdown de la Tarjeta de Favoritos (Card individual)
+
+        $('body').removeClass('overflow-hidden'); // Desbloqueamos scroll
+
+        // Quitar clase activa a la tarjeta
+        $toggle.closest(favSelectors.card).removeClass(favSelectors.activeClass);
+
+        // Resetear contenido del dropdown (vaciar y mostrar loader para la próxima vez)
+        let $dropdownMenu = $toggle.next(favSelectors.dropdown.menu);
+        $dropdownMenu.find(favSelectors.dropdown.contentWrapper).empty();
+        $dropdownMenu.find(favSelectors.dropdown.loader).show();
     }
 });
 
@@ -445,18 +461,6 @@ $(document).on('show.bs.dropdown', function (e) {
     });
 });
 
-$(document).on('hidden.bs.dropdown', function (e) {
-    let $toggle = $(e.target);
-    if (!$toggle.hasClass('icon-favorite-card')) return;
-
-    $toggle.closest(favSelectors.card).removeClass(favSelectors.activeClass);
-    $('body').removeClass('overflow-hidden');
-
-    let $dropdownMenu = $toggle.next(favSelectors.dropdown.menu);
-    $dropdownMenu.find(favSelectors.dropdown.contentWrapper).empty();
-    $dropdownMenu.find(favSelectors.dropdown.loader).show();
-});
-
 // --- GUARDAR NUEVA LISTA ---
 $(document).on('click', favSelectors.buttons.saveList, function(e) {
     e.preventDefault();
@@ -562,7 +566,7 @@ $(document).on('click', favSelectors.buttons.toggleItem, function(e) {
 
     let $btn = $(this);
     let $dropdownMenu = $btn.closest(favSelectors.dropdown.menu);
-    let $card = $btn.closest(favSelectors.card);
+    let $card = $btn.closest(favSelectors.dropdown.container);
 
     let listHash = $btn.data('list-hash');
     let action = $btn.data('action');

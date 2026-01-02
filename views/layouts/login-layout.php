@@ -61,7 +61,7 @@ if (Yii::$app->session->hasFlash('error')) {
                         'options' => ['class' => 'flex-shrink-0'],
                     ]),
                     'encode' => false,
-                    'dropdownOptions' => ['class' => 'mt-2 shadow-lg dropdown-menu-end'],
+                    'dropdownOptions' => ['class' => 'mt-2 shadow-lg dropdown-menu-end border-0'],
                     'items' => LangHelper::getLanguageItems(),
                     'linkOptions' => [
                         'id' => 'langDropdown',

@@ -17,8 +17,7 @@ class m251123_075448_seed_devices_fake extends Migration
     private array $names = [
         'Desktop',
         'Mobile',
-        'Tablet',
-        'CTV', // Connected TV
+        'Tablet'
     ];
 
     public function safeUp(): bool

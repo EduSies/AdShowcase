@@ -13,6 +13,7 @@ use yii\web\Response;
 
 final class FavoriteIndexAction extends BaseFavoriteAction
 {
+    public ?string $can = 'favorite.manage';
     public ?string $layout = 'main';
     public ?string $view = '@app/views/site/catalog/index';
     protected $serviceClass = CatalogListService::class;
@@ -20,6 +21,8 @@ final class FavoriteIndexAction extends BaseFavoriteAction
 
     public function run()
     {
+        $this->ensureCan($this->can);
+
         $this->serviceClass = new $this->serviceClass();
         $request = Yii::$app->request;
 

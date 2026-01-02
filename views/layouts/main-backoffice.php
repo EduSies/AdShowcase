@@ -207,6 +207,10 @@ if (Yii::$app->session->hasFlash('error')) {
         <div class="container">
             <?php if (!empty($this->params['breadcrumbs'])): ?>
                 <?= Breadcrumbs::widget([
+                    'homeLink' => [
+                        'label' => Yii::t('app', 'Dashboard'),
+                        'url' => ['/dashboard'],
+                    ],
                     'links' => $this->params['breadcrumbs'],
                     'activeItemTemplate' => '<li class="breadcrumb-item active d-flex align-items-center" aria-current="page">' .
                         Icon::widget(['icon' => 'bi-chevron-right', 'size' => Icon::SIZE_16, 'options' => ['class' => 'me-2']]) .

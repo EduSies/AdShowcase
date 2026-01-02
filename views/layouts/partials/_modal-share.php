@@ -1,7 +1,11 @@
 <?php
 
+use app\helpers\SharedLinkHelper;
 use app\widgets\Icon;
 use yii\helpers\Html;
+use yii\helpers\Url;
+
+$this->registerJsVar('ajaxUrlGenerateSharedLink', Url::to(['shared-link/generate']));
 
 ?>
 
@@ -15,6 +19,7 @@ use yii\helpers\Html;
             <?= Html::hiddenInput(null, null, ['id' => 'hidden-creative-title']) ?>
             <?= Html::hiddenInput(null, null, ['id' => 'hidden-creative-format']) ?>
             <?= Html::hiddenInput(null, null, ['id' => 'hidden-creative-agency']) ?>
+            <?= Html::hiddenInput(null, null, ['id' => 'hidden-shared-creative-hash']) ?>
 
             <div class="modal-header border-0 p-5 pt-4 pb-0">
                 <h4 class="modal-title text-muted" id="shareModalLabel"><?= Yii::t('app', 'Share Creative') ?></h4>
@@ -36,12 +41,7 @@ use yii\helpers\Html;
                                     'class' => 'form-label small text-uppercase text-muted mb-2'
                                 ]) ?>
 
-                                <?= Html::dropDownList('ttl', '1440', [
-                                    '1440' => '24 ' . Yii::t('app', 'Hours'),
-                                    '2880' => '48 ' . Yii::t('app', 'Hours'),
-                                    '10080' => '7 ' . Yii::t('app', 'Days'),
-                                    '-1' => Yii::t('app', 'Never'),
-                                ], [
+                                <?= Html::dropDownList('ttl', '24h', SharedLinkHelper::getTtlOptions(), [
                                     'id' => 'shareTtl',
                                     'class' => 'form-select py-2 bg-light border-0',
                                 ]) ?>
@@ -52,10 +52,11 @@ use yii\helpers\Html;
                                     'class' => 'form-label small text-uppercase text-muted mb-2'
                                 ]) ?>
 
-                                <?= Html::input('number', 'max_views', '10', [
-                                    'id' => 'shareMaxViews',
-                                    'class' => 'form-control py-2 bg-light border-0',
-                                    'min' => '1',
+                                <?= Html::input('number', 'max_uses', '10', [
+                                        'id' => 'shareMaxViews',
+                                        'class' => 'form-control py-2 bg-light border-0',
+                                        'min' => '1',
+                                        'placeholder' => Yii::t('app', 'Leave empty for unlimited')
                                 ]) ?>
                             </div>
                         </div>
@@ -71,7 +72,6 @@ use yii\helpers\Html;
                 </div>
 
                 <div id="shareResultStep" class="d-none text-center">
-
                     <div class="mb-5 d-flex flex-column align-items-center mt-2">
                         <a href="#" id="btnDownloadComposite" class="d-block bg-white p-3 shadow-sm border rounded-3 text-decoration-none d-flex align-items-center justify-content-center hover-scale"
                            style="width: 180px; height: 180px; transition: transform 0.2s;"
@@ -90,18 +90,18 @@ use yii\helpers\Html;
 
                     <div class="input-group input-group-lg mb-4 shadow-sm">
                         <?= Html::textInput(null, null, [
-                            'id' => 'shareInputUrl',
-                            'class' => 'form-control bg-light border-end-0 fs-6 text-muted',
-                            'readonly' => true,
+                                'id' => 'shareInputUrl',
+                                'class' => 'form-control bg-light border-end-0 fs-6 text-muted',
+                                'readonly' => true,
                         ]) ?>
 
                         <?= Html::button(
-                            Icon::widget(['icon' => 'bi-clipboard', 'size' => Icon::SIZE_24]),
-                            [
-                                'id' => 'btnCopyLink',
-                                'class' => 'btn btn-light border border-start-0 text-primary px-4',
-                                'type' => 'button'
-                            ]
+                                Icon::widget(['icon' => 'bi-clipboard', 'size' => Icon::SIZE_24]),
+                                [
+                                        'id' => 'btnCopyLink',
+                                        'class' => 'btn btn-light border border-start-0 text-primary px-4',
+                                        'type' => 'button'
+                                ]
                         ) ?>
                     </div>
 

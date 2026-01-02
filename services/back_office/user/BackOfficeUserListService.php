@@ -9,7 +9,7 @@ use yii\db\Expression;
 
 final class BackOfficeUserListService
 {
-    /** Returns flat array for DataTables. */
+    /** Returns array for DataTables. */
     public function findAll(): array
     {
         return User::find()

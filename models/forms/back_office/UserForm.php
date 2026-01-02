@@ -98,10 +98,6 @@ class UserForm extends Model
             ['language_id', 'integer'],
 
             // Avatar URL (Puede ser URL corta o Base64 largo)
-            ['avatar_url', 'required',
-                'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE],
-                'message' => Yii::t('app', 'Please upload and crop a thumbnail image.')
-            ],
             ['avatar_url', 'string'],
             ['avatar_url', 'validateAvatarSize'],
 

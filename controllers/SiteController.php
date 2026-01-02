@@ -39,9 +39,9 @@ class SiteController extends BaseWebController
 
     public function actions(): array
     {
-        return [
+        return array_merge(parent::actions(), [
             // ===== Dashboard =====
-            'index' => [
+            'dashboard' => [
                 'class' => \app\controllers\actions\site\DashboardIndexAction::class,
                 'sections' => $this->getSectionsMenu(),
             ],
@@ -49,7 +49,7 @@ class SiteController extends BaseWebController
                 'class' => \app\controllers\actions\site\CatalogIndexAction::class,
                 'sections' => $this->getSectionsMenu(),
             ],
-        ];
+        ]);
     }
 
     /**

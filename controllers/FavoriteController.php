@@ -8,7 +8,7 @@ class FavoriteController extends BaseWebController
 {
     public function actions(): array
     {
-        return [
+        return array_merge(parent::actions(), [
             'index' => [
                 'class' => \app\controllers\actions\favorite\FavoriteIndexAction::class,
             ],
@@ -33,6 +33,6 @@ class FavoriteController extends BaseWebController
             'delete-list' => [
                 'class' => \app\controllers\actions\favorite\DeleteListAction::class,
             ],
-        ];
+        ]);
     }
 }

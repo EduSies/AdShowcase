@@ -5,33 +5,48 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\shared_link;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\models\SharedLink;
+use app\services\back_office\shared_link\BackOfficeSharedLinkRevokeService;
+use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
-/** POST: id => revoca (marca revoked_at=NOW()) */
-final class SharedLinkRevokeAction extends BaseBackofficeAction
+final class SharedLinkRevokeAction extends BaseBackOfficeAction
 {
     public ?string $can = 'share.manage';
-    public ?string $modelClass = \app\models\SharedLink::class;
+    public ?string $modelClass = SharedLink::class;
+    public string $idParam = 'hash';
 
-    public function run(): array
+    public function run()
     {
         $this->ensureCan($this->can);
-        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $id = (string)Yii::$app->request->post('id', '');
-        if ($id === '') {
-            throw new NotFoundHttpException('Missing id.');
+        $hash = (string) Yii::$app->request->get($this->idParam, Yii::$app->request->post($this->idParam));
+
+        if ($hash === '') {
+            throw new NotFoundHttpException(Yii::t('app', 'Missing hash.'));
         }
 
-        $class = $this->modelClass;
-        $model = $class::findOne($id);
+        $service = new BackOfficeSharedLinkRevokeService();
+        $ok = $service->revoke($hash);
 
-        if (!$model) {
-            throw new NotFoundHttpException('Not found.');
+        // Respuesta AJAX
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                'success' => $ok,
+                'message' => $ok
+                    ? Yii::t('app', 'Access revoked successfully.')
+                    : Yii::t('app', 'Revoke failed.'),
+            ];
         }
 
-        $model->revoked_at = date('Y-m-d H:i:s');
-        return ['success' => (bool)$model->save(false, ['revoked_at'])];
+        // Respuesta Estándar (Flash + Redirección)
+        Yii::$app->session->setFlash(
+            $ok ? 'success' : 'error',
+            $ok ? Yii::t('app', 'Access revoked successfully.') : Yii::t('app', 'Revoke failed.')
+        );
+
+        return $this->controller->redirect(Yii::$app->request->referrer);
     }
 }

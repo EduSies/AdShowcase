@@ -25,6 +25,7 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
             'scrollCollapse' => true,
             'order' => [[1, 'desc']],
             'language' => [
+                'search' => \Yii::t('app', 'Search'),
                 'lengthMenu' => '_MENU_',
                 'info' => \Yii::t('app', 'Showing _START_ - _END_ of _TOTAL_'),
                 'infoEmpty' => \Yii::t('app', 'Showing 0 - 0 of 0'),

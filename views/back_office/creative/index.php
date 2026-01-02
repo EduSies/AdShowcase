@@ -16,7 +16,7 @@ use yii\helpers\Url;
 $this->title = $title;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Back Office')];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Creatives')];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Taxonomies')];
 $this->params['breadcrumbs'][] = $this->title;
 
 DataTablesAsset::register($this);

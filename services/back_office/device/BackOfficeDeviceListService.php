@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
 
 final class BackOfficeDeviceListService
 {
-    /** Returns flat array for DataTables. */
+    /** Returns array for DataTables. */
     public function findAll(): array
     {
         return Device::find()

@@ -19,10 +19,10 @@ class LanguageController extends BaseWebController
 
     public function actions(): array
     {
-        return [
+        return array_merge(parent::actions(), [
             'change' => [
                 'class' => \app\controllers\actions\language\ChangeAction::class,
             ],
-        ];
+        ]);
     }
 }

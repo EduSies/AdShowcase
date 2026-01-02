@@ -38,7 +38,7 @@ if (!$isFavoritesDetail):
             ]
         ) ?>
 
-        <div class="dropdown-menu overflow-hidden shadow-lg border-0 p-0 mt-2 layer-add-favorites" aria-labelledby="create-list-page-dropdown" style="min-width: 358px;z-index: 1028;">
+        <div class="dropdown-menu overflow-hidden shadow-lg border-0 p-0 mt-2 layer-add-favorites" aria-labelledby="create-list-page-dropdown" style="min-width: 358px;min-height: 195px;z-index: 1028;">
             <div class="create-list-favorite-screen">
                 <?= Html::button(
                     Html::tag('span', Yii::t('app', 'Create list'), ['class' => 'h5 mb-0 text-muted']),
@@ -48,7 +48,7 @@ if (!$isFavoritesDetail):
                     ]
                 ) ?>
 
-                <div class="p-3 pt-0">
+                <div class="p-3 pt-2 pb-4">
                     <label class="form-label small text-muted ms-3 mb-1"><?= Yii::t('app', 'Name') ?></label>
                     <?= Html::textInput('new_list_name', '', [
                         'class' => 'form-control new-list-input',

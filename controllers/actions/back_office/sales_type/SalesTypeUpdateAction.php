@@ -51,7 +51,7 @@ final class SalesTypeUpdateAction extends BaseBackOfficeAction
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeSalesTypeUpdateService();
 
-            if ($service->update($salesType->id, $model)) {
+            if ($service->update($salesType->hash, $model)) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Updated successfully.'));
                 return $this->controller->redirect($this->indexRoute);
             }

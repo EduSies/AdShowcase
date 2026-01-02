@@ -124,12 +124,12 @@ class MenuHelper
             ],
             [
                 'section' => 'shared_links',
-                'label' => Yii::t('app', 'Shared links'),
+                'label' => Yii::t('app', 'Shared Links'),
                 'icon' => 'bi-share',
                 'permission' => 'backoffice.access',
                 'items' => [
                     [
-                        'label' => Yii::t('app', 'Shared links'),
+                        'label' => Yii::t('app', 'Shared Links'),
                         'icon' => 'bi-link-45deg',
                         'url' => ['back-office/shared-link'],
                         'visible' => true,
@@ -149,7 +149,7 @@ class MenuHelper
                         'label' => Yii::t('app', 'Audit log'),
                         'icon' => 'bi-journal-text',
                         'url' => ['back-office/audit-log'],
-                        'visible' => true,
+                        'visible' => false,
                         'activePattern' => '@^back-office/audit-log@',
                         'description' => 'Review system audit logs',
                         'permission' => 'audit.view',
@@ -158,7 +158,7 @@ class MenuHelper
                         'label' => Yii::t('app', 'Settings'),
                         'icon' => 'bi-sliders',
                         'url' => ['back-office/settings'],
-                        'visible' => true,
+                        'visible' => false,
                         'activePattern' => '@^back-office/settings@',
                         'description' => 'Configure platform settings',
                         'permission' => 'users.manage',

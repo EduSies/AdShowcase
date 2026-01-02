@@ -65,11 +65,11 @@ if (Yii::$app->session->hasFlash('error')) {
         $userCanShare = !Yii::$app->user->isGuest && Yii::$app->user->can('share.manage');
 
         // CONFIGURACIÓN POR DEFECTO
-        $showSearch = true;
+        $showSearch = !Yii::$app->user->isGuest;
         $showFavorites = true;
         $showBackOffice = $userCanBackOffice;
         $showLanguage = true;
-        $showUser = true;
+        $showUser = !Yii::$app->user->isGuest;
 
         if (isset($this->params['navbar'])) {
             $navParams = $this->params['navbar'];
@@ -171,7 +171,6 @@ if (Yii::$app->session->hasFlash('error')) {
                     'title' => Yii::t('app', 'Select language'),
                 ],
             ];
-            $rightItems[] = Html::tag('div','', ['class' => 'vr']);
         }
 
         if ($showUser) {
@@ -180,6 +179,8 @@ if (Yii::$app->session->hasFlash('error')) {
             $fullName = Html::encode($identity->name . ' ' . $identity->surname);
             $username = Html::encode($identity->username);
             $roleName = Html::encode($identity->type ?? 'User');
+
+            $rightItems[] = Html::tag('div','', ['class' => 'vr']);
 
             $rightItems[] = [
                 'label' => Html::img($avatarUrl, [

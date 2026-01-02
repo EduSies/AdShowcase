@@ -10,10 +10,7 @@ use yii\web\ForbiddenHttpException;
 
 abstract class BasePreviewAction extends Action
 {
-    /** Permiso RBAC requerido para esta acción (si procede). */
     public ?string $can = null;
-
-    /** Ruta de vista para renderizar (index/create/update…). */
     public ?string $view = null;
 
     protected function ensureCan(?string $perm): void
@@ -21,6 +18,36 @@ abstract class BasePreviewAction extends Action
         if ($perm && !Yii::$app->user->can($perm)) {
             throw new ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
         }
+    }
+
+    /**
+     * Verifica si el usuario tiene permiso para ver el Mockup.
+     */
+    protected function ensureCreativeAccess(string $creativeHash): void
+    {
+        if (!Yii::$app->user->isGuest) {
+            return;
+        }
+
+        $sessionKey = 'allowed_creative_hash_' . $creativeHash;
+
+        // Recuperamos el tiempo de expiración de la sesión
+        $expirationTime = Yii::$app->session->get($sessionKey);
+
+        // Si no hay dato o no es numérico -> Excepción
+        if (!$expirationTime || !is_numeric($expirationTime)) {
+            throw new ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
+        }
+
+        if (time() > $expirationTime) {
+            // El permiso temporal ha caducado.
+            // Borramos la sesión para limpiar.
+            Yii::$app->session->remove($sessionKey);
+
+            throw new ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
+        }
+
+        return;
     }
 
     protected function beforeRun()

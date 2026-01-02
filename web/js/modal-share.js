@@ -13,10 +13,11 @@ const shareSelectors = {
         hiddenTitle: '#hidden-creative-title',
         hiddenFormat: '#hidden-creative-format',
         hiddenAgency: '#hidden-creative-agency',
-        hiddenHash: '#shareCreativeHash',
+        hiddenHash: '#hidden-shared-creative-hash',
 
         url: '#shareInputUrl', // Input visible (readonly) donde se muestra el enlace generado
         ttl: '#shareTtl', // Select de "Expires in". IMPORTANTE: Se usa para devolver el foco al volver del paso 2 al 1
+        maxUses: '#shareMaxViews', // Input de máximas views de una creative
 
         // Inputs ocultos con textos traducidos (Yii::t) para construir mensajes de WhatsApp/Email
         msgBase: '#t-share-message',
@@ -80,15 +81,49 @@ $(document).ready(function() {
 
         // --- GENERATE LINK ---
         $(shareSelectors.buttons.generate).on('click', function() {
-            // Simulación AJAX
-            const mockUrl = window.location.origin + '/s/demo_' + Math.floor(Math.random() * 1000);
+            let $btn = $(this);
 
-            // URL del QR (Quickchart)
-            const mockQr = 'https://quickchart.io/qr?size=300&margin=1&text=' + encodeURIComponent(mockUrl) + '&t=' + Date.now();
+            let originalContent = $btn.html();
+            let width = $btn.outerWidth();
+            let height = $btn.outerHeight();
+            let spinnerHtml = $(favSelectors.templates.spinner).html();
 
-            processShareSuccess(mockUrl, mockQr);
+            $btn.css({
+                'width': width,
+                'height': height
+            }).prop('disabled', true).html(spinnerHtml);
 
-            setTimeout(() => $(shareSelectors.modal.id).focus(), 100);
+            $.ajax({
+                url: ajaxUrlGenerateSharedLink,
+                type: 'POST',
+                data: {
+                    creative_hash: $(shareSelectors.inputs.hiddenHash).val(),
+                    ttl: $(shareSelectors.inputs.ttl).val(),
+                    max_uses: $(shareSelectors.inputs.maxUses).val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Generar QR con la URL real devuelta por el servidor
+                        const realUrl = response.url;
+                        const qrUrl = 'https://quickchart.io/qr?size=300&margin=1&text=' + encodeURIComponent(realUrl);
+
+                        processShareSuccess(realUrl, qrUrl);
+
+                        if(window.swalSuccess) swalSuccess(response.message);
+                    } else {
+                        if(window.swalDanger) swalDanger(response.message);
+                    }
+
+                    $btn.prop('disabled', false).html(originalContent);
+                },
+                error: function() {
+                    if (window.swalDanger) swalDanger('Server error occurred');
+                    $btn.prop('disabled', false).html(originalContent);
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).html(originalContent);
+                }
+            });
         });
 
         // --- RESET (GENERAR NUEVO) ---

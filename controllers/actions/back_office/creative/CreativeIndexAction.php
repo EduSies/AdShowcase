@@ -11,7 +11,7 @@ use Yii;
 
 final class CreativeIndexAction extends BaseDataTableAction
 {
-    public ?string $can = 'creative.view';
+    public ?string $can = 'creative.manage';
     public ?string $view = '@app/views/back_office/creative/index';
 
     public function run()

@@ -82,6 +82,8 @@ function swalFire(options, callback = null) {
     }
     if ('html' in options) {
         options.html = '<div>'+options.html+'</div>';
+    } else {
+        options.html = '';
     }
     if (!('customClass' in options)) {
         options.customClass = {};

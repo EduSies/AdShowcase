@@ -91,7 +91,7 @@ foreach ($listsFavorites as $favorites):
                                 Icon::widget(['icon' => 'bi-chevron-left']) .
                                 Html::tag('span', Yii::t('app', 'Edit name'), ['class' => 'h5 mb-0 text-muted']),
                                 [
-                                    'class' => 'btn btn-link text-decoration-none w-100 text-start p-3 d-flex align-items-center gap-2 color-main-2 back-to-list-btn',
+                                    'class' => 'btn btn-link text-decoration-none w-100 text-start p-3 d-flex align-items-center gap-2 color-main-2 back-to-list-actions',
                                     'type' => 'button'
                                 ]
                             ) ?>
@@ -121,7 +121,7 @@ foreach ($listsFavorites as $favorites):
                                 Icon::widget(['icon' => 'bi-chevron-left']) .
                                 Html::tag('span', Yii::t('app', 'Move to another list'), ['class' => 'h5 mb-0 text-muted']),
                                 [
-                                    'class' => 'btn btn-link text-decoration-none w-100 text-start p-3 d-flex align-items-center gap-2 color-main-2 back-to-list-btn',
+                                    'class' => 'btn btn-link text-decoration-none w-100 text-start p-3 d-flex align-items-center gap-2 color-main-2 back-to-list-actions',
                                     'type' => 'button'
                                 ]
                             ) ?>

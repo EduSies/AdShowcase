@@ -15,7 +15,6 @@ use yii\helpers\Json;
 $this->title = $title;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Back Office')];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Users')];
 $this->params['breadcrumbs'][] = $this->title;
 
 DataTablesAsset::register($this);

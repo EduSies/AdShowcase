@@ -41,7 +41,7 @@ class AuthController extends BaseWebController
 
     public function actions(): array
     {
-        return [
+        return array_merge(parent::actions(), [
             'login' => [
                 'class' => LoginAction::class,
                 'successUrl' => \Yii::$app->homeUrl,
@@ -61,6 +61,6 @@ class AuthController extends BaseWebController
             'verify-email' => [
                 'class' => VerifyEmailAction::class, // recibe <token> por parámetro
             ],
-        ];
+        ]);
     }
 }

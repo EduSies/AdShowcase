@@ -21,7 +21,7 @@ class CreativeHelper
         $creative['viewFormatName'] = !empty($creative['format']) ? $creative['format']['name'] : Yii::t('app', 'Format');
         $creative['viewAgencyName'] = !empty($creative['agency']) ? $creative['agency']['name'] : Yii::t('app', 'Agency');
         $creative['viewCountryCode'] = !empty($creative['country']) ? strtolower($creative['country']['iso']) : '';
-        $creative['viewCountryName'] = !empty($creative['country']) ? $creative['country']['name'] : '';
+        $creative['viewCountryName'] = !empty($creative['country']) ? $creative['country']['name'] : Yii::t('app', 'Country');
 
         // Icono Dispositivo
         $creative['viewDeviceIcon'] = self::getDeviceIcon((int)($creative['device_id'] ?? 0));
@@ -61,7 +61,6 @@ class CreativeHelper
             1 => 'bi-display', // Desktop
             2 => 'bi-phone', // Mobile
             3 => 'bi-tablet', // Tablet
-            4 => 'bi-tv', // CTV (Connected TV)
             default => 'bi-display',
         };
     }
@@ -75,7 +74,6 @@ class CreativeHelper
             1 => 'device-desktop', // Desktop
             2 => 'device-mobile', // Mobile
             3 => 'device-tablet', // Tablet
-            4 => 'device-ctv', // CTV
             default => 'device-desktop',
         };
     }

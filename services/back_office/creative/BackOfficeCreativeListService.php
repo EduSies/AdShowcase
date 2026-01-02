@@ -9,7 +9,7 @@ use yii\db\Expression;
 
 final class BackOfficeCreativeListService
 {
-    /** Returns flat array for DataTables with joined relations. */
+    /** Returns array for DataTables with joined relations. */
     public function findAll(): array
     {
         return Creative::find()

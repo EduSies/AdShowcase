@@ -6,6 +6,7 @@ use yii\web\UrlManager;
 $rules = [
     // --- Home ---
     '' => 'site/catalog',
+    'dashboard' => 'site/dashboard',
 
     // --- Auth ---
     'login' => 'auth/login',
@@ -24,10 +25,12 @@ $rules = [
     'back-office/<action:[a-z0-9\-]+>' => 'back-office/<action>',
 
     // --- Shared links ---
-    's/<token:[A-Za-z0-9_\-]{43}>' => 'shared-link/open',
+    's/<token:[\w\-]+>' => 'shared-link/open',
+    'shared-link/generate' => 'shared-link/generate',
 
     // --- Preview creative ---
     'preview/<hash:[A-Za-z0-9_\-]{16}>' => 'preview/index',
+    'preview/mockup/<hash:[A-Za-z0-9_\-]{16}>' => 'preview/mockup',
 
     // --- Favorite Route ---
     'favorites' => 'favorite/index',
