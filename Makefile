@@ -121,8 +121,10 @@ build:
 	      	--exclude='views/site/login.php' \
 	      	--exclude='views/site/error.php' \
 	      	--exclude='web/favicon.ico' \
+			--exclude='web/.htaccess' \
+			--exclude='.htaccess' \
 	      	_yii_scaffold/ .; \
-		  rm -rf _yii_scaffold; \
+		  rm -rf _yii_scaffold vagrant Vagrantfile; \
 	  fi"
 
 	@echo ">> 3/6 Purgar docker-compose* del scaffold en raíz (para evitar 7.4)"
