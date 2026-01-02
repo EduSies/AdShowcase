@@ -7,8 +7,8 @@ use yii\helpers\Url;
 
 $this->registerJsVar('ajaxUrlGenerateSharedLink', Url::to(['shared-link/generate']));
 $this->registerJsVar('ajaxUrlSendShareEmail', Url::to(['shared-link/send-email']));
-$this->registerJsVar('textSendShareEmailValidate', "Please enter a valid email address");
-$this->registerJsVar('textSendShareEmailError', "Error sending email");
+$this->registerJsVar('textSendShareEmailValidate', Yii::t('app','Please enter a valid email address'));
+$this->registerJsVar('textSendShareEmailError', Yii::t('app', 'Error sending email'));
 
 ?>
 
