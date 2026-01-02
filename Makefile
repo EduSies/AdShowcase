@@ -117,6 +117,7 @@ build:
 	      	--exclude='Vagrantfile' \
 	      	--exclude='config/web.php' \
 	      	--exclude='models/LoginForm.php' \
+	      	--exclude='models/ContactForm.php' \
 	      	--exclude='views/site/login.php' \
 	      	--exclude='views/site/error.php' \
 	      	--exclude='web/favicon.ico' \
