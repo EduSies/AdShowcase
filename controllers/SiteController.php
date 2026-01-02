@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\ContactForm;
 use Yii;
 use yii\filters\AccessControl;
 
@@ -53,33 +54,33 @@ class SiteController extends BaseWebController
     }
 
     /**
-     * {@inheritdoc}
+     * Previsualiza el diseño del correo en el navegador.
+     * Accede vía: /site/email-preview
      */
-    /*    public function actions()
-        {
-            return [
-                'error' => [
-                    'class' => 'yii\web\ErrorAction',
-                ],
-                'captcha' => [
-                    'class' => 'yii\captcha\CaptchaAction',
-                    'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-                ],
-            ];
-        }*/
-
-/*    public function actionContact()
+    public function actionEmailPreview()
     {
-        $model = new ContactForm();
+        $dummyContent = '
+            <div style="text-align: center;">
+                <p style="font-family: Helvetica, Arial, sans-serif; color: #1f2937; font-weight: bold; margin-bottom: 5px;">
+                    Hey! AdShowcase has shared a preview with you
+                </p>
+                
+                <h2 style="font-family: Helvetica, Arial, sans-serif; color: #FF6600; margin: 0 0 10px 0; font-size: 24px;">
+                    Summer Campaign 2026
+                </h2>
+                
+                <p style="font-family: Helvetica, Arial, sans-serif; color: #9ca3af; font-size: 14px; margin-bottom: 30px;">
+                    Gaming Skin / Video Overlay
+                </p>
 
-        if ($model->load(\Yii::$app->request->post()) && $model->contact(\Yii::$app->params['adminEmail'])) {
-            \Yii::$app->session->setFlash('contactFormSubmitted');
+                <a href="#" style="background-color: #2563eb; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);">
+                    CLICK HERE TO SEE THE PREVIEW
+                </a>
+            </div>
+        ';
 
-            return $this->refresh();
-        }
-
-        return $this->render('contact', [
-            'model' => $model,
+        return $this->renderPartial('@app/mail/layouts/html', [
+            'content' => $dummyContent,
         ]);
-    }*/
+    }
 }

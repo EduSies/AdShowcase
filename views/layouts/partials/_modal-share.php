@@ -6,6 +6,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->registerJsVar('ajaxUrlGenerateSharedLink', Url::to(['shared-link/generate']));
+$this->registerJsVar('ajaxUrlSendShareEmail', Url::to(['shared-link/send-email']));
+$this->registerJsVar('textSendShareEmailValidate', "Please enter a valid email address");
+$this->registerJsVar('textSendShareEmailError', "Error sending email");
 
 ?>
 
@@ -72,6 +75,7 @@ $this->registerJsVar('ajaxUrlGenerateSharedLink', Url::to(['shared-link/generate
                 </div>
 
                 <div id="shareResultStep" class="d-none text-center">
+
                     <div class="mb-5 d-flex flex-column align-items-center mt-2">
                         <a href="#" id="btnDownloadComposite" class="d-block bg-white p-3 shadow-sm border rounded-3 text-decoration-none d-flex align-items-center justify-content-center hover-scale"
                            style="width: 180px; height: 180px; transition: transform 0.2s;"
@@ -94,31 +98,38 @@ $this->registerJsVar('ajaxUrlGenerateSharedLink', Url::to(['shared-link/generate
                                 'class' => 'form-control bg-light border-end-0 fs-6 text-muted',
                                 'readonly' => true,
                         ]) ?>
-
                         <?= Html::button(
                                 Icon::widget(['icon' => 'bi-clipboard', 'size' => Icon::SIZE_24]),
-                                [
-                                        'id' => 'btnCopyLink',
-                                        'class' => 'btn btn-light border border-start-0 text-primary px-4',
-                                        'type' => 'button'
-                                ]
+                                ['id' => 'btnCopyLink', 'class' => 'btn btn-light border border-start-0 text-primary px-4', 'type' => 'button']
                         ) ?>
                     </div>
 
-                    <div id="copySuccessMessage" class="text-success small mb-4" style="opacity: 0; transition: opacity 0.3s; height: 20px;">
+                    <div id="copySuccessMessage" class="text-success small mb-4 d-none">
                         <?= Icon::widget(['icon' => 'bi-check-circle-fill', 'options' => ['class' => 'me-1']]) ?>
                         <?= Yii::t('app', 'Link copied!') ?>
                     </div>
 
-                    <div class="d-flex gap-3 justify-content-center mb-4 mt-5">
-                        <a href="#" target="_blank" id="btnShareWhatsapp" class="btn btn-success rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
-                            <?= Icon::widget(['icon' => 'bi-whatsapp', 'size' => Icon::SIZE_24]) ?>
-                            <span>WhatsApp</span>
-                        </a>
+                    <hr class="my-3 text-muted" style="opacity: 0.1">
 
-                        <a href="#" id="btnShareMail" class="btn btn-secondary rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
-                            <?= Icon::widget(['icon' => 'bi-envelope', 'size' => Icon::SIZE_24]) ?>
-                            <span>Email</span>
+                    <div class="text-start mb-2">
+                        <label class="form-label small text-uppercase text-muted"><?= Yii::t('app', 'Send via Email') ?></label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <?= Html::input('email', null, null, [
+                                'id' => 'shareInputEmailDest',
+                                'class' => 'form-control',
+                                'placeholder' => 'client@example.com'
+                        ]) ?>
+                        <button class="btn btn-primary px-4" type="button" id="btnSendEmailTrigger">
+                            <?= Icon::widget(['icon' => 'bi-send', 'options' => ['class' => 'me-2']]) ?>
+                            <?= Yii::t('app', 'Send') ?>
+                        </button>
+                    </div>
+
+                    <div class="d-flex justify-content-center mb-4">
+                        <a href="#" target="_blank" id="btnShareWhatsapp" class="btn btn-success btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-2 shadow-sm">
+                            <?= Icon::widget(['icon' => 'bi-whatsapp', 'size' => Icon::SIZE_16]) ?>
+                            <span>WhatsApp</span>
                         </a>
                     </div>
 

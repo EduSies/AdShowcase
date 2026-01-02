@@ -1,8 +1,9 @@
 <?php
 
+use yii\helpers\ArrayHelper;
+
 return [
-    'adminEmail' => 'edusies89@gmail.com',
-    'senderEmail' => 'edusies89@gmail.com',
-    'senderName' => 'Example.com mailer',
+    'senderEmail' => ArrayHelper::getValue($_ENV, 'SENDER_EMAIL'),
+    'senderName' => ArrayHelper::getValue($_ENV, 'APP_NAME'),
     'isSsl' => strtolower(($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https',
 ];

@@ -21,7 +21,8 @@ const shareSelectors = {
 
         // Inputs ocultos con textos traducidos (Yii::t) para construir mensajes de WhatsApp/Email
         msgBase: '#t-share-message',
-        subjectBase: '#t-share-subject'
+        subjectBase: '#t-share-subject',
+        emailDest: '#shareInputEmailDest'
     },
     buttons: {
         generate: '#btnGenerateLink', // Botón para enviar la petición AJAX y generar el enlace
@@ -29,7 +30,8 @@ const shareSelectors = {
         copy: '#btnCopyLink', // Botón para copiar la URL al portapapeles
         download: '#btnDownloadComposite', // Botón para descargar la imagen compuesta (Canvas + QR)
         whatsapp: '#btnShareWhatsapp', // Enlace dinámico para compartir en WhatsApp
-        mail: '#btnShareMail' // Enlace dinámico para compartir por Email
+        mail: '#btnShareMail', // Enlace dinámico para compartir por Email
+        sendEmail: '#btnSendEmailTrigger'
     },
     elements: {
         qrImage: '#shareQrImage', // Etiqueta <img> donde se carga el QR
@@ -71,6 +73,7 @@ $(document).ready(function() {
 
         // --- CERRAR EL MODAL ---
         shareModalEl.addEventListener('hidden.bs.modal', function () {
+            $(shareSelectors.inputs.emailDest).val('');
             // Devolver foco a un elemento seguro para accesibilidad
             const fallback = document.querySelector(shareSelectors.elements.fallbackFocus);
             if(fallback) {
@@ -126,12 +129,13 @@ $(document).ready(function() {
             });
         });
 
-        // --- RESET (GENERAR NUEVO) ---
+        // --- RESET ---
         $(shareSelectors.buttons.reset).on('click', function() {
             $(shareSelectors.steps.result).addClass('d-none');
             $(shareSelectors.steps.config).removeClass('d-none');
 
             $(shareSelectors.modal.id).focus();
+            $(shareSelectors.inputs.emailDest).val('');
         });
 
         // --- COPY LINK ---
@@ -153,8 +157,6 @@ $(document).ready(function() {
             downloadCompositeImage();
         });
     }
-
-    // --- FUNCIONES AUXILIARES ---
 
     function processShareSuccess(url, qrImageSrc) {
         // Cambio de pantalla
@@ -218,14 +220,14 @@ $(document).ready(function() {
         ctx.textAlign = "center";
         const centerX = width / 2;
 
-        // 1. FORMATO
+        // FORMATO
         ctx.fillStyle = "#6c757d";
         ctx.font = "bold 18px system-ui";
         ctx.letterSpacing = "2px";
         let currentY = textStart + 20;
         ctx.fillText(format, centerX, currentY);
 
-        // 2. TÍTULO
+        // TÍTULO
         ctx.fillStyle = mainColor;
         ctx.font = "bold 28px system-ui";
         ctx.letterSpacing = "0px";
@@ -235,7 +237,7 @@ $(document).ready(function() {
         if (title.length > 35) displayTitle = title.substring(0, 35) + '...';
         ctx.fillText(displayTitle, centerX, currentY);
 
-        // 3. AGENCIA
+        // AGENCIA
         ctx.fillStyle = "#6c757d";
         ctx.font = "20px system-ui";
         currentY += 35;
@@ -252,7 +254,6 @@ $(document).ready(function() {
             document.body.removeChild(link);
         } catch (err) {
             console.error("Could not generate image:", err);
-            // Aquí podrías usar una alerta o un SweetAlert si lo tienes disponible
         }
     }
 
@@ -264,7 +265,7 @@ $(document).ready(function() {
             document.execCommand('copy');
             showCopySuccess();
         } catch (err) {
-            console.error('No se pudo copiar', err);
+            console.error('Error to copy', err);
         }
     }
 
@@ -272,8 +273,73 @@ $(document).ready(function() {
         const $msg = $(shareSelectors.elements.copyMessage);
         const $modal = $(shareSelectors.modal.id);
 
-        $msg.css('opacity', '1');
-        setTimeout(() => $msg.css('opacity', '0'), 3000);
+        $msg.removeClass('d-none').hide().fadeIn(300);
+
+        setTimeout(() => {
+            $msg.fadeOut(300, function() {
+                $(this).addClass('d-none');
+            });
+        }, 3000);
+
         setTimeout(() => $modal.focus(), 100);
     }
+
+    $(shareSelectors.buttons.sendEmail).on('click', function() {
+        const $btn = $(this);
+        const email = $(shareSelectors.inputs.emailDest).val();
+        const sharedUrl = $(shareSelectors.inputs.url).val();
+
+        // Validar email básico
+        if (!email || !email.includes('@')) {
+            if(window.swalDanger) swalDanger(textSendShareEmailValidate);
+            return;
+        }
+
+        // Datos visuales para el correo
+        const title = $(shareSelectors.inputs.hiddenTitle).val();
+        const format = $(shareSelectors.inputs.hiddenFormat).val();
+        const agency = $(shareSelectors.inputs.hiddenAgency).val();
+
+        // Generamos la URL del QR igual que en el frontend para mandarla al backend
+        // Usamos QuickChart porque es accesible públicamente por el cliente de correo
+        const qrUrl = 'https://quickchart.io/qr?size=300&margin=1&text=' + encodeURIComponent(sharedUrl);
+
+        // Loading
+        let originalContent = $btn.html();
+        let width = $btn.outerWidth();
+        let height = $btn.outerHeight();
+        let spinnerHtml = $(favSelectors.templates.spinner).html();
+
+        $btn.css({
+            'width': width,
+            'height': height
+        }).prop('disabled', true).html(spinnerHtml);
+
+        $.ajax({
+            url: ajaxUrlSendShareEmail,
+            type: 'POST',
+            data: {
+                email: email,
+                url: sharedUrl,
+                qr_src: qrUrl,
+                title: title,
+                format: format,
+                agency: agency
+            },
+            success: function(response) {
+                if (response.success) {
+                    if(window.swalSuccess) swalSuccess(response.message);
+                    $(shareSelectors.inputs.emailDest).val('');
+                } else {
+                    if(window.swalDanger) swalDanger(response.message);
+                }
+            },
+            error: function() {
+                if(window.swalDanger) swalDanger(textSendShareEmailError);
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalContent);
+            }
+        });
+    });
 });

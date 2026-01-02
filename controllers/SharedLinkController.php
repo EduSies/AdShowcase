@@ -23,7 +23,7 @@ class SharedLinkController extends BaseWebController
                 // Acción 'generate'
                 [
                     'allow' => true,
-                    'actions' => ['generate'],
+                    'actions' => ['generate', 'send-email'],
                     'roles' => ['@'], // Solo usuarios logueados
                 ],
             ],
@@ -40,6 +40,9 @@ class SharedLinkController extends BaseWebController
             ],
             'open' => [
                 'class' => \app\controllers\actions\shared_link\OpenLinkAction::class,
+            ],
+            'send-email' => [
+                'class' => \app\controllers\actions\shared_link\SendEmailAction::class,
             ]
         ]);
     }

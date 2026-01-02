@@ -78,26 +78,20 @@ $config = [
                 ],
             ],
         ],
-/*        'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
-            'viewPath' => '@app/mail',
-            // send all mails to a file by default.
-            'useFileTransport' => true,
-        ],*/
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'useFileTransport' => false,
             'transport' => [
                 'scheme' => 'smtp',
-                'host' => ArrayHelper::getValue($_ENV, 'MAILTRAP_HOST'),
-                'username' => ArrayHelper::getValue($_ENV, 'MAILTRAP_USER'),
-                'password' => ArrayHelper::getValue($_ENV, 'MAILTRAP_PASS'),
-                'port' => (int) ArrayHelper::getValue($_ENV, 'MAILTRAP_PORT'),
-                'encryption' => 'tls',
+                'host' => ArrayHelper::getValue($_ENV, 'SMTP_HOST'),
+                'username' => ArrayHelper::getValue($_ENV, 'SMTP_USER'),
+                'password' => ArrayHelper::getValue($_ENV, 'SMTP_PASS'),
+                'port' => (int) ArrayHelper::getValue($_ENV, 'SMTP_PORT'),
+                'encryption' => ArrayHelper::getValue($_ENV, 'SMTP_ENCRYPTION'),
             ],
-/*            'messageConfig' => [
-                'from' => ['noreply@tu-dominio-verificado.com' => 'AdShowcase'],
-            ],*/
+            'messageConfig' => [
+                'from' => [ArrayHelper::getValue($_ENV, 'SMTP_USER') => ArrayHelper::getValue($_ENV, 'APP_NAME')],
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

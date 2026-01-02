@@ -27,6 +27,7 @@ $rules = [
     // --- Shared links ---
     's/<token:[\w\-]+>' => 'shared-link/open',
     'shared-link/generate' => 'shared-link/generate',
+    'shared-link/send-email' => 'shared-link/send-email',
 
     // --- Preview creative ---
     'preview/<hash:[A-Za-z0-9_\-]{16}>' => 'preview/index',
