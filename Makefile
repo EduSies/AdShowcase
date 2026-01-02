@@ -106,10 +106,22 @@ build:
 	    docker compose -f '$(LOCAL_DIR)/docker-compose.yml' -p adshowcase run --rm --user $$(id -u):$$(id -g) \
 	      -e COMPOSER_HOME=/var/www/html/runtime/composer -e COMPOSER_CACHE_DIR=/var/www/html/runtime/composer \
 	      php bash -lc 'set -e; mkdir -p runtime/composer; composer create-project yiisoft/yii2-app-basic:$(YII_APP_BASIC_VERSION) /var/www/html/_yii_scaffold --prefer-dist --no-interaction --no-progress --no-install --no-scripts'; \
-	    rsync -av --ignore-existing \
-	      --exclude='.git' --exclude='.gitignore' --exclude='vendor' --exclude='runtime' --exclude='web/assets' \
-	      _yii_scaffold/ .; \
-	    rm -rf _yii_scaffold; \
+		  rsync -av --ignore-existing \
+	      	--exclude='.git' \
+	      	--exclude='.gitignore' \
+	      	--exclude='vendor' \
+	      	--exclude='runtime' \
+	      	--exclude='web/assets' \
+	      	--exclude='tests' \
+	      	--exclude='vagrant' \
+	      	--exclude='Vagrantfile' \
+	      	--exclude='config/web.php' \
+	      	--exclude='models/LoginForm.php' \
+	      	--exclude='views/site/login.php' \
+	      	--exclude='views/site/error.php' \
+	      	--exclude='web/favicon.ico' \
+	      	_yii_scaffold/ .; \
+		  rm -rf _yii_scaffold; \
 	  fi"
 
 	@echo ">> 3/6 Purgar docker-compose* del scaffold en raíz (para evitar 7.4)"
