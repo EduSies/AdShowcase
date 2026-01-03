@@ -145,28 +145,26 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
     /**
      * Agrega una columna renderizada para el Estado (Status).
      *
-     * Combina la lógica de StatusHelper (para textos) con un mapa visual
-     * (iconos y colores) para generar un badge elegante.
-     *
-     * @param array  $rows      Datos de la tabla.
-     * @param string $view      Vista parcial (ej: '_status').
-     * @param string $statusKey La clave con el valor del estado en la BD (ej: 'status').
+     * @param array  $rows            Datos de la tabla.
+     * @param string $view            Vista parcial (ej: 'status').
+     * @param string $statusKey       La clave con el valor del estado en la BD (ej: 'status').
+     * @param array  $customVisualMap (Opcional) Mapa de 'VALOR' => ['color' => '...', 'icon' => '...']. Si se pasa, sustituye al por defecto.
+     * @param array  $customLabels    (Opcional) Array de 'VALOR' => 'Etiqueta'. Si se pasa, sustituye a StatusHelper::statusFilter().
      */
-    protected function addStatusColumn(array $rows, string $view, string $statusKey = 'status'): array
+    protected function addStatusColumn(array $rows, string $view, string $statusKey = 'status', array $customVisualMap = [], array $customLabels = []): array
     {
-        // 1. Pre-cargamos las traducciones del Helper para no llamar a la función en cada fila
-        $statusLabels = StatusHelper::statusFilter();
+        $statusLabels = !empty($customLabels) ? $customLabels : StatusHelper::statusFilter();
 
         return $this->addRenderedColumn(
             $rows,
             $statusKey,
             $view,
-            static function (array $row) use ($statusKey, $statusLabels): array {
+            static function (array $row) use ($statusKey, $statusLabels, $customVisualMap): array {
 
                 $status = $row[$statusKey] ?? null;
 
-                // 2. Definimos el mapa visual usando las CONSTANTES del Helper
-                $visualMap = [
+                // Definimos el mapa visual por defecto
+                $defaultVisualMap = [
                     StatusHelper::STATUS_ACTIVE => ['color' => 'success', 'icon' => 'bi bi-check-circle-fill'],
                     StatusHelper::STATUS_PENDING => ['color' => 'warning', 'icon' => 'bi bi-hourglass-split'],
                     StatusHelper::STATUS_INACTIVE => ['color' => 'secondary', 'icon' => 'bi bi-slash-circle'],
@@ -174,11 +172,14 @@ abstract class BaseDatatableAction extends BaseBackofficeAction
                     StatusHelper::STATUS_ARCHIVED => ['color' => 'dark', 'icon' => 'bi bi-archive-fill'],
                 ];
 
-                // 3. Obtenemos la configuración o un fallback por defecto
-                $config = $visualMap[$status] ?? ['color' => 'secondary', 'icon' => 'bi bi-question-circle'];
+                // Si nos pasaron un mapa custom, lo usamos. Si no, usamos el default.
+                $mapToUse = !empty($customVisualMap) ? $customVisualMap : $defaultVisualMap;
 
-                // 4. Obtenemos la traducción oficial del Helper
-                $label = $statusLabels[$status] ?? $status; // Si no hay traducción, muestra el código crudo
+                // Obtenemos la configuración o un fallback
+                $config = $mapToUse[$status] ?? ['color' => 'secondary', 'icon' => 'bi bi-question-circle'];
+
+                // Obtenemos la traducción
+                $label = $statusLabels[$status] ?? $status;
 
                 return [
                     'label' => $label,

@@ -57,7 +57,7 @@ class m251220_193049_seed_creative_table extends Migration
             $folder2 = substr($hash, 2, 2);
 
             // Ruta relativa (DB)
-            $relativePath = "uploads/assets/{$folder1}/{$folder2}/{$hash}.{$physicalExtension}";
+            $relativePath = "/uploads/assets/{$folder1}/{$folder2}/{$hash}.{$physicalExtension}";
 
             // Ruta absoluta (Disco)
             $absoluteDir = $uploadRoot . "/uploads/assets/{$folder1}/{$folder2}";

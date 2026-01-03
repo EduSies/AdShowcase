@@ -73,7 +73,7 @@ class CreativeForm extends Model
         // - Todo es "safe". upload_asset es opcional.
         // - Incluimos asset_file_id por si se mantiene el existente.
         $scenarios[self::SCENARIO_UPDATE] = [
-            'id', 'upload_asset', 'url_thumbnail', 'asset_file_id',
+            'id', 'hash', 'upload_asset', 'url_thumbnail', 'asset_file_id',
             'title', 'brand_id', 'agency_id',
             'device_id', 'country_id', 'format_id', 'sales_type_id', 'product_id',
             'language_id', 'click_url', 'workflow_status', 'status'

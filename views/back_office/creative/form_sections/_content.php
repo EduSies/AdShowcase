@@ -18,6 +18,7 @@
 use app\assets\CropperJsAsset;
 use app\widgets\Icon;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 CropperJsAsset::register($this);
 
@@ -182,7 +183,25 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 
 <div class="row g-3">
     <div class="col-md-8">
-        <div class="mt-4 d-flex justify-content-end gap-2">
+        <div class="mt-4 d-flex justify-content-between gap-2">
+            <div>
+                <?php if ($isUpdate): ?>
+                    <?= Html::a(
+                        Icon::widget([
+                            'icon' => 'bi-eye',
+                            'size' => Icon::SIZE_24,
+                            'options' => ['class' => 'flex-shrink-0']
+                        ]) .
+                        Html::tag('span', Yii::t('app', 'Go to preview'), ['class' => 'ms-2']),
+                        Url::to(['preview/index', 'hash' => $model->hash], true),
+                        [
+                            'class' => 'btn btn-outline-secondary rounded-pill d-flex align-items-center',
+                            'target' => '_blank',
+                        ]
+                    ) ?>
+                <?php endif; ?>
+            </div>
+
             <?= Html::submitButton(
                 Icon::widget([
                     'icon' => $submitIcon,

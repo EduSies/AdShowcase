@@ -33,10 +33,11 @@ final class CreativeIndexAction extends BaseDataTableAction
             '/layouts/partials/datatables/back_office/_status',
             'workflow_status',
             [
-                StatusHelper::WORKFLOW_DRAFT => ['color' => 'secondary', 'icon' => 'bi bi-pencil'],
-                StatusHelper::WORKFLOW_REVIEWED => ['color' => 'info', 'icon' => 'bi bi-eye'],
-                StatusHelper::WORKFLOW_APPROVED => ['color' => 'primary', 'icon' => 'bi bi-check2-all'],
-            ]
+                StatusHelper::WORKFLOW_DRAFT => ['color' => 'dark', 'icon' => 'bi bi-pencil'],
+                StatusHelper::WORKFLOW_REVIEWED => ['color' => 'warning', 'icon' => 'bi bi-eye'],
+                StatusHelper::WORKFLOW_APPROVED => ['color' => 'success', 'icon' => 'bi bi-check2-all'],
+            ],
+            StatusHelper::workflowStatusFilter()
         );
 
         $rows = $this->addActionsColumn(

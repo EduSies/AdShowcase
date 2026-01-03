@@ -107,8 +107,7 @@ class m251115_200055_seed_rbac extends Migration
         // sales: ver + gestionar favoritos
         $this->grantIfMissing($auth, $rSales, $pViewCreative);
         $this->grantIfMissing($auth, $rSales, $pFavManage);
-        // acceso al backoffice para perfiles internos
-        $this->grantIfMissing($auth, $rSales, $pBackoffice);
+        $this->grantIfMissing($auth, $rSales, $pShareManage);
 
         // editor: ver + gestionar creatives + compartir
         $this->grantIfMissing($auth, $rEditor, $pViewCreative);

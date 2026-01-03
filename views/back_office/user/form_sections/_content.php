@@ -168,23 +168,24 @@ $showResendButton = $isUpdate && in_array($model->status, [
 
 <div class="row g-3">
     <div class="col-md-10">
-        <div class="mt-4 gap-2 d-flex <?= $showResendButton ? 'justify-content-between' : 'justify-content-end' ?>">
-
-            <?php if ($showResendButton): ?>
-                <?= Html::a(
-                    Icon::widget([
-                        'icon' => 'bi-envelope-paper',
-                        'size' => Icon::SIZE_24,
-                        'options' => ['class' => 'flex-shrink-0'],
-                    ]) .
-                    Html::tag('span', Yii::t('app', 'Resend Verification'), ['class' => 'ms-2']),
-                    'javascript:void(0);',
-                    [
-                        'class' => 'btn btn-outline-warning rounded-pill d-flex align-items-center js-resend-verification',
-                        'encode' => false,
-                    ]
-                ) ?>
-            <?php endif; ?>
+        <div class="mt-4 gap-2 d-flex justify-content-between">
+            <div>
+                <?php if ($showResendButton): ?>
+                    <?= Html::a(
+                        Icon::widget([
+                            'icon' => 'bi-envelope-paper',
+                            'size' => Icon::SIZE_24,
+                            'options' => ['class' => 'flex-shrink-0'],
+                        ]) .
+                        Html::tag('span', Yii::t('app', 'Resend Verification'), ['class' => 'ms-2']),
+                        'javascript:void(0);',
+                        [
+                            'class' => 'btn btn-outline-warning rounded-pill d-flex align-items-center js-resend-verification',
+                            'encode' => false,
+                        ]
+                    ) ?>
+                <?php endif; ?>
+            </div>
 
             <?= Html::submitButton(
                 Icon::widget([
