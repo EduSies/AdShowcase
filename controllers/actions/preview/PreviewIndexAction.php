@@ -84,7 +84,7 @@ final class PreviewIndexAction extends BasePreviewAction
         $this->controller->view->params['navbar'] = [
             'search' => false,
             'favorites' => false,
-            'backoffice' => false,
+            'backoffice' => true,
             'language' => true,
             'user' => true,
         ];

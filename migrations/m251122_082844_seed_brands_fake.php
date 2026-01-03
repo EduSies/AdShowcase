@@ -5,33 +5,38 @@ use yii\helpers\Inflector;
 
 class m251122_082844_seed_brands_fake extends Migration
 {
-    /** Cuántas marcas generar. */
-    private int $count = 1000;
+    /** Cuántas marcas generar en total. */
+    private int $count = 500; // Ajusta este número según necesites
 
     public function safeUp(): void
     {
         $table = '{{%brand}}';
-
-        // Faker si está disponible; si no, fallback
-        $faker = class_exists(\Faker\Factory::class) ? \Faker\Factory::create() : null;
-
+        $faker = \Faker\Factory::create();
         $now = time();
-        $usedSlugs = [];
+
+        // Lista de marcas reales
+        $realBrands = $this->getRealBrandsList();
+        $totalReal = count($realBrands);
 
         for ($i = 0; $i < $this->count; $i++) {
-            $name = $faker ? mb_substr($faker->unique()->company(), 0, 255) : $this->fallbackCompany($i);
+            // Lógica: Usar nombre real mientras queden, sino usar Faker
+            if ($i < $totalReal) {
+                $name = $realBrands[$i];
+            } else {
+                // Si ya gastamos los nombres reales, generamos aleatorios
+                $name = $faker->unique()->company();
+            }
 
             // slug único (url_slug)
-            $slugBase = Inflector::slug($name);
-            $slug = $slugBase;
+            $slug = Inflector::slug($name);
 
-            // hash aleatorio de 16 (solo alfanumérico por estética)
+            // hash aleatorio de 16
             $hash = \Yii::$app->security->generateRandomString(16);
 
-            // status con más probabilidad de 'active'
+            // status con pesos
             $status = $this->weightedStatus();
 
-            // fechas coherentes (created <= updated)
+            // fechas coherentes
             $createdTs = $now - random_int(0, 3600 * 24 * 365);
             $updatedTs = $createdTs + random_int(0, 3600 * 24 * 60);
             $createdAt = date('Y-m-d H:i:s', $createdTs);
@@ -46,9 +51,9 @@ class m251122_082844_seed_brands_fake extends Migration
                 'updated_at' => $updatedAt,
             ];
 
+            // Usamos upsert para evitar errores si ejecutas la seed varias veces
             $this->upsert($table, $row, [
-                'hash' => $row['hash'],
-                'name' => $row['name'],
+                'name' => $row['name'], // Si existe hash/slug/id, actualizamos nombre (o lo que quieras)
                 'status' => $row['status'],
                 'updated_at' => $row['updated_at'],
             ]);
@@ -57,12 +62,11 @@ class m251122_082844_seed_brands_fake extends Migration
 
     public function safeDown(): bool
     {
+        // En desarrollo solemos hacer truncate, pero return false protege datos
+        // $this->truncateTable('{{%brand}}');
         return false;
     }
 
-    // ================= Helpers =================
-
-    /** Status con pesos: active (~75%), pending (~15%), archived (~10%). */
     private function weightedStatus(): string
     {
         $r = random_int(1, 100);
@@ -71,15 +75,53 @@ class m251122_082844_seed_brands_fake extends Migration
         return 'archived';
     }
 
-    /** Fallback simple de nombres si no hay Faker. */
-    private function fallbackCompany(int $i): string
+    /**
+     * Devuelve un array con marcas reales de diversos sectores.
+     */
+    private function getRealBrandsList(): array
     {
-        static $pool = [
-            'Coca-Cola', 'Fanta', 'Sprite', 'Aquabona', 'Barbie', 'Hot Wheels', 'Max Steel',
-            'Monster High', 'American Girl', 'Apptivity', 'Nike', 'Adidas', 'Pepsi',
-            'Apple', 'Samsung', 'Amazon', 'Netflix', 'Ikea', 'Sony', 'LEGO', 'Zara', 'H&M',
-            'Starbucks', 'Tesla', 'Nvidia', 'Google', 'Meta', 'Microsoft', 'Disney', 'Uber',
+        return [
+            // Tech & Electronics
+            'Apple', 'Samsung', 'Google', 'Microsoft', 'Sony', 'Dell', 'HP', 'Lenovo', 'LG', 'Panasonic',
+            'Intel', 'Nvidia', 'AMD', 'Cisco', 'Oracle', 'IBM', 'Adobe', 'Salesforce', 'SAP', 'Spotify',
+            'Netflix', 'Meta', 'TikTok', 'Uber', 'Airbnb', 'Tesla', 'SpaceX', 'Garmin', 'Canon', 'Nikon',
+            'GoPro', 'Dyson', 'Bose', 'Sonos', 'Nintendo', 'PlayStation', 'Xbox', 'Razer', 'Logitech',
+
+            // Auto
+            'Toyota', 'Volkswagen', 'Ford', 'Honda', 'BMW', 'Mercedes-Benz', 'Audi', 'Porsche', 'Ferrari',
+            'Lamborghini', 'Hyundai', 'Kia', 'Nissan', 'Chevrolet', 'Jeep', 'Land Rover', 'Volvo', 'Lexus',
+            'Mazda', 'Subaru', 'Yamaha', 'Ducati', 'Harley-Davidson',
+
+            // Fashion & Apparel
+            'Nike', 'Adidas', 'Puma', 'Under Armour', 'New Balance', 'Reebok', 'Zara', 'H&M', 'Uniqlo',
+            'Levi\'s', 'Gap', 'Calvin Klein', 'Tommy Hilfiger', 'Ralph Lauren', 'Lacoste', 'The North Face',
+            'Patagonia', 'Columbia', 'Vans', 'Converse', 'Dr. Martens', 'Timberland',
+
+            // Luxury
+            'Louis Vuitton', 'Gucci', 'Chanel', 'Hermès', 'Prada', 'Dior', 'Rolex', 'Cartier', 'Tiffany & Co.',
+            'Burberry', 'Versace', 'Armani', 'Balenciaga', 'Saint Laurent', 'Omega', 'Tag Heuer',
+
+            // Food & Beverage
+            'Coca-Cola', 'Pepsi', 'Red Bull', 'Nestlé', 'Danone', 'Kellogg\'s', 'General Mills', 'Kraft Heinz',
+            'Mars', 'Hershey\'s', 'Ferrero', 'Mondelez', 'Unilever', 'Starbucks', 'McDonald\'s', 'Burger King',
+            'KFC', 'Subway', 'Domino\'s', 'Pizza Hut', 'Taco Bell', 'Heineken', 'Budweiser', 'Corona',
+            'Jack Daniel\'s', 'Johnnie Walker', 'Nespresso', 'Lipton',
+
+            // Beauty & Personal Care
+            'L\'Oréal', 'Estée Lauder', 'Nivea', 'Dove', 'Gillette', 'Colgate', 'Oral-B', 'Pantene',
+            'Head & Shoulders', 'Garnier', 'Maybelline', 'MAC Cosmetics', 'Sephora', 'Lush',
+
+            // Retail & E-commerce
+            'Amazon', 'Walmart', 'Target', 'Costco', 'IKEA', 'Home Depot', 'Best Buy', 'Alibaba', 'eBay',
+            'Etsy', 'Shopify',
+
+            // Finance & Services
+            'Visa', 'Mastercard', 'American Express', 'PayPal', 'JP Morgan', 'Goldman Sachs', 'HSBC',
+            'Allianz', 'AXA', 'Santander', 'BBVA',
+
+            // Airlines & Travel
+            'Delta', 'American Airlines', 'United Airlines', 'Emirates', 'Lufthansa', 'British Airways',
+            'Air France', 'Ryanair', 'Booking.com', 'Expedia', 'TripAdvisor', 'Hilton', 'Marriott', 'Hyatt'
         ];
-        return $pool[$i % count($pool)];
     }
 }

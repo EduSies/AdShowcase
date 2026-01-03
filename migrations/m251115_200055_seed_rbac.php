@@ -115,6 +115,7 @@ class m251115_200055_seed_rbac extends Migration
         $this->grantIfMissing($auth, $rEditor, $pManageCreative);
         $this->grantIfMissing($auth, $rEditor, $pShareManage);
         $this->grantIfMissing($auth, $rEditor, $pBackoffice);
+        $this->grantIfMissing($auth, $rEditor, $pFavManage);
 
         // admin: todo lo de editor + gestión de usuarios, taxonomías y ver auditoría
         $this->grantIfMissing($auth, $rAdmin, $pViewCreative);
