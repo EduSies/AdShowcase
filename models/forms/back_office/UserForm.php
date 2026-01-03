@@ -6,16 +6,14 @@ namespace app\models\forms\back_office;
 
 use app\helpers\StatusHelper;
 use app\models\User;
+use app\validators\PasswordStrengthValidator;
 use Yii;
 use yii\base\Model;
-use yii\web\UploadedFile;
 
 /**
  * UserForm
  *
  * Form model for creating/updating User records from BackOffice.
- * - Contains plain fields and validation rules.
- * - Does NOT persist data (that is handled by services).
  */
 class UserForm extends Model
 {
@@ -36,7 +34,6 @@ class UserForm extends Model
     public ?int $language_id = null;
     public ?string $avatar_url = null;
 
-    // Plain password fields (not stored directly in DB)
     public string $password = '';
     public string $password_repeat = '';
 
@@ -97,11 +94,11 @@ class UserForm extends Model
             ['type', 'string', 'max' => 32],
             ['language_id', 'integer'],
 
-            // Avatar URL (Puede ser URL corta o Base64 largo)
+            // Avatar URL
             ['avatar_url', 'string'],
             ['avatar_url', 'validateAvatarSize'],
 
-            ['username', 'string', 'max' => 10], // Máximo 10 caracteres
+            ['username', 'string', 'max' => 10],
             [
                 'username',
                 'match',
@@ -130,15 +127,17 @@ class UserForm extends Model
                 'skipOnEmpty' => true,
             ],
 
-            // Password: required only on create
             [['password', 'password_repeat'], 'required', 'on' => self::SCENARIO_CREATE],
-            ['password', 'validatePasswordStrength'],
+
+            // Validador de fortaleza
+            ['password', PasswordStrengthValidator::class],
+
             ['password_repeat', 'compare',
                 'compareAttribute' => 'password',
                 'message' => Yii::t('app', 'Passwords do not match.')
             ],
 
-            // Unique email (ignoring current record on update)
+            // Unique email
             [
                 'email',
                 'unique',
@@ -152,7 +151,7 @@ class UserForm extends Model
                 'message' => Yii::t('app', 'This email is already in use.'),
             ],
 
-            // Unique username (ignoring current record on update)
+            // Unique username
             [
                 'username',
                 'unique',
@@ -185,40 +184,7 @@ class UserForm extends Model
     }
 
     /**
-     * Validador personalizado de fortaleza de contraseña.
-     * Quitada la variable $params de la firma ya que no se usa.
-     */
-    public function validatePasswordStrength($attribute)
-    {
-        if (!$this->hasErrors()) {
-            $password = $this->$attribute;
-
-            // Validación solo si no está vacío (para escenarios de update donde es opcional)
-            if (empty($password)) {
-                return;
-            }
-
-            if (strlen($password) < 8) {
-                $this->addError($attribute, Yii::t('app', 'Password must be at least 8 characters long.'));
-            }
-            if (!preg_match('/[A-Z]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one uppercase letter.'));
-            }
-            if (!preg_match('/[a-z]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one lowercase letter.'));
-            }
-            if (!preg_match('/[0-9]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one number.'));
-            }
-            if (!preg_match('/[\W_]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one symbol.'));
-            }
-        }
-    }
-
-    /**
      * Valida que el string Base64 del avatar no exceda el tamaño límite (2MB).
-     * Lógica idéntica a CreativeForm::validateThumbnailSize.
      */
     public function validateAvatarSize($attribute, $params)
     {

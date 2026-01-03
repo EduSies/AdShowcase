@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace app\controllers\actions\auth;
 
+use app\services\auth\AuthService;
 use Yii;
 use yii\web\BadRequestHttpException;
-use app\models\auth\VerifyEmailForm;
 
 final class VerifyEmailAction extends BaseLoginAction
 {
@@ -14,19 +14,28 @@ final class VerifyEmailAction extends BaseLoginAction
 
     public function run(string $token)
     {
+        $service = new AuthService();
+
         try {
-            $model = new VerifyEmailForm($token);
-        } catch (\Throwable $e) {
-            throw new BadRequestHttpException('El token no es válido o ha caducado.');
+            $user = $service->verifyEmailToken($token);
+        } catch (\InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
         }
 
-        if (($user = $model->verifyEmail()) !== null) {
-            Yii::$app->user->login($user);
-            Yii::$app->session->setFlash('success', 'Email verificado. ¡Bienvenido!');
-            return $this->controller->goHome();
+        if ($user !== null) {
+            // Esto permite que el usuario use la pantalla de "Reset Password" para crear su clave
+            $service->generatePasswordResetToken($user);
+
+            // Guardamos el usuario con el nuevo token de reset
+            $user->save(false, ['password_reset_token']);
+
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Email verified. Please set your new password.'));
+
+            return $this->controller->redirect(['auth/reset-password', 'token' => $user->password_reset_token]);
         }
 
-        Yii::$app->session->setFlash('error', 'No se pudo verificar el email.');
+        Yii::$app->session->setFlash('error', Yii::t('app', 'Sorry, we are unable to verify your account with provided token.'));
+
         return $this->controller->redirect(['auth/login']);
     }
 }

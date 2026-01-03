@@ -12,7 +12,7 @@ final class BackOfficeSharedLinkListService
     /** Returns array for DataTables. */
     public function findAll(): array
     {
-        $rows = SharedLink::find()
+        $query = SharedLink::find()
             ->alias('sl')
             ->select([
                 'sl.*',
@@ -21,8 +21,13 @@ final class BackOfficeSharedLinkListService
                 'user_name' => 'u.name',
                 'user_surname' => 'u.surname'
             ])
-            ->joinWith(['creative c', 'user u'], false)
-            ->orderBy(['sl.id' => SORT_DESC])
+            ->joinWith(['creative c', 'user u'], false);
+
+        if (Yii::$app->user->identity->type !== 'admin') {
+            $query->andWhere(['sl.user_id' => Yii::$app->user->id]);
+        }
+
+        $rows = $query->orderBy(['sl.id' => SORT_DESC])
             ->asArray()
             ->all();
 

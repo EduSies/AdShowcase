@@ -26,7 +26,7 @@ class SiteController extends BaseWebController
 
                 // Authenticated user without backoffice.access
                 // redirect to the public catalog.
-                return Yii::$app->response->redirect(['catalog/index']);
+                return Yii::$app->response->redirect(['catalog']);
             },
             'rules' => [
                 ['allow' => true, 'roles' => ['@'], 'matchCallback' => function () {

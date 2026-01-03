@@ -2,9 +2,10 @@
 
 namespace app\models\forms\auth;
 
+use app\validators\LoginFormatValidator;
+use app\validators\PasswordStrengthValidator;
 use Yii;
 use yii\base\Model;
-use yii\validators\EmailValidator;
 
 /**
  * Modelo de usuario que mapea a {{%user}} (con tablePrefix => ADSHOWCASE_user).
@@ -34,8 +35,8 @@ class LoginForm extends Model
 
             ['login', 'string', 'max' => 255],
 
-            ['login', 'validateLoginFormat'],
-            ['password', 'validatePasswordStrength'],
+            ['login', LoginFormatValidator::class],
+            ['password', PasswordStrengthValidator::class],
 
             ['rememberMe', 'boolean'],
             ['rememberMe', 'default', 'value' => $this->rememberMe],
@@ -49,65 +50,5 @@ class LoginForm extends Model
             'password' => Yii::t('app', 'Password'),
             'rememberMe' => Yii::t('app', 'Remember'),
         ];
-    }
-
-    /**
-     * Validador inteligente:
-     * - Si tiene '@', valida exclusivamente como Email.
-     * - Si NO tiene '@', valida exclusivamente como Username.
-     */
-    public function validateLoginFormat($attribute)
-    {
-        $value = $this->$attribute;
-
-        // CASO 1: INTENTO DE EMAIL (Detectamos si contiene arroba)
-        if (str_contains($value, '@')) {
-            $emailValidator = new EmailValidator();
-            if (!$emailValidator->validate($value)) {
-                // Es un email, pero está mal formado (ej: "pepe@gmail")
-                $this->addError($attribute, Yii::t('app', 'This is not a valid email address.'));
-            }
-            return;
-        }
-
-        // CASO 2: INTENTO DE USERNAME (No tiene arroba)
-        // Aquí aplicamos tus restricciones estrictas (Max 10, sin acentos, etc.)
-
-        // A) Longitud máxima de 10
-        if (mb_strlen($value) > 10) {
-            $this->addError($attribute, Yii::t('app', 'Username must be 10 characters or less.'));
-            return;
-        }
-
-        // B) Caracteres permitidos (letras, números, puntos, guiones)
-        if (!preg_match('/^[a-zA-Z0-9._-]+$/', $value)) {
-            $this->addError($attribute, Yii::t('app', 'Username can only contain letters, numbers, dots, hyphens, and underscores.'));
-        }
-    }
-
-    /**
-     * Validador personalizado de fortaleza de contraseña.
-     */
-    public function validatePasswordStrength($attribute)
-    {
-        if (!$this->hasErrors()) {
-            $password = $this->$attribute;
-
-            if (strlen($password) < 8) {
-                $this->addError($attribute, Yii::t('app', 'Password must be at least 8 characters long.'));
-            }
-            if (!preg_match('/[A-Z]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one uppercase letter.'));
-            }
-            if (!preg_match('/[a-z]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one lowercase letter.'));
-            }
-            if (!preg_match('/[0-9]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one number.'));
-            }
-            if (!preg_match('/[\W_]/', $password)) {
-                $this->addError($attribute, Yii::t('app', 'Password must contain at least one symbol.'));
-            }
-        }
     }
 }

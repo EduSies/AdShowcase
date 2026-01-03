@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace app\services\back_office\user;
 
+use app\helpers\StatusHelper;
 use app\models\User;
 use app\models\forms\back_office\UserForm;
+use app\services\auth\AuthService;
 use Yii;
 
 final class BackOfficeUserCreateService
@@ -17,15 +19,10 @@ final class BackOfficeUserCreateService
         $this->initUploadPath();
     }
 
-    /**
-     * Create entity from form (SCENARIO_CREATE). Returns model or null on error.
-     */
     public function create(UserForm $form): ?User
     {
-        // Reiniciar registro de archivos temporales del trait
         $this->tempFiles = [];
 
-        // Validamos el form antes de abrir transacción
         if (!$form->validate()) {
             return null;
         }
@@ -34,9 +31,8 @@ final class BackOfficeUserCreateService
 
         try {
             $user = new User();
+            $authService = new AuthService();
 
-            // Procesar Avatar (Base64 -> Archivo) usando el Trait
-            // Si esto crea un archivo, se añade a $this->tempFiles
             $processedAvatar = $this->processAvatar($form->avatar_url);
 
             $user->setAttributes([
@@ -45,22 +41,20 @@ final class BackOfficeUserCreateService
                 'type' => $form->type,
                 'name' => $form->name,
                 'surname' => $form->surname,
-                'status' => $form->status,
+                'status' => StatusHelper::STATUS_PENDING,
                 'language_id' => $form->language_id,
                 'avatar_url' => $processedAvatar,
             ]);
 
-            $user->generateAuthKey();
+            $authService->setPassword($user, $form->password);
+            $authService->generateVerificationToken($user);
 
             if (empty($user->hash)) {
                 $user->hash = Yii::$app->security->generateRandomString(16);
             }
 
-            if ($form->password !== '') {
-                $user->setPassword($form->password);
-            }
+            $user->auth_key = Yii::$app->security->generateRandomString();
 
-            // Guardar Usuario
             if (!$user->save()) {
                 $form->addErrors($user->getErrors());
                 throw new \Exception(Yii::t('app', 'Error saving user.'));

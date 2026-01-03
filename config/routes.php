@@ -11,7 +11,6 @@ $rules = [
     // --- Auth ---
     'login' => 'auth/login',
     'logout' => 'auth/logout',
-    //'signup' => 'auth/signup',
     'request-password-reset' => 'auth/request-password-reset',
     'reset-password/<token:[A-Za-z0-9_\-\.]+>' => 'auth/reset-password',
     'verify-email/<token:[A-Za-z0-9_\-\.]+>' => 'auth/verify-email',

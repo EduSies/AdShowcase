@@ -6,7 +6,6 @@ namespace app\controllers;
 
 use app\controllers\actions\auth\LoginAction;
 use app\controllers\actions\auth\LogoutAction;
-use app\controllers\actions\auth\SignupAction;
 use app\controllers\actions\auth\RequestPasswordResetAction;
 use app\controllers\actions\auth\ResetPasswordAction;
 use app\controllers\actions\auth\VerifyEmailAction;
@@ -29,11 +28,9 @@ class AuthController extends BaseWebController
 
         $behaviors['access']['except'] = [
             'login',
-            //'signup',
             'request-password-reset',
             'reset-password',
             'verify-email',
-            'error',
         ];
 
         return $behaviors;
@@ -49,17 +46,14 @@ class AuthController extends BaseWebController
             'logout' => [
                 'class' => LogoutAction::class,
             ],
-            'signup' => [
-                'class' => SignupAction::class,
-            ],
             'request-password-reset' => [
                 'class' => RequestPasswordResetAction::class,
             ],
             'reset-password' => [
-                'class' => ResetPasswordAction::class, // recibe <token> por parámetro
+                'class' => ResetPasswordAction::class,
             ],
             'verify-email' => [
-                'class' => VerifyEmailAction::class, // recibe <token> por parámetro
+                'class' => VerifyEmailAction::class,
             ],
         ]);
     }

@@ -78,7 +78,7 @@ const swalDefault = Swal.mixin({
 function swalFire(options, callback = null) {
     if ('title' in options) {
         let cleanTitle = String(options.title).replace(/^"|"$/g, '');
-        options.title = '<h3>' + cleanTitle + '</h3>';
+        options.title = '<h5>' + cleanTitle + '</h5>';
     }
     if ('html' in options) {
         options.html = '<div>'+options.html+'</div>';

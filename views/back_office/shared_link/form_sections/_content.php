@@ -205,12 +205,11 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 
 <?php
 
-$copiedHtml = Icon::widget(['icon' => 'bi-check-lg']) . ' ' . Yii::t('app', 'Copied!');
-
 $ajaxUrlRevoke = Url::to(['shared-link-revoke', 'hash' => $sharedLinkHash]);
 $confirmMsg = Yii::t('app', 'Are you sure? This action is irreversible.');
 $continueText = Yii::t('app', 'Continue');
 $cancelText = Yii::t('app', 'Cancel');
+$copiedHtml = Icon::widget(['icon' => 'bi-check-lg']) . ' ' . Yii::t('app', 'Copied!');
 
 $js = <<<JS
     $('.js-copy-btn').on('click', function() {
@@ -257,10 +256,13 @@ $js = <<<JS
         }
     });
 
-    // Lógica de Revocar (se mantiene igual)
+    // Lógica de Revocar
     $(document).on('click', '.js-revoke', function(e){
         e.preventDefault();
         e.stopPropagation();
+        
+        var btn = $(this);
+        var originalContent = btn.html();
         
         swalFire({
             title: "$confirmMsg",
@@ -269,22 +271,41 @@ $js = <<<JS
             customClass: {container: 'swal2-cancel-pr-container'}
         }).then((dialog) => {
             if (dialog.isConfirmed) {
+                
+                let width = btn.outerWidth();
+                let height = btn.outerHeight();
+                let spinnerHtml = $('#spinner-template').html();
+
+                btn.css({'width': width, 'height': height})
+                   .prop('disabled', true)
+                   .html(spinnerHtml);
+                
                 $.ajax({
                     method: 'post',
                     url: "$ajaxUrlRevoke",
                 }).done(function (response) {
                     if (response.success === true) {
                         swalSuccess(response.message);
-                        setTimeout(function() { window.location.reload(); }, 3000);
+                        setTimeout(function() { window.location.reload(); }, 2000);
                     } else {
                         swalDanger(response.message);
+                        restoreRevokeButton(btn, originalContent);
                     }
-                }).fail(function() { swalDanger('Error processing request.'); });
+                }).fail(function() { 
+                    swalDanger('Error processing request.'); 
+                    restoreRevokeButton(btn, originalContent);
+                });
             }
-        })
+        });
+        
+        function restoreRevokeButton(button, content) {
+            button.prop('disabled', false)
+                  .html(content)
+                  .css({'width': '', 'height': ''});
+        }
     });
 JS;
 
-$this->registerJs($js, \yii\web\View::POS_READY);
+$this->registerJs($js);
 
 ?>

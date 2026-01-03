@@ -9,8 +9,10 @@
 
 use app\assets\CropperJsAsset;
 use app\helpers\LangHelper;
+use app\helpers\StatusHelper;
 use app\widgets\Icon;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 // Registramos los assets de CropperJS
 CropperJsAsset::register($this);
@@ -18,6 +20,11 @@ CropperJsAsset::register($this);
 $submitIcon  = $isUpdate ? 'bi-pencil-square' : 'bi-plus-circle';
 $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 $titlePassword = $isUpdate ? Yii::t('app', 'Change password') : Yii::t('app', 'New password');
+
+$showResendButton = $isUpdate && in_array($model->status, [
+    StatusHelper::STATUS_INACTIVE,
+    StatusHelper::STATUS_PENDING
+]);
 
 ?>
 
@@ -95,7 +102,7 @@ $titlePassword = $isUpdate ? Yii::t('app', 'Change password') : Yii::t('app', 'N
     </div>
     <div class="col-md-5">
         <?= $form->field($model, 'status')->dropDownList(
-            $status,
+            ($isUpdate ? $status : StatusHelper::statusFilter([StatusHelper::STATUS_PENDING])),
             ['prompt' => Yii::t('app', 'Select status')]
         ) ?>
     </div>
@@ -135,7 +142,24 @@ $titlePassword = $isUpdate ? Yii::t('app', 'Change password') : Yii::t('app', 'N
 
 <div class="row g-3">
     <div class="col-md-10">
-        <div class="mt-4 d-flex justify-content-end gap-2">
+        <div class="mt-4 gap-2 d-flex <?= $showResendButton ? 'justify-content-between' : 'justify-content-end' ?>">
+
+            <?php if ($showResendButton): ?>
+                <?= Html::a(
+                    Icon::widget([
+                        'icon' => 'bi-envelope-paper',
+                        'size' => Icon::SIZE_24,
+                        'options' => ['class' => 'flex-shrink-0'],
+                    ]) .
+                    Html::tag('span', Yii::t('app', 'Resend Verification'), ['class' => 'ms-2']),
+                    'javascript:void(0);',
+                    [
+                        'class' => 'btn btn-outline-warning rounded-pill d-flex align-items-center js-resend-verification',
+                        'encode' => false,
+                    ]
+                ) ?>
+            <?php endif; ?>
+
             <?= Html::submitButton(
                 Icon::widget([
                     'icon' => $submitIcon,
@@ -220,7 +244,11 @@ $titlePassword = $isUpdate ? Yii::t('app', 'Change password') : Yii::t('app', 'N
 
 <?php
 
-// Script para sincronizar el estilo de validación (rojo) del hidden input al visible input
+$resendConfirmMsg = Yii::t('app', 'Are you sure? This will reset the user status to Pending and invalidate previous tokens.');
+$btnContinue = Yii::t('app', 'Yes, resend');
+$btnCancel = Yii::t('app', 'Cancel');
+$ajaxUrlResendVerification = Url::to(['back-office/user-resend-verification', 'hash' => $model->hash]);
+
 $js = <<<JS
     $('#{$form->id}').on('afterValidateAttribute', function(event, attribute, messages) {
         if (attribute.name === 'avatar_url') { // Nombre del atributo en UserForm
@@ -230,6 +258,55 @@ $js = <<<JS
             } else {
                 visibleInput.classList.remove('is-invalid');
             }
+        }
+    });
+    
+    $(document).on('click', '.js-resend-verification', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+    
+        var btn = $(this);
+        var originalContent = btn.html();
+    
+        swalFire({
+            title: "$resendConfirmMsg",
+            confirmButtonText: "$btnContinue",
+            cancelButtonText: "$btnCancel",
+            customClass: {container: 'swal2-cancel-pr-container'}
+        }).then((dialog) => {
+            if (dialog.isConfirmed) {
+                
+                let width = btn.outerWidth();
+                let height = btn.outerHeight();
+                let spinnerHtml = $('#spinner-template').html();
+    
+                btn.css({
+                    'width': width,
+                    'height': height
+                }).prop('disabled', true).html(spinnerHtml);
+                
+                $.ajax({
+                    method: 'post',
+                    url: "$ajaxUrlResendVerification",
+                }).done(function (response) {
+                    if (response.success === true) {
+                        swalSuccess(response.message);
+                        setTimeout(function() { window.location.reload(); }, 2000);
+                    } else {
+                        swalDanger(response.message);
+                        restoreButton(btn, originalContent);
+                    }
+                }).fail(function() { 
+                    swalDanger('Error processing request.'); 
+                    restoreButton(btn, originalContent);
+                });
+            }
+        });
+        
+        function restoreButton(button, content) {
+            button.prop('disabled', false)
+                  .html(content)
+                  .css({'width': '', 'height': ''});
         }
     });
 JS;

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace app\controllers\actions\back_office\user;
 
 use app\controllers\actions\back_office\BaseBackOfficeAction;
+use app\helpers\StatusHelper;
 use app\models\forms\back_office\UserForm;
 use app\models\LanguageLocale;
+use app\services\auth\AuthService;
 use app\services\back_office\user\BackOfficeUserCreateService;
 use app\services\rbac\RbacRolesService;
 use Yii;
@@ -39,22 +41,27 @@ final class UserCreateAction extends BaseBackOfficeAction
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $service = new BackOfficeUserCreateService();
-            $ok = $service->create($model);
+            $userEntity = $service->create($model);
 
-            if ($ok) {
-                \Yii::$app->session->setFlash('success', \Yii::t('app', 'Created successfully.'));
+            if ($userEntity) {
+                $authService = new AuthService();
+                $authService->sendVerificationEmail($userEntity);
+
+                Yii::$app->session->setFlash('success', Yii::t('app', 'User created. A verification email has been sent.'));
                 return $this->controller->redirect($this->indexRoute);
             }
 
             $firstError = current($model->getFirstErrors()) ?: \Yii::t('app', 'Unable to create user.');
-            \Yii::$app->session->setFlash('error', $firstError);
+            if(!$model->hasErrors()) {
+                \Yii::$app->session->setFlash('error', $firstError);
+            }
         }
 
         return $this->controller->render($this->view, [
             'indexRoute' => $this->indexRoute,
             'model' => $model,
             'roles' => (new RbacRolesService)->getRolesDropDown(),
-            'status' => \app\helpers\StatusHelper::statusFilter(),
+            'status' => StatusHelper::statusFilter(),
         ]);
     }
 }

@@ -113,6 +113,7 @@ class BackOfficeController extends BaseWebController
             'user-update' => ['class' => \app\controllers\actions\back_office\user\UserUpdateAction::class],
             'user-delete' => ['class' => \app\controllers\actions\back_office\user\UserDeleteAction::class],
             'user-assign-role' => ['class' => \app\controllers\actions\back_office\user\UserAssignRoleAction::class],
+            'user-resend-verification' => ['class' => \app\controllers\actions\back_office\user\ResendVerificationAction::class],
 
             'shared-link' => ['class' => \app\controllers\actions\back_office\shared_link\SharedLinkIndexAction::class],
             'shared-link-update' => ['class' => \app\controllers\actions\back_office\shared_link\SharedLinkUpdateAction::class],
