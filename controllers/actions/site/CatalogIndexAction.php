@@ -13,6 +13,7 @@ use yii\web\Response;
 
 final class CatalogIndexAction extends BaseSiteAction
 {
+    public ?string $can = 'creative.view';
     public ?string $layout = 'main';
     public ?string $view = '@app/views/site/catalog/index';
     protected $serviceClass = CatalogListService::class;
@@ -20,6 +21,8 @@ final class CatalogIndexAction extends BaseSiteAction
 
     public function run()
     {
+        $this->ensureCan($this->can);
+
         $this->serviceClass = new $this->serviceClass();
         $request = Yii::$app->request;
 

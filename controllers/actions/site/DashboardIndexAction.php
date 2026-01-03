@@ -8,11 +8,14 @@ use Yii;
 
 final class DashboardIndexAction extends BaseSiteAction
 {
+    public ?string $can = 'backoffice.access';
     public ?string $layout = 'main-backoffice';
     public ?string $view = '@app/views/site/index';
 
     public function run()
     {
+        $this->ensureCan($this->can);
+
         return $this->controller->render($this->view ?? 'index', [
             'title' => Yii::t('app', 'Dashboard'),
             'sections' => $this->sections,

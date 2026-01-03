@@ -1,46 +1,14 @@
 <?php
 
 /**
- * Seed de **roles y permisos** (RBAC) para AdShowcase.
+ * Seed de **roles y permisos** (RBAC).
  *
  * Roles base:
- * - admin : todo el control del sistema **y acceso al backoffice**.
- * - editor : crea/edita/elimina creatives, comparte, ve todo, **acceso al backoffice**.
- * - sales : ve creatives, crea listas/favoritos, comparte, **acceso al backoffice**.
- * - viewer : sólo lectura del catálogo (usuarios autenticados).
- * - guest : visitante no autenticado (rol por defecto en config).
- *
- * Permisos propuestos:
- * - creative.view
- * - creative.manage
- * - share.manage
- * - favorite.manage
- * - taxonomies.manage  (brands/formats/countries/devices/sales_types/products)
- * - users.manage
- * - audit.view
- * - backoffice.access
- *
- * Herencia (árbol):
- *   admin
- *    ├─ backoffice.access
- *    ├─ users.manage
- *    ├─ taxonomies.manage
- *    ├─ audit.view
- *    └─ (todas las perm. de editor)
- *   editor
- *    ├─ backoffice.access
- *    ├─ creative.view
- *    ├─ creative.manage
- *    └─ share.manage
- *   sales
- *    ├─ backoffice.access
- *    ├─ creative.view
- *    └─ favorite.manage
- *   viewer
- *    └─ creative.view
- *   guest
- *    └─ (sin permisos explícitos; verás públicos si implementas lógica pública)
-**/
+ * - admin : control total + backoffice.
+ * - editor : gestión de contenido + backoffice.
+ * - sales : ver, compartir, favoritos (SIN backoffice).
+ * - viewer : sólo lectura (SIN backoffice).
+ */
 
 use yii\db\Migration;
 
@@ -50,7 +18,7 @@ class m251115_200055_seed_rbac extends Migration
     {
         $auth = \Yii::$app->authManager;
 
-        // 1) Crear permisos (si no existen)
+        // Crear permisos
         $pViewCreative = $auth->getPermission('creative.view') ?: $auth->createPermission('creative.view');
         $pManageCreative = $auth->getPermission('creative.manage') ?: $auth->createPermission('creative.manage');
         $pShareManage = $auth->getPermission('share.manage') ?: $auth->createPermission('share.manage');
@@ -61,38 +29,33 @@ class m251115_200055_seed_rbac extends Migration
         $pBackoffice = $auth->getPermission('backoffice.access') ?: $auth->createPermission('backoffice.access');
 
         // Descripciones
-        $pViewCreative->description = 'Ver creatives y sus metadatos';
+        $pViewCreative->description = 'Ver creatives y metadatos';
         $pManageCreative->description = 'Crear/editar/eliminar creatives';
-        $pShareManage->description = 'Crear/gestionar enlaces compartidos';
-        $pFavManage->description = 'Gestionar favoritos y listas';
-        $pTaxManage->description = 'Gestionar catálogos (brands, formats, etc.)';
-        $pUsersManage->description = 'Gestionar usuarios y roles';
-        $pAuditView->description = 'Ver registros de auditoría';
-        $pBackoffice->description = 'Acceder al backoffice';
+        $pShareManage->description = 'Gestión de enlaces compartidos';
+        $pFavManage->description = 'Gestión de favoritos';
+        $pTaxManage->description = 'Gestión de taxonomías';
+        $pUsersManage->description = 'Gestión de usuarios';
+        $pAuditView->description = 'Ver auditoría';
+        $pBackoffice->description = 'Entrar al backoffice';
 
         foreach ([$pViewCreative, $pManageCreative, $pShareManage, $pFavManage, $pTaxManage, $pUsersManage, $pAuditView, $pBackoffice] as $perm) {
-            // Sólo añade si no existía
             if ($auth->getPermission($perm->name) === null) {
                 $auth->add($perm);
             }
         }
 
-        // 2) Crear roles (si no existen) y asignar descripción
-        $rAdmin  = $auth->getRole('admin') ?: $auth->createRole('admin');
+        // Crear roles
+        $rAdmin = $auth->getRole('admin') ?: $auth->createRole('admin');
         $rEditor = $auth->getRole('editor') ?: $auth->createRole('editor');
-        $rSales  = $auth->getRole('sales') ?: $auth->createRole('sales');
+        $rSales = $auth->getRole('sales') ?: $auth->createRole('sales');
         $rViewer = $auth->getRole('viewer') ?: $auth->createRole('viewer');
-        $rGuest  = $auth->getRole('guest') ?: $auth->createRole('guest');
 
-        // Descripciones de roles
-        $rAdmin->description  = 'Rol Admin';
-        $rEditor->description = 'Rol Editor';
-        $rSales->description  = 'Rol Sales';
-        $rViewer->description = 'Rol Viewer';
-        $rGuest->description  = 'Rol Guest';
+        $rAdmin->description = 'Administrator';
+        $rEditor->description = 'Editor';
+        $rSales->description = 'Sales';
+        $rViewer->description = 'Viewer';
 
-        foreach ([$rAdmin, $rEditor, $rSales, $rViewer, $rGuest] as $role) {
-            // Si el rol no existe aún, lo añadimos; si ya existe, lo actualizamos (para que se apliquen las descripciones)
+        foreach ([$rAdmin, $rEditor, $rSales, $rViewer] as $role) {
             if ($auth->getRole($role->name) === null) {
                 $auth->add($role);
             } else {
@@ -100,23 +63,22 @@ class m251115_200055_seed_rbac extends Migration
             }
         }
 
-        // 3) Asignar permisos a roles (componer árbol)
-        // viewer: sólo ver
+        // VIEWER: Solo ver
         $this->grantIfMissing($auth, $rViewer, $pViewCreative);
 
-        // sales: ver + gestionar favoritos
+        // SALES: Ver + Favoritos + Compartir
         $this->grantIfMissing($auth, $rSales, $pViewCreative);
         $this->grantIfMissing($auth, $rSales, $pFavManage);
         $this->grantIfMissing($auth, $rSales, $pShareManage);
 
-        // editor: ver + gestionar creatives + compartir
+        // EDITOR: lo anterior + Gestionar Creatives + Backoffice
         $this->grantIfMissing($auth, $rEditor, $pViewCreative);
         $this->grantIfMissing($auth, $rEditor, $pManageCreative);
         $this->grantIfMissing($auth, $rEditor, $pShareManage);
-        $this->grantIfMissing($auth, $rEditor, $pBackoffice);
         $this->grantIfMissing($auth, $rEditor, $pFavManage);
+        $this->grantIfMissing($auth, $rEditor, $pBackoffice);
 
-        // admin: todo lo de editor + gestión de usuarios, taxonomías y ver auditoría
+        // ADMIN: Full access
         $this->grantIfMissing($auth, $rAdmin, $pViewCreative);
         $this->grantIfMissing($auth, $rAdmin, $pManageCreative);
         $this->grantIfMissing($auth, $rAdmin, $pShareManage);
@@ -131,26 +93,23 @@ class m251115_200055_seed_rbac extends Migration
     {
         $auth = \Yii::$app->authManager;
 
-        // Eliminar rol->permiso (revokeChildren borra enlaces del rol)
-        foreach (['admin','editor','sales','viewer','guest'] as $roleName) {
-            $role = $auth->getRole($roleName);
-            if ($role) {
+        foreach (['admin','editor','sales','viewer'] as $roleName) {
+            if ($role = $auth->getRole($roleName)) {
                 $auth->removeChildren($role);
+                $auth->remove($role);
             }
         }
 
         // Eliminar permisos
         foreach (['creative.view','creative.manage','share.manage','favorite.manage','taxonomies.manage','users.manage','audit.view','backoffice.access'] as $permName) {
-            $perm = $auth->getPermission($permName);
-            if ($perm) {
+            if ($perm = $auth->getPermission($permName)) {
                 $auth->remove($perm);
             }
         }
 
         // Eliminar roles
         foreach (['admin','editor','sales','viewer','guest'] as $roleName) {
-            $role = $auth->getRole($roleName);
-            if ($role) {
+            if ($role = $auth->getRole($roleName)) {
                 $auth->remove($role);
             }
         }

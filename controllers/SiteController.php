@@ -2,46 +2,57 @@
 
 namespace app\controllers;
 
-use app\models\ContactForm;
 use Yii;
 use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
 
 class SiteController extends BaseWebController
 {
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function behaviors(): array
     {
-        $parent = parent::behaviors();
+        $behaviors = parent::behaviors();
 
-        $parent['accessSite'] = [
+        $behaviors['access'] = [
             'class' => AccessControl::class,
-            'denyCallback' => function () {
+            'rules' => [
+                // CATÁLOGO (Home)
+                // Permitimos entrar si tiene el permiso básico 'creative.view'
+                // Roles: Viewer, Sales, Editor, Admin
+                [
+                    'actions' => ['catalog', 'index'],
+                    'allow' => true,
+                    'roles' => ['@'],
+                    'matchCallback' => function () {
+                        return Yii::$app->user->can('creative.view');
+                    }
+                ],
+                // DASHBOARD
+                // Permitimos entrar SOLO si tiene 'backoffice.access'
+                // Roles: Sales, Editor, Admin
+                [
+                    'actions' => ['dashboard'],
+                    'allow' => true,
+                    'roles' => ['@'],
+                    'matchCallback' => function () {
+                        return Yii::$app->user->can('backoffice.access');
+                    }
+                ],
+            ],
+            'denyCallback' => function ($rule, $action) {
                 if (Yii::$app->user->isGuest) {
                     return Yii::$app->response->redirect(['auth/login']);
                 }
 
-                // Authenticated user without backoffice.access
-                // redirect to the public catalog.
-                return Yii::$app->response->redirect(['catalog']);
-            },
-            'rules' => [
-                ['allow' => true, 'roles' => ['@'], 'matchCallback' => function () {
-                    return Yii::$app->user->can('backoffice.access');
-                }],
-            ],
+                throw new ForbiddenHttpException(Yii::t('app', 'You do not have access permissions.'));
+            }
         ];
 
-        return $parent;
+        return $behaviors;
     }
 
     public function actions(): array
     {
         return array_merge(parent::actions(), [
-            // ===== Dashboard =====
             'dashboard' => [
                 'class' => \app\controllers\actions\site\DashboardIndexAction::class,
                 'sections' => $this->getSectionsMenu(),
