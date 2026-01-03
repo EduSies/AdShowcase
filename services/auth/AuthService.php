@@ -10,7 +10,6 @@ use app\services\email\EmailSenderService;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\db\Expression;
-use yii\helpers\Html;
 use yii\helpers\Url;
 
 final class AuthService
