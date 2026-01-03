@@ -1,5 +1,5 @@
 /**
- * Lógica para CropperJS v2.1.0 (Parametrizada)
+ * Lógica para CropperJS v2.1.0
  */
 document.addEventListener('DOMContentLoaded', function () {
     const elements = {
@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!elements.fileInput || !elements.hiddenInput || !elements.cropModalEl) return;
 
+    // Trigger para abrir el input file al hacer click en la preview
     if (elements.previewImage) {
         elements.previewImage.addEventListener('click', function() {
             elements.fileInput.click();
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const bs = window.bootstrap || bootstrap;
     const cropModal = new bs.Modal(elements.cropModalEl);
-    let tempImageSrc = '';
+    let tempImageSrc = null; // Inicializamos a null explícitamente
 
     // Leemos los data-attributes del input file. Si no existen, usamos los defaults (Creative Banner)
     const getSettings = () => {
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const file = files[0];
 
             if (!file.type.startsWith('image/')) {
-                alert('Please select a valid image file.');
+                swalDanger('Please select a valid image file.');
                 elements.fileInput.value = '';
                 return;
             }
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const reader = new FileReader();
             reader.onload = function (evt) {
                 tempImageSrc = evt.target.result;
+                // No asignamos el src todavía, esperamos a que el modal se muestre
                 cropModal.show();
             };
 
@@ -57,29 +59,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Evento: Modal Visible (Configurar Aspect Ratio)
+    // Evento: Modal Visible
     elements.cropModalEl.addEventListener('shown.bs.modal', function () {
         if (!tempImageSrc || !elements.cropperImage) return;
 
+        // Asignamos el source solo ahora que el modal es visible
         elements.cropperImage.src = tempImageSrc;
 
         if (elements.cropperSelection) {
             const settings = getSettings();
 
+            // Configuración visual según Aspect Ratio
             if (settings.aspectRatio === 1) {
                 // Modo Redondo (Avatar)
                 elements.cropperSelection.classList.add('cropper-round');
-                if (elements.cropperShade) {
-                    elements.cropperShade.classList.add('cropper-round');
-                }
+                if (elements.cropperShade) elements.cropperShade.classList.add('cropper-round');
             } else {
                 // Modo Rectangular (Banner)
                 elements.cropperSelection.classList.remove('cropper-round');
-                if (elements.cropperShade) {
-                    elements.cropperShade.classList.remove('cropper-round');
-                }
+                if (elements.cropperShade) elements.cropperShade.classList.remove('cropper-round');
             }
 
+            // Pequeño delay para asegurar que el componente web ha renderizado la imagen interna
             setTimeout(() => {
                 elements.cropperSelection.$center();
 
@@ -94,12 +95,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Limpieza al cerrar
     elements.cropModalEl.addEventListener('hidden.bs.modal', function () {
-        if (elements.cropperImage) elements.cropperImage.src = '';
+        if (elements.cropperImage) {
+            elements.cropperImage.removeAttribute('src');
+        }
         elements.fileInput.value = '';
-        tempImageSrc = '';
+        tempImageSrc = null;
     });
 
-    // Guardar (Usar dimensiones dinámicas)
+    // Guardar (Crop & Save)
     if (elements.cropBtn) {
         elements.cropBtn.addEventListener('click', async function () {
             if (!elements.cropperSelection) return;
@@ -115,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const base64Data = canvas.toDataURL('image/jpeg', 0.9); // Calidad 90%
 
+                // Actualizar inputs y vista previa
                 elements.hiddenInput.value = base64Data;
 
                 if (elements.previewImage) elements.previewImage.src = base64Data;
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     elements.previewContainer.style.setProperty('display', 'flex', 'important');
                 }
 
+                // Limpiar estados de error visuales
                 elements.fileInput.classList.remove('is-invalid');
                 elements.hiddenInput.classList.remove('is-invalid');
 
@@ -135,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 cropModal.hide();
 
             } catch (error) {
-                console.error(error);
+                console.error("Cropper error:", error);
             }
         });
     }

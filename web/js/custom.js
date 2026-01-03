@@ -27,3 +27,19 @@ function deviceType() {
     // console.log('Device: Desktop (1)');
     return 1;
 }
+
+$(document).on('click', '.js-toggle-password', function(e) {
+    e.preventDefault();
+
+    var btn = $(this);
+    var input = btn.closest('.input-group').find('input');
+    var icon = btn.find('i'); // Asumiendo que Icon::widget renderiza un <i>
+
+    if (input.attr('type') === 'password') {
+        input.attr('type', 'text');
+        icon.removeClass('bi-eye').addClass('bi-eye-slash');
+    } else {
+        input.attr('type', 'password');
+        icon.removeClass('bi-eye-slash').addClass('bi-eye');
+    }
+});

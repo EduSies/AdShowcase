@@ -6,6 +6,7 @@ namespace app\services\back_office\user;
 
 use app\models\User;
 use app\models\forms\back_office\UserForm;
+use app\services\auth\AuthService;
 use Yii;
 
 final class BackOfficeUserUpdateService
@@ -58,8 +59,9 @@ final class BackOfficeUserUpdateService
                 'language_id' => $form->language_id,
             ]);
 
-            if ($form->password !== '') {
-                $user->setPassword($form->password);
+            if (!empty($form->password)) {
+                $authService = new AuthService();
+                $authService->setPassword($user, $form->password);
             }
 
             // Guardar cambios
@@ -79,14 +81,14 @@ final class BackOfficeUserUpdateService
             // Éxito: vaciamos tempFiles para no borrar el nuevo avatar
             $this->tempFiles = [];
 
-            // --- LIMPIEZA DE ARCHIVOS ANTIGUOS (POST-COMMIT) ---
+            // --- LIMPIEZA DE ARCHIVOS ANTIGUOS ---
             try {
                 // Si el avatar cambió y el antiguo no es null, intentar borrarlo
                 if ($oldAvatarUrl && $oldAvatarUrl !== $user->avatar_url) {
                     $this->deleteOrphanedAvatar($oldAvatarUrl);
                 }
             } catch (\Exception $e) {
-                // Si falla la limpieza, solo logueamos (no fallamos la acción principal)
+                // Si falla la limpieza, solo logueamos
                 Yii::error('Error cleaning up orphaned avatar: ' . $e->getMessage());
             }
 

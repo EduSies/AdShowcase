@@ -120,23 +120,49 @@ $showResendButton = $isUpdate && in_array($model->status, [
 <h5 class="mt-4 mb-3 text-muted"><?= $titlePassword ?></h5>
 <div class="row g-3">
     <div class="col-md-5">
-        <?= $form->field($model, 'password')
-            ->passwordInput([
-                    'maxlength' => true,
-                    'autocomplete' => 'new-password',
-                    'placeholder' => Yii::t('app', 'Password'),
-            ])
-            ->hint($isUpdate ? Yii::t('app', 'Leave blank to keep current password') : null
-        ) ?>
-    </div>
-    <div class="col-md-5">
-        <?= $form->field($model, 'password_repeat')
-            ->passwordInput([
+        <?= $form->field($model, 'password', [
+            'template' => '
+                <div class="input-group password-group">
+                    <div class="form-floating flex-grow-1">
+                        {input}
+                        {label}
+                        {error}
+                    </div>
+                    <button class="btn btn-outline-secondary js-toggle-password border-start-0" type="button" tabindex="-1">
+                        ' . Icon::widget(['icon' => 'bi-eye']) . '
+                    </button>
+                </div>
+                {hint}
+            ',
+        ])->passwordInput([
                 'maxlength' => true,
                 'autocomplete' => 'new-password',
-                'placeholder' => Yii::t('app', 'Repeat password'),
-            ]
-        ) ?>
+                'placeholder' => Yii::t('app', 'Password'),
+                'class' => 'form-control border-end-0',
+        ])->hint($isUpdate ? Yii::t('app', 'Leave blank to keep current password') : null) ?>
+    </div>
+
+    <div class="col-md-5">
+        <?= $form->field($model, 'password_repeat', [
+            'template' => '
+                <div class="input-group password-group">
+                    <div class="form-floating flex-grow-1">
+                        {input}
+                        {label}
+                        {error}
+                    </div>
+                    <button class="btn btn-outline-secondary js-toggle-password border-start-0" type="button" tabindex="-1">
+                        ' . Icon::widget(['icon' => 'bi-eye']) . '
+                    </button>
+                </div>
+                {hint}
+            ',
+        ])->passwordInput([
+            'maxlength' => true,
+            'autocomplete' => 'new-password',
+            'placeholder' => Yii::t('app', 'Repeat password'),
+            'class' => 'form-control border-end-0',
+        ]) ?>
     </div>
 </div>
 
@@ -188,7 +214,6 @@ $showResendButton = $isUpdate && in_array($model->status, [
 
                 <cropper-canvas background style="width: 100%; height: 100%;">
                     <cropper-image
-                            src=""
                             alt="Picture"
                             translatable="true"
                             scalable="true"

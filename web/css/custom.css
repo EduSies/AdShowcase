@@ -276,6 +276,11 @@ i.bi.icon-80px { font-size: 80px; }
 /* END DataTable */
 
 /* Forms */
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+    background-image: none !important;
+    padding-right: 0.75rem !important;
+}
 section.form {
     background-color: rgba(255, 255, 255, 0.7);
     border-radius: 4px;
@@ -533,3 +538,64 @@ section.form .form-title {
     margin-left: calc(-0.5 * var(--bs-gutter-x));
 }
 /* END Card Structure */
+
+/* INIT Password Eye */
+.password-group .form-floating .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+}
+
+.password-group .js-toggle-password {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: calc(3.5rem + calc(var(--bs-border-width) * 2));
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.password-group:has(.form-control.is-invalid) .js-toggle-password {
+    border-color: #dc3545;
+    color: #dc3545;
+    clip-path: inset(-0.25rem -0.25rem -0.25rem 0rem) !important;
+}
+
+.password-group:has(.form-control) .js-toggle-password {
+    clip-path: inset(-0.25rem -0.25rem -0.25rem 0rem);
+}
+
+.password-group:has(.form-control:focus) .js-toggle-password {
+    clip-path: inset(-0.25rem -0.25rem -0.25rem 0rem);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+.password-group:has(.form-control.is-invalid:focus) .js-toggle-password {
+    clip-path: inset(-0.25rem -0.25rem -0.25rem 0rem);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
+    border-color: var(--bs-form-invalid-border-color) !important;
+}
+
+.password-group .form-control.is-invalid {
+    background-position: right 1rem center;
+}
+
+.password-group .btn {
+    background-color: var(--bs-white);
+}
+
+.password-group .btn:hover {
+    color: var(--main-color-1);
+    background-color: var(--bs-white);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.password-group .was-validated .form-control:invalid:focus,
+.password-group .form-control.is-invalid:focus,
+.password-group .form-control:focus {
+    clip-path: inset(-0.25rem 0rem -0.25rem -0.25rem) !important;
+}
+/* END Password Eye */

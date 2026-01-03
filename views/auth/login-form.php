@@ -43,11 +43,20 @@ $this->title = $title;
         ])->label(Yii::t('app', 'Email or username')) ?>
 
         <?= $form->field($model, 'password', [
-            'options' => ['class' => 'form-floating mb-3'],
-            'template' => "{input}\n{label}\n{error}",
+            'options' => ['class' => 'input-group mb-3 password-group'],
+            'template' => '
+                <div class="form-floating flex-grow-1">
+                    {input}
+                    {label}
+                    {error}
+                </div>
+                <button class="btn btn-outline-secondary js-toggle-password border-start-0" type="button" tabindex="-1">
+                    ' . Icon::widget(['icon' => 'bi-eye']) . '
+                </button>
+            ',
         ])->passwordInput([
             'placeholder' => '',
-            'class' => 'form-control',
+            'class' => 'form-control border-end-0',
         ])->label(Yii::t('app', 'Password')) ?>
 
         <div class="mb-3">

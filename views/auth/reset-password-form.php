@@ -34,27 +34,45 @@ $this->title = $title;
         ]); ?>
 
         <?= $form->field($model, 'password', [
-                'options' => ['class' => 'form-floating mb-3'],
-                'template' => "{input}\n{label}\n{error}",
+            'options' => ['class' => 'input-group mb-3 password-group'],
+            'template' => '
+                <div class="form-floating flex-grow-1">
+                    {input}
+                    {label}
+                    {error}
+                </div>
+                <button class="btn btn-outline-secondary js-toggle-password border-start-0" type="button" tabindex="-1">
+                    ' . Icon::widget(['icon' => 'bi-eye']) . '
+                </button>
+            ',
         ])->passwordInput([
-                'autofocus' => true,
-                'placeholder' => '',
-                'class' => 'form-control',
+            'autofocus' => true,
+            'placeholder' => '',
+            'class' => 'form-control border-end-0',
         ])->label(Yii::t('app', 'New Password')) ?>
 
         <?= $form->field($model, 'password_repeat', [
-                'options' => ['class' => 'form-floating mb-3'],
-                'template' => "{input}\n{label}\n{error}",
+            'options' => ['class' => 'input-group mb-3 password-group'],
+            'template' => '
+                <div class="form-floating flex-grow-1">
+                    {input}
+                    {label}
+                    {error}
+                </div>
+                <button class="btn btn-outline-secondary js-toggle-password border-start-0" type="button" tabindex="-1">
+                    ' . Icon::widget(['icon' => 'bi-eye']) . '
+                </button>
+            ',
         ])->passwordInput([
-                'placeholder' => '',
-                'class' => 'form-control',
+            'placeholder' => '',
+            'class' => 'form-control border-end-0',
         ])->label(Yii::t('app', 'Repeat Password')) ?>
 
         <div class="d-grid gap-2 mt-4">
             <?= Html::submitButton(
-                    '<span>' . Yii::t('app', 'Save') . '</span>' .
-                    Icon::widget(['icon' => 'bi-check-circle', 'size' => Icon::SIZE_24, 'options' => ['class' => 'ms-4']]),
-                    ['class' => 'btn btn-primary rounded-pill btn-lg d-flex justify-content-center align-items-center', 'name' => 'reset-password-button']
+                '<span>' . Yii::t('app', 'Save') . '</span>' .
+                Icon::widget(['icon' => 'bi-check-circle', 'size' => Icon::SIZE_24, 'options' => ['class' => 'ms-4']]),
+                ['class' => 'btn btn-primary rounded-pill btn-lg d-flex justify-content-center align-items-center', 'name' => 'reset-password-button']
             ) ?>
         </div>
 
