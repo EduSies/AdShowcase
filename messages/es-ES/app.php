@@ -468,4 +468,6 @@ return [
     'Password Reset for AdShowcase' => 'Restablecimiento de contraseña para AdShowcase',
     'If you did not make this request, please ignore this email.' => 'Si no has realizado esta solicitud, ignora este correo.',
     'Hello, {name}' => 'Hola, {name}',
+    'General info' => 'Información general',
+    'Go to preview' => 'Ir a la previsualización',
 ];
