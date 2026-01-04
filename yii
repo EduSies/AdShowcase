@@ -17,7 +17,16 @@ try {
 
     defined('ADSHOWCASE_BASE_PATH') or define('ADSHOWCASE_BASE_PATH', ArrayHelper::getValue($_ENV, 'ADSHOWCASE_BASE_PATH', __DIR__));
     defined('YII_ENV') or define('YII_ENV', ArrayHelper::getValue($_ENV, 'ADSHOWCASE_ENV'));
-    defined('YII_DEBUG') or define('YII_DEBUG', YII_ENV == 'dev');
+
+    $envDebug = ArrayHelper::getValue($_ENV, 'YII_DEBUG');
+
+    if ($envDebug !== null) {
+        $debugState = filter_var($envDebug, FILTER_VALIDATE_BOOLEAN);
+    } else {
+        $debugState = (YII_ENV === 'dev');
+    }
+
+    defined('YII_DEBUG') or define('YII_DEBUG', $debugState);
 
     require ADSHOWCASE_BASE_PATH . '/vendor/yiisoft/yii2/Yii.php';
     require ADSHOWCASE_BASE_PATH . '/config/bootstrap.php';
