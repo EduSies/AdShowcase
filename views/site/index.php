@@ -14,7 +14,7 @@ $this->title = $title;
 
 <div class="site-index">
 
-    <div class="jumbotron position-relative text-center bg-transparent mt-5 mb-5">
+    <div class="jumbotron position-relative text-center bg-transparent mt-4 mb-5">
         <h1 class="display-4 logo-adshowcase-dashboard"><?= Html::encode($this->title) ?></h1>
     </div>
 
