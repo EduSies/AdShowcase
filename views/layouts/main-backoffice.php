@@ -230,6 +230,14 @@ if (Yii::$app->session->hasFlash('error')) {
         </div>
     </footer>
 
+    <template id="spinner-template">
+        <div class="d-flex justify-content-center align-items-center w-100">
+            <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+                <span class="visually-hidden"><?= Yii::t('app', 'Loading') ?>...</span>
+            </div>
+        </div>
+    </template>
+
     <?php $this->registerJs(<<<JS
         // Inicializar todos los tooltips de la página
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

@@ -25,6 +25,8 @@ CropperJsAsset::register($this);
 $submitIcon  = $isUpdate ? 'bi-pencil-square' : 'bi-plus-circle';
 $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 
+$this->registerJsFile('@web/js/modal-share.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+
 ?>
 
 <h5 class="mb-3 text-muted"><?= Yii::t('app', 'Creative assets') ?></h5>
@@ -184,7 +186,7 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
 <div class="row g-3">
     <div class="col-md-8">
         <div class="mt-4 d-flex justify-content-between gap-2">
-            <div>
+            <div class="d-flex gap-4">
                 <?php if ($isUpdate): ?>
                     <?= Html::a(
                         Icon::widget([
@@ -199,6 +201,30 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
                             'target' => '_blank',
                         ]
                     ) ?>
+                    <?php
+                        // Validamos que existan todos los datos necesarios antes de pintar el botón
+                        $canShare = !empty($model->hash) &&
+                            !empty($model->title) &&
+                            isset($formats[$model->format_id]) &&
+                            isset($agencies[$model->agency_id]);
+                    ?>
+                    <?php if ($canShare): ?>
+                        <?= Html::button(
+                            Icon::widget(['icon' => 'bi-share-fill', 'size' => Icon::SIZE_24]) .
+                            Html::tag('span', Yii::t('app', 'Share')),
+                            [
+                                'class' => 'btn btn-outline-secondary rounded-pill d-flex align-items-center gap-2 action-share-btn',
+                                'data' => [
+                                    'bs-toggle' => 'modal',
+                                    'bs-target' => '#shareModal',
+                                    'creative-hash' => $model->hash,
+                                    'creative-title' => $model->title,
+                                    'creative-format' => $formats[$model->format_id],
+                                    'creative-agency' => $agencies[$model->agency_id],
+                                ]
+                            ]
+                        ) ?>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
 
@@ -283,6 +309,8 @@ $submitLabel = $isUpdate ? Yii::t('app', 'Update') : Yii::t('app', 'Create');
         </div>
     </div>
 </div>
+
+<?= $this->render('@adshowcase/views/layouts/partials/_modal-share') ?>
 
 <?php
 

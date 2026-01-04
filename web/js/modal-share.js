@@ -38,7 +38,10 @@ const shareSelectors = {
         spinner: '#qrSpinner', // Spinner de carga que se muestra mientras llega el QR
         copyMessage: '#copySuccessMessage', // Mensaje temporal de éxito ("Link copied!")
         fallbackFocus: '#control-scroll-filter' // Elemento del DOM al que devolver el foco si se cierra el modal (Accesibilidad)
-    }
+    },
+    templates: {
+        spinner: '#spinner-template' // ID del template del spinner de carga
+    },
 };
 
 $(document).ready(function() {
@@ -89,7 +92,7 @@ $(document).ready(function() {
             let originalContent = $btn.html();
             let width = $btn.outerWidth();
             let height = $btn.outerHeight();
-            let spinnerHtml = $(favSelectors.templates.spinner).html();
+            let spinnerHtml = $(shareSelectors.templates.spinner).html();
 
             $btn.css({
                 'width': width,
@@ -308,7 +311,7 @@ $(document).ready(function() {
         let originalContent = $btn.html();
         let width = $btn.outerWidth();
         let height = $btn.outerHeight();
-        let spinnerHtml = $(favSelectors.templates.spinner).html();
+        let spinnerHtml = $(shareSelectors.templates.spinner).html();
 
         $btn.css({
             'width': width,
