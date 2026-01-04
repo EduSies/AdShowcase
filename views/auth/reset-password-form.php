@@ -13,7 +13,7 @@ $this->title = $title;
 
 ?>
 
-<div class="site-reset-password d-flex flex-column justify-content-center align-items-center py-5">
+<div class="site-reset-password d-flex flex-column justify-content-center align-items-center">
     <div class="w-100 d-flex flex-column align-items-center" style="max-width: 700px;min-width: 450px;">
 
         <div class="text-center mb-4">
