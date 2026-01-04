@@ -74,7 +74,7 @@ if (Yii::$app->session->hasFlash('error')) {
     </div>
     <main id="main" class="flex-shrink-0 position-relative" role="main">
         <div class="container d-flex flex-column align-items-center">
-            <h1 class="logo-adshowcase mb-5">
+            <h1 class="logo-adshowcase mb-5 display-1 text-center">
                 <?= Html::a(
                     ArrayHelper::getValue($_ENV, 'APP_NAME'),
                     ['/'],

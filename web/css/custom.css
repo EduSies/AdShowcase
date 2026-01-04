@@ -77,9 +77,8 @@ body:not(.login-layout) > main > .container {
     padding: 24px 28px;
 }
 
-.logo-adshowcase {
+.logo-adshowcase, .logo-adshowcase-dashboard {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-size: 72px;
     color: var(--main-color-1);
     display: inline-block;
 }
@@ -305,13 +304,6 @@ section.form .form-title {
 /* Dashboard */
 .font-adshowcase {
     font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-.logo-adshowcase-dashboard {
-    font-family: "Allerta Stencil", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--main-color-1);
-    display: inline-block;
-    margin: 0;
 }
 
 .list-group-item.active {

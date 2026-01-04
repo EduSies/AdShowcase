@@ -14,7 +14,7 @@ $this->title = $title;
 ?>
 
 <div class="site-request-password-reset d-flex flex-column justify-content-center align-items-center">
-    <div class="w-100 d-flex flex-column align-items-center" style="max-width: 700px;min-width: 450px;">
+    <div class="w-100 d-flex flex-column align-items-center">
 
         <div class="text-center mb-4">
             <h1 class="h3 mb-3 fw-normal"><?= Html::encode($this->title) ?></h1>
