@@ -44,12 +44,14 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_proxy
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}-local.rule=Host(`${LOCAL_HOST:-localhost.adshowcase.com}`)
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-local.rule=Host(`${LOCAL_HOST:-localhost.adshowcase.com}`) || Host(`192.168.50.3`) || Host(`sieshouse.duckdns.org`) || Host(`adshowcase.duckdns.org`)"
       - traefik.http.routers.${COMPOSE_PROJECT_NAME}-local.entrypoints=web
       - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
     networks:
       - traefik_private
       - traefik_proxy
+    ports:
+      - "8080:80"
 
 volumes:
   db-adshowcase:
