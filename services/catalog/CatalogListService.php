@@ -145,6 +145,8 @@ final class CatalogListService
                 'or',
                 ['like', 'c.hash', $params['search']],
                 ['like', 'c.title', $params['search']],
+                ['like', 'a.name', $params['search']],
+                ['like', 'b.name', $params['search']],
                 ['like', 'co.name', $params['search']],
                 ['like', 'f.name', $params['search']],
                 ['like', 'p.name', $params['search']],
