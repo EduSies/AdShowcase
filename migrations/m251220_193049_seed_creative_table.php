@@ -31,8 +31,6 @@ class m251220_193049_seed_creative_table extends Migration
             $uploadRoot = \Yii::getAlias('@app') . '/web';
         }
 
-        echo "    > Descargando imagen base de Picsum para replicar...\n";
-
         $opts = [
             "http" => [
                 "method" => "GET",
@@ -41,35 +39,52 @@ class m251220_193049_seed_creative_table extends Migration
         ];
         $context = stream_context_create($opts);
 
-        // Descargamos una imagen JPG genérica
-        $dummyImageContent = @file_get_contents('https://picsum.photos/800/600', false, $context);
-
-        echo "    > Generando 100 registros y ARCHIVOS FÍSICOS...\n";
+        echo "    > Generando 150 registros y descargando imágenes únicas...\n";
 
         $assetRows = [];
-        // Forzamos jpg para los físicos porque Picsum devuelve jpg (evita mismatch de extensión)
         $physicalExtension = 'jpg';
 
-        for ($i = 0; $i < 100; $i++) {
-            $hash = hash('sha256', uniqid() . $i . microtime());
+        for ($i = 0; $i < 150; $i++) {
+            $seed = uniqid();
 
+            $imageUrl = "https://picsum.photos/seed/{$seed}/800/600";
+
+            $imageContent = @file_get_contents($imageUrl, false, $context);
+
+            if ($imageContent === false) {
+                echo "      ! Fallo al descargar imagen $i. Saltando...\n";
+                continue;
+            }
+
+            $hash = hash('sha256', uniqid() . $i . microtime());
             $folder1 = substr($hash, 0, 2);
             $folder2 = substr($hash, 2, 2);
 
-            // Ruta relativa (DB)
+            // Rutas
             $relativePath = "/uploads/assets/{$folder1}/{$folder2}/{$hash}.{$physicalExtension}";
-
-            // Ruta absoluta (Disco)
             $absoluteDir = $uploadRoot . "/uploads/assets/{$folder1}/{$folder2}";
             $absolutePath = $uploadRoot . "/" . $relativePath;
+
+            $currentStep = $i + 1;
+            echo "      > [$currentStep/150] Guardando imagen... ";
 
             try {
                 if (!is_dir($absoluteDir)) {
                     FileHelper::createDirectory($absoluteDir, 0775, true);
                 }
-                file_put_contents($absolutePath, $dummyImageContent);
+
+                // Guardamos y capturamos el resultado (bytes escritos)
+                $bytesWritten = file_put_contents($absolutePath, $imageContent);
+
+                if ($bytesWritten !== false) {
+                    $sizeKb = round($bytesWritten / 1024, 1);
+                    echo "OK ({$sizeKb} KB)\n";
+                } else {
+                    echo "ERROR: No se pudieron escribir datos en el disco.\n";
+                }
+
             } catch (\Exception $e) {
-                echo "      ! Error IO: " . $e->getMessage() . "\n";
+                echo "\n      ! Error IO: " . $e->getMessage() . "\n";
             }
 
             $assetRows[] = [
@@ -81,6 +96,8 @@ class m251220_193049_seed_creative_table extends Migration
                 'duration_sec' => 0,
                 'created_at' => date('Y-m-d H:i:s'),
             ];
+
+            usleep(100000); // 0.1 segundos
         }
 
         $this->batchInsert(self::TABLE_ASSET_FILE, [
